@@ -37,16 +37,16 @@ const Login = ({handleClose, setMessage, setSevernity}) => {
         <Input id="component-simple"/>
       </FormControl>
 
-<GoogleLogin
-  onSuccess={credentialResponse => {
-    console.log(credentialResponse);
-  }}
-  onError={() => {
-    console.log('Login Failed');
-  }}
-/>;
 
           </Box>
+        <GoogleLogin
+          onSuccess={credentialResponse => {
+            console.log(credentialResponse);
+          }}
+          onError={() => {
+            console.log('Login Failed');
+          }}
+        />
         </Grid>
     )
 }
