@@ -1,6 +1,8 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
+import {Link as RouterLink}  from 'react-router-dom'
 import { Link } from '@mui/material';
+import {getUser, logoutUser} from '../utils/sessionManager'
 import Badge from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Box from '@mui/material/Box';
@@ -19,6 +21,7 @@ import InputBase from '@mui/material/InputBase';
 import AdbIcon from '@mui/icons-material/Adb';
 
 import { styled, alpha } from '@mui/material/styles';
+import { PATH_APP, PATH_PAGE, ROOTS } from '../routes/paths';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -96,26 +99,25 @@ const NavBar= () => {
   };
 
   return (
-      <AppBar position="static" >
+      <AppBar position="static" color='secondary' >
         <Container maxWidth="lg">
           <Toolbar disableGutters>
+            <Link variant='secondary' to={ROOTS.app} component={RouterLink}  style={{textDecoration: 'none'}}>
             <Typography
               variant="h6"
               noWrap
-              component="a"
-              href="/"
               sx={{
                 mr: 2,
                 display: { xs: 'none', md: 'flex' },
                 fontFamily: 'monospace',
                 fontWeight: 700,
                 letterSpacing: '.3rem',
-                color: 'inherit',
                 textDecoration: 'none',
               }}
             >
               SHEIN
             </Typography>
+            </Link>
 
             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
               <IconButton
@@ -193,8 +195,6 @@ const NavBar= () => {
               />
             </Search>
 
-            <Box sx={{ flexGrow: 0 }}>
-
               <IconButton
                 size="large"
                 aria-label="cart"
@@ -205,12 +205,19 @@ const NavBar= () => {
                   <ShoppingCartIcon />
                 </StyledBadge>
               </IconButton>
-              <Tooltip title="Open settings"
-              >
+              {getUser()  == null ?(
+                  <MenuItem>
+                    <Link color='secondary' to ={PATH_PAGE.auth.login} component={RouterLink}>
+                      <Typography>Login</Typography>
+                    </Link>
+                  </MenuItem>
+              ):(
+              <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="Samrat" src="/static/images/avatar/2.jpg" />
                 </IconButton>
               </Tooltip>
+              )}
 
               <Menu
                 sx={{ mt: '45px' }}
@@ -234,7 +241,6 @@ const NavBar= () => {
                   </MenuItem>
                 ))}
               </Menu>
-            </Box>
           </Toolbar>
         </Container>
       </AppBar>

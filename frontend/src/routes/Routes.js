@@ -1,3 +1,4 @@
+/*
 import {PATH_APP, PATH_PAGE, ROOTS} from "./paths";
 import DashBoardLayout from "../layout";
 import React from "react";
@@ -41,3 +42,4 @@ const Routes = {
     ]
 }
 export default Routes;
+*/

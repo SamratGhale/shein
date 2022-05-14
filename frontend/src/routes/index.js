@@ -2,15 +2,18 @@
 //Routes are the classes that contains information of the routes
 //Paths are just paths to the route
 import Home from '../modules/home';
+import DashboardLayout from "../layout";
 // import HomeRoutes from './HomeRoutes';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, useRoutes, Navigate} from 'react-router-dom';
 import DefaultAuth from '../global/DefaultProtect';
 import React, { Fragment, useEffect, Suspense, lazy } from 'react';
 import AppRoutes from './Routes';
+import Login from '../modules/users/login';
 //import DefaultAuth from 'src/global/Auth/DefaultProtect';
 // ----------------------------------------------------------------------
 
 
+/*
 function RouteProgress(props) {
   return <Route {...props} />;
 }
@@ -62,4 +65,17 @@ const routes = [
   },
   AppRoutes,
 ];
-export default routes;
+*/
+
+export default function Router() {
+  return useRoutes([
+    {
+      path: '/',
+      element: <DashboardLayout />,
+      children: [
+        { path: '', element: <Home/> },
+        { path: 'auth/login', element: <Login/> },
+      ],
+    },
+  ]);
+}
