@@ -207,7 +207,7 @@ const NavBar= () => {
               </IconButton>
               {getUser()  == null ?(
                   <MenuItem>
-                    <Link color='secondary' to ={PATH_PAGE.auth.login} component={RouterLink}>
+                    <Link to ={PATH_PAGE.auth.login} component={RouterLink}>
                       <Typography>Login</Typography>
                     </Link>
                   </MenuItem>
@@ -235,11 +235,15 @@ const NavBar= () => {
                 open={Boolean(anchorElUser)}
                 onClose={handleCloseUserMenu}
               >
-                {settings.map((setting) => (
-                  <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">{setting}</Typography>
+                  <MenuItem  onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">My Orders</Typography>
                   </MenuItem>
-                ))}
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center">My Account</Typography>
+                  </MenuItem>
+                  <MenuItem  onClick={logoutUser}>
+                    <Typography textAlign="center">Logout</Typography>
+                  </MenuItem>
               </Menu>
           </Toolbar>
         </Container>

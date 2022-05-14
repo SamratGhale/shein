@@ -24,6 +24,11 @@ module.exports = {
       password: Joi.string().optional().description('user password'),
     }),
   },
+  google_login: {
+    params: Joi.object({
+      cred: Joi.string().description('google crediential'),
+    }),
+  },
 
   changePassword: {
     payload: Joi.object({

@@ -6,6 +6,7 @@ import { Grid, Button, TextField } from '@mui/material';
 import { GoogleLogin} from '@react-oauth/google';
 import { ROOTS } from '../../routes/paths';
 
+import { googleLogin } from './services';
 
 const Login = ({handleClose, setMessage, setSevernity}) => {
     const handleLogin=async()=>{
@@ -41,6 +42,7 @@ const Login = ({handleClose, setMessage, setSevernity}) => {
           </Box>
         <GoogleLogin
           onSuccess={credentialResponse => {
+            googleLogin(credentialResponse.credential)
             console.log(credentialResponse);
           }}
           onError={() => {

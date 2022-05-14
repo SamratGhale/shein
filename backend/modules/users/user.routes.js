@@ -61,6 +61,22 @@ const routes = {
     description: 'Get users by role',
     permissions: [USER.READ, USER.ADMIN]
   },
+  login: {
+    method: 'POST',
+    path: '/login',
+    description: 'Login using username and password',
+    uploadPayload: {
+      output: 'stream',
+      parse: true,
+      multipart: true,
+      allow: 'multipart/form-data',
+    },
+  },
+  google_login: {
+    method: 'POST',
+    path: '/google_login/{cred}',
+    description: 'Login using google',
+  },
 };
 
 function register(app) {

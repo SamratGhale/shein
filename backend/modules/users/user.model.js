@@ -4,10 +4,10 @@ const commonSchema = require('../../helpers/schema');
 
 const schema = {
   email: { type: String, joi: Joi.string().email().optional().description("Admin email") },
-  password: { type: String , required: true},
+  password: { type: String , required: false},
   phone : {type: String, required: false},
   role: {type: String , required: false},
-  is_approved :{type:Boolean, required: true},
+  google_account :{type:Boolean, required: true},
   ...commonSchema,
 };
 

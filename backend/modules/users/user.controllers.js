@@ -1,8 +1,11 @@
 const UserModel = require('./user.model')
 const bcrypt = require('bcrypt');
+const { OAuth2Client } = require('google-auth-library')
 const jwt = require('jsonwebtoken');
 const Role= require('./role.controllers').Role;
 require('dotenv').config();
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 const User= {
     async add(data) {
@@ -92,7 +95,8 @@ const User= {
             email: email.toLowerCase(),
             password: encrypted_password,
             role : role,
-            is_approved:false 
+            is_approved:false,
+            google_account:false 
         });
         const token = jwt.sign(
             {user_id : user._id, email, role: user.role, is_approved:user.is_approved},
@@ -101,6 +105,44 @@ const User= {
         user.token  = token;
         return user;
     },
+    async register_google(payload){
+        const {email, name} = payload;
+        const user = await UserModel.create({
+            email: email.toLowerCase(),
+            role : "USER",
+            is_approved:true,
+            google_account: true,
+            is_registered: true
+        });
+        return user;
+    },
+
+    async google_login(crediential) {
+
+        const salt = process.env.TOKEN_KEY;
+        try {
+            const ticket = await client.verifyIdToken({
+                idToken: crediential,
+                audience: process.env.GOOGLE_CLIENT_ID,
+            })
+
+            const {email, name} = ticket.getPayload();
+            var u= await UserModel.findOne({email: email});
+            console.log(u)
+            if(!u){
+                u = await this.register_google({ email, name });
+            }
+            const token = jwt.sign(
+                { user_id: u._id, email, role: u.role, is_approved: u.is_approved },
+                salt
+            );
+            return {user: u, token: token};
+        } catch (err) {
+            console.log(err);
+            throw { message: "Google login failed", code: 404 }
+        }
+    },
+
     async login(data){
         try{
             const {email, password} = data;
@@ -130,6 +172,7 @@ const User= {
         }
     },
 
+
     async archive(id) {
         return UserModel.findOneAndUpdate({ _id: id, is_archived: false }, { is_archived: true });
     },
@@ -147,12 +190,13 @@ module.exports = {
       const from = req.query.from || null;
       return User.list(start, limit, from);
     },
-    getById: (req) =>      User.getById(req.params.id),
-    register: (req) =>     User.register(req.payload),
-    login: (req) =>        User.login(req.payload),
-    archive: (req) =>      User.archive(req.params.id),
-    approve: (req) =>      User.approve(req.params.id),
-    findById: (req) =>      User.findById(req.params.id),
+    getById: (req) =>             User.getById(req.params.id),
+    register: (req) =>            User.register(req.payload),
+    login: (req) =>               User.login(req.payload),
+    google_login: (req) =>        User.google_login(req.params.cred),
+    archive: (req) =>             User.archive(req.params.id),
+    approve: (req) =>             User.approve(req.params.id),
+    findById: (req) =>            User.findById(req.params.id),
     findByRoles: (req) =>      User.findByRoles(req.params.role),
     validateToken : (req) =>  User.validateToken(req.params.token),
     update:(req)=>User.update(req),
