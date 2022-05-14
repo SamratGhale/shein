@@ -29,6 +29,7 @@ export const PATH_APP = {
   {
     item_detail     : merge_path(ROOTS.app, '/items/:id'),
     items           : merge_path(ROOTS.app, '/items'),
+    account         : merge_path(ROOTS.app, '/account'),
     cart            : merge_path(ROOTS.app, '/cart'),
   },
 };

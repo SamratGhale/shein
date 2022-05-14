@@ -20,7 +20,6 @@ const darkTheme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'Ubuntu',
     fontSize: 17,
   },
   overrides: {

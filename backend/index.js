@@ -35,8 +35,12 @@ const server = new Hapi.Server({
       origin:["*"],
       additionalHeaders: ['cache-control', 'x-requested-with', 'X_AUTH_TOKEN','access_token']
     },
+    state: {
+      parse: false
+    },
     validate: {
       failAction: async (request, h, err) => {
+        console.log(err)
           // In prod, log a limited error message and throw the default Bad Request error.
           return h
             .response({

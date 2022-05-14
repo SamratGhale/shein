@@ -22,6 +22,8 @@ import AdbIcon from '@mui/icons-material/Adb';
 
 import { styled, alpha } from '@mui/material/styles';
 import { PATH_APP, PATH_PAGE, ROOTS } from '../routes/paths';
+import { db } from '../modules/home/db';
+import { ItemsContext } from '../modules/home/context';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -82,6 +84,7 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 const NavBar= () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const {cartCount} = React.useContext(ItemsContext);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -201,7 +204,7 @@ const NavBar= () => {
                 color="inherit"
                 sx={{ width: 100 }}
               >
-                <StyledBadge badgeContent={17} color="success">
+                <StyledBadge badgeContent={cartCount} color="success">
                   <ShoppingCartIcon />
                 </StyledBadge>
               </IconButton>

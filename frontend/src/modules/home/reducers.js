@@ -8,6 +8,8 @@ const reducer= (state, action)=>{
         return {...state, refresh: !state.refresh}
     case actions.SET_CART_DATA:
         return {...state, cartItems: action.data}
+    case actions.SET_CART_COUNT:
+        return {...state, cartCount: action.data}
     }
 }
 export default reducer;

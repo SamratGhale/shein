@@ -1,71 +1,10 @@
-//Routes and paths 
-//Routes are the classes that contains information of the routes
-//Paths are just paths to the route
 import Home from '../modules/home';
 import DashboardLayout from "../layout";
-// import HomeRoutes from './HomeRoutes';
-import { Switch, Route, useRoutes, Navigate} from 'react-router-dom';
-import DefaultAuth from '../global/DefaultProtect';
-import React, { Fragment, useEffect, Suspense, lazy } from 'react';
-import AppRoutes from './Routes';
+import {  useRoutes } from 'react-router-dom';
+import React from 'react';
 import Login from '../modules/users/login';
-//import DefaultAuth from 'src/global/Auth/DefaultProtect';
-// ----------------------------------------------------------------------
-
-
-/*
-function RouteProgress(props) {
-  return <Route {...props} />;
-}
-
-export const renderRoutes = (routes = []) => {
-  return (
-    <Suspense fallback={<Home />} >
-
-      <Switch>
-        {routes.map((route, i) => {
-          const Component = route.component;
-          const Guard = route.guard || DefaultAuth;
-          const Layout = route.layout || Fragment;
-          //const BreadCrumbs = route.breadcrumbs || [];
-          //const Heading = route.heading || '';
-          const authorizedUsers = route.roles || [];
-
-          return (
-            <RouteProgress
-              key={i}
-              path={route.path}
-              exact={route.exact}
-              render={(props) => (
-                <Guard authorizedUsers={authorizedUsers}>
-                  <Layout>
-                    {route.routes ? (
-                      renderRoutes(route.routes)
-                    ) : (
-                      <Component
-                        {...props}
-                      />
-                    )}
-                  </Layout>
-                </Guard>
-              )}
-            />
-          );
-        })}
-      </Switch>
-    </Suspense>
-  );
-}
-
-const routes = [
-  {
-    exact: true,
-    path: '/404',
-    component: lazy(() => import('../views/page404'))
-  },
-  AppRoutes,
-];
-*/
+import { PATH_APP, PATH_PAGE } from './paths';
+import Account from '../modules/users/account';
 
 export default function Router() {
   return useRoutes([
@@ -73,8 +12,9 @@ export default function Router() {
       path: '/',
       element: <DashboardLayout />,
       children: [
-        { path: '', element: <Home/> },
-        { path: 'auth/login', element: <Login/> },
+        { path: PATH_APP.root, element: <Home/> },
+        { path: PATH_APP.app.account, element: <Account/> },
+        { path: PATH_PAGE.auth.login, element: <Login/> },
       ],
     },
   ]);
