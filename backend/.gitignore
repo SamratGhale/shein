@@ -10,6 +10,7 @@
 
 # production
 /build
+/modules/clothes/images
 
 # misc
 .DS_Store

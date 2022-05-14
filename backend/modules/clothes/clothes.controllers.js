@@ -15,7 +15,9 @@ const Clothes= {
       var failed = false;
       if(Array.isArray(data.images)){
         data.images.forEach((image, i)=>{
-          const ext = image.hapi.filename.split('.').at(-1);
+          console.log(image.hapi.filename.split('.'));
+          var arr = image.hapi.filename.split('.');
+          const ext = arr[arr.length -1];
           if (!['img', 'jpg', 'png', 'gif'].includes(ext)) {
             failed = true;
             ClothesModel.findByIdAndDelete(res.id).then(() => {
@@ -36,6 +38,7 @@ const Clothes= {
         return res;
       }
     }catch(err){
+      console.log(err);
       if(err.message){
         return err;
       }
