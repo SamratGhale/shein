@@ -9,7 +9,7 @@ require('dotenv').config();
 
 const modules = require('./modules/routes');
 
-const port = 4001;
+const port = 4000;
 
 const db = process.env.DATABASE_URL 
 
