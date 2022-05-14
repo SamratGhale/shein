@@ -1,7 +1,6 @@
 const UserModel = require('./user.model')
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const DataUtils  = require('../../helpers/data');
 const Role= require('./role.controllers').Role;
 require('dotenv').config();
 
@@ -9,18 +8,8 @@ const User= {
     async add(data) {
         return await this.register(data);
     },
-    async list(start, limit, from) {
-        const $match = { is_archived: false };
-        if (from) $match.from = { $regex: new RegExp(`${from}`), $options: 'gi' };
-        const query = [{ $match }];
-
-        return DataUtils.paging({
-            start,
-            limit,
-            sort: { created_at: -1 },
-            model: UserModel,
-            query,
-        });
+    async list() {
+        return UserModel.find();
     },
     async getById(_id) {
         return UserModel.findOne({ _id, is_archived: false });
