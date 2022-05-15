@@ -1,5 +1,8 @@
 import axios from 'axios';
-import { CLOTHES } from '../../constants/api';
+import { CLOTHES, CART } from '../../constants/api';
+import { getUserToken } from '../../utils/sessionManager';
+
+const access_token = getUserToken();
 
 export async function getAllItems() {
     try {
@@ -18,4 +21,34 @@ export async function getById(id) {
     } catch (err) {
         throw err;
     }
+}
+export async function addToCart(payload) {
+    return new Promise((resolve, reject) => {
+        axios.post(CART, payload, {
+            headers: {
+                'access_token': access_token
+            }
+        })
+            .then((res) => {
+                resolve(res);
+                console.log(res);
+            }).catch((err) => {
+                reject(err);
+            });
+    });
+}
+
+export async function getMyCart() {
+    return new Promise((resolve, reject) => {
+        axios.get(CART, {
+            headers: {
+                'access_token': access_token
+            }
+        })
+            .then((res) => {
+                resolve(res.data);
+            }).catch((err) => {
+                reject(err);
+            });
+    });
 }

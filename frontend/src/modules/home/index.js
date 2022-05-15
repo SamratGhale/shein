@@ -61,6 +61,7 @@ function AddToCartModal({ item, open, handleClose }) {
   );
 }
 
+<<<<<<< HEAD
 function SingleItem({ item, setItem, handleAddCart }) {
   return (
     <Card sx={{ maxWidth: 345, minWidth: 300 }}>
@@ -98,6 +99,8 @@ function SingleItem({ item, setItem, handleAddCart }) {
     </Card>
   );
 }
+=======
+>>>>>>> aadb2d9e69bd6270c91267e733e60ab722180164
 
 const useStyles = makeStyles((theme) => ({
   root: {
