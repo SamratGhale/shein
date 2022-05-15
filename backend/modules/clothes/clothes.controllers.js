@@ -1,59 +1,69 @@
-const ClothesModel = require('./clothes.model');
-const fs = require('fs');
+const ClothesModel = require("./clothes.model");
+const fs = require("fs");
 
-const Clothes= {
+const Clothes = {
   async add(data) {
-    try{
+    try {
       const res = await ClothesModel.create(data);
       //Add image
-    
+
       const dir = `./modules/clothes/images/${res._id}`;
 
-      if(!fs.existsSync(dir)){
-        fs.mkdirSync(dir, {recursive : true});
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
       }
       var failed = false;
-      if(Array.isArray(data.images)){
-        data.images.forEach((image, i)=>{
-          console.log(image.hapi.filename.split('.'));
-          var arr = image.hapi.filename.split('.');
-          const ext = arr[arr.length -1];
-          if (!['img', 'jpg', 'png', 'gif'].includes(ext)) {
+      if (Array.isArray(data.images)) {
+        data.images.forEach((image, i) => {
+          console.log(image.hapi.filename.split("."));
+          var arr = image.hapi.filename.split(".");
+          const ext = arr[arr.length - 1];
+          if (!["img", "jpg", "png", "gif", "jpeg"].includes(ext)) {
             failed = true;
             ClothesModel.findByIdAndDelete(res.id).then(() => {
               fs.rmSync(dir, { recursive: true, force: true });
               return;
-            }
-            );
+            });
           }
-          fs.writeFileSync(`${dir}/${image.hapi.filename}`, image._data, err => {
-              throw { message: "couldn't upload image please try again", code: 404 };
-          })
-        })
+          fs.writeFileSync(
+            `${dir}/${image.hapi.filename}`,
+            image._data,
+            (err) => {
+              throw {
+                message: "couldn't upload image please try again",
+                code: 404,
+              };
+            }
+          );
+        });
       }
 
       if (failed) {
-        throw { message: "Image format not valid please try again!", code: 404 };
-      }else{
+        throw {
+          message: "Image format not valid please try again!",
+          code: 404,
+        };
+      } else {
         return res;
       }
-    }catch(err){
+    } catch (err) {
       console.log(err);
-      if(err.message){
+      if (err.message) {
         return err;
       }
-      throw {message:"Could't add the item please try again", code:400};
+      throw { message: "Could't add the item please try again", code: 400 };
     }
   },
   async list() {
     const res = await ClothesModel.find().lean();
     res.forEach(async (item, i) => {
       res[i].files = fs.readdirSync(`./modules/clothes/images/${item._id}`);
-    })
+    });
     return res;
   },
   async getById(_id) {
-    const ret = await ClothesModel.findOne({ _id, is_archived: false });
+    const ret = await ClothesModel.findOne({ _id, is_archived: false }).lean();
+    ret.files = fs.readdirSync(`./modules/clothes/images/${ret._id}`);
     return ret;
   },
   async update(id, data) {
@@ -78,7 +88,7 @@ const Clothes= {
     } else if (item.quantity < qty) {
       throw { message: "Not enought item", code: 400 };
     } else {
-      item.quantity = item.quantity -  qty;
+      item.quantity = item.quantity - qty;
       return await this.update(id, item);
     }
   },
@@ -88,7 +98,7 @@ const Clothes= {
     if (!item) {
       throw { message: "Item not found", code: 400 };
     } else {
-      item.quantity = item.quantity +  qty;
+      item.quantity = item.quantity + qty;
       return await this.update(id, item);
     }
   },
