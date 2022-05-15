@@ -8,7 +8,7 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 const darkTheme = createTheme({
   palette: {
-    type: 'light',
+    mode: 'dark',
     primary: {
       main: '#96cb76',
     },
@@ -16,7 +16,7 @@ const darkTheme = createTheme({
       main: '#352ac1',
     },
     text: {
-      primary: 'rgba(0,0,0,0.87)',
+      primary: '#fff',
     },
   },
   typography: {
@@ -39,8 +39,8 @@ const darkTheme = createTheme({
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <ThemeProvider theme={darkTheme}>
-      <CssBaseline/>
-      <App />
-    </ThemeProvider>
+  <ThemeProvider theme={darkTheme}>
+    <CssBaseline />
+    <App />
+  </ThemeProvider>
 );
