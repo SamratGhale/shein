@@ -2,9 +2,9 @@ const mongoose = require('mongoose');
 const commonSchema = require('../../helpers/schema');
 
 const schema = {
-  item     :{type: mongoose.Schema.ObjectId, ref:'clothes' , required: true},
-  user     :{type: mongoose.Schema.ObjectId, ref:'User',     required: true},
-  quantity :{type: Number, required: true},
+  item: { type: mongoose.Schema.ObjectId, ref: 'clothes', required: true },
+  user: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
+  quantity: { type: Number, required: true },
   ...commonSchema,
 };
 

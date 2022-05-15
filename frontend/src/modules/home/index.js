@@ -53,37 +53,6 @@ function AddToCartModal({ item, open, handleClose }) {
     )
 }
 
-function SingleItem({ item, setItem, handleAddCart }) {
-    return (
-        <Card sx={{ maxWidth: 345, minWidth: 300 }}>
-            <CardActionArea onClick={() => {
-                console.log(item)
-            }}>
-                <CardMedia
-                    component="img"
-                    height="400"
-                    image={`${CLOTHES_IMAGE}${item._id}/${item.files[0]}`}
-                    alt="green iguana"
-                />
-                <CardContent>
-                    <Typography gutterBottom variant="h6" component="div">
-                        {item.item_name}
-                    </Typography>
-                    <Typography variant="subtitle2" color={"purple"} >
-                        Rs. {item.item_price}
-                    </Typography>
-                </CardContent>
-            </CardActionArea>
-            <CardActions>
-                <Button onClick={() => {
-                    setItem(item);
-                    handleAddCart();
-                }} size="small">Add to cart</Button>
-            </CardActions>
-        </Card>
-    )
-}
-
 
 const useStyles = makeStyles((theme) => ({
     root: {

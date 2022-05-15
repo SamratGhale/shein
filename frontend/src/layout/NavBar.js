@@ -1,8 +1,8 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
-import {Link as RouterLink}  from 'react-router-dom'
+import { Link as RouterLink } from 'react-router-dom'
 import { Link } from '@mui/material';
-import {getUser, logoutUser} from '../utils/sessionManager'
+import { getUser, logoutUser } from '../utils/sessionManager'
 import Badge from '@mui/material/Badge';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import Box from '@mui/material/Box';
@@ -79,12 +79,11 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 
 const pages = ['Products', 'Pricing', 'Blog'];
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
-const NavBar= () => {
+const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const {cartCount} = React.useContext(ItemsContext);
+  const { cartCount } = React.useContext(ItemsContext);
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -102,10 +101,10 @@ const NavBar= () => {
   };
 
   return (
-      <AppBar position="static" color='secondary' >
-        <Container maxWidth="lg">
-          <Toolbar disableGutters>
-            <Link variant='secondary' to={ROOTS.app} component={RouterLink}  style={{textDecoration: 'none'}}>
+    <AppBar position="static" color='secondary' >
+      <Container maxWidth="lg">
+        <Toolbar disableGutters>
+          <Link variant='secondary' to={ROOTS.app} component={RouterLink} style={{ textDecoration: 'none' }}>
             <Typography
               variant="h6"
               noWrap
@@ -120,137 +119,139 @@ const NavBar= () => {
             >
               SHEIN
             </Typography>
-            </Link>
+          </Link>
 
-            <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-              <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleOpenNavMenu}
-                color="inherit"
-              >
-                <MenuIcon />
-              </IconButton>
-              <Menu
-                id="menu-appbar"
-                anchorEl={anchorElNav}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'left',
-                }}
-                open={Boolean(anchorElNav)}
-                onClose={handleCloseNavMenu}
-                sx={{
-                  display: { xs: 'block', md: 'none' },
-                }}
-              >
-                {pages.map((page) => (
-                  <MenuItem key={page} onClick={handleCloseNavMenu}>
-                    <Typography textAlign="center">{page}</Typography>
-                  </MenuItem>
-                ))}
-              </Menu>
-            </Box>
-            <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-            <Typography
-              variant="h5"
-              noWrap
-              component="a"
-              href=""
+          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+            <IconButton
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
+            </IconButton>
+            <Menu
+              id="menu-appbar"
+              anchorEl={anchorElNav}
+              anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: 'top',
+                horizontal: 'left',
+              }}
+              open={Boolean(anchorElNav)}
+              onClose={handleCloseNavMenu}
               sx={{
-                mr: 2,
-                display: { xs: 'flex', md: 'none' },
-                flexGrow: 1,
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                color: 'inherit',
-                textDecoration: 'none',
+                display: { xs: 'block', md: 'none' },
               }}
             >
-              LOGO
-            </Typography>
-            <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
               {pages.map((page) => (
-                <Button
-                  key={page}
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  {page}
-                </Button>
+                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                  <Typography textAlign="center">{page}</Typography>
+                </MenuItem>
               ))}
-            </Box>
-            <Search>
-              <SearchIconWrapper>
-                <SearchIcon />
-              </SearchIconWrapper>
-              <StyledInputBase
-                placeholder="Search…"
-                inputProps={{ 'aria-label': 'search' }}
-              />
-            </Search>
-
-              <IconButton
-                size="large"
-                aria-label="cart"
-                color="inherit"
-                sx={{ width: 100 }}
+            </Menu>
+          </Box>
+          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+          <Typography
+            variant="h5"
+            noWrap
+            component="a"
+            href=""
+            sx={{
+              mr: 2,
+              display: { xs: 'flex', md: 'none' },
+              flexGrow: 1,
+              fontFamily: 'monospace',
+              fontWeight: 700,
+              letterSpacing: '.3rem',
+              color: 'inherit',
+              textDecoration: 'none',
+            }}
+          >
+            LOGO
+          </Typography>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+            {pages.map((page) => (
+              <Button
+                key={page}
+                onClick={handleCloseNavMenu}
+                sx={{ my: 2, color: 'white', display: 'block' }}
               >
-                <StyledBadge badgeContent={cartCount} color="success">
-                  <ShoppingCartIcon />
-                </StyledBadge>
+                {page}
+              </Button>
+            ))}
+          </Box>
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon />
+            </SearchIconWrapper>
+            <StyledInputBase
+              placeholder="Search…"
+              inputProps={{ 'aria-label': 'search' }}
+            />
+          </Search>
+
+          <IconButton
+            size="large"
+            aria-label="cart"
+            color="inherit"
+            sx={{ width: 100 }}
+          >
+            <Link to={PATH_APP.app.cart} component={RouterLink}>
+              <StyledBadge badgeContent={cartCount} color="success">
+                <ShoppingCartIcon />
+              </StyledBadge>
+            </Link>
+          </IconButton>
+          {getUser() == null ? (
+            <MenuItem>
+              <Link to={PATH_PAGE.auth.login} component={RouterLink}>
+                <Typography>Login</Typography>
+              </Link>
+            </MenuItem>
+          ) : (
+            <Tooltip title="Open settings">
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                <Avatar alt="Samrat" src="/static/images/avatar/2.jpg" />
               </IconButton>
-              {getUser()  == null ?(
-                  <MenuItem>
-                    <Link to ={PATH_PAGE.auth.login} component={RouterLink}>
-                      <Typography>Login</Typography>
-                    </Link>
-                  </MenuItem>
-              ):(
-              <Tooltip title="Open settings">
-                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                  <Avatar alt="Samrat" src="/static/images/avatar/2.jpg" />
-                </IconButton>
-              </Tooltip>
-              )}
+            </Tooltip>
+          )}
 
-              <Menu
-                sx={{ mt: '45px' }}
-                id="menu-appbar"
-                anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-              >
-                  <MenuItem  onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">My Orders</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center">My Account</Typography>
-                  </MenuItem>
-                  <MenuItem  onClick={logoutUser}>
-                    <Typography textAlign="center">Logout</Typography>
-                  </MenuItem>
-              </Menu>
-          </Toolbar>
-        </Container>
-      </AppBar>
+          <Menu
+            sx={{ mt: '45px' }}
+            id="menu-appbar"
+            anchorEl={anchorElUser}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(anchorElUser)}
+            onClose={handleCloseUserMenu}
+          >
+            <MenuItem onClick={handleCloseUserMenu}>
+              <Typography textAlign="center">My Orders</Typography>
+            </MenuItem>
+            <MenuItem onClick={handleCloseUserMenu}>
+              <Typography textAlign="center">My Account</Typography>
+            </MenuItem>
+            <MenuItem onClick={logoutUser}>
+              <Typography textAlign="center">Logout</Typography>
+            </MenuItem>
+          </Menu>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 };
 export default NavBar;
