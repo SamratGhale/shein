@@ -48,19 +48,14 @@ export const ItemsContextProvider = ({ children }) => {
     }, [])
 
     async function addToCart(item, amount) {
-
-        if (getUser()) {
-
+        /* For unlogged users */
+        const i = await db.cart.get({ item_id: item._id });
+        if (i) {
+            const new_q = Number(i.quantity) + Number(amount);
+            await db.cart.update(i.id, { quantity: new_q });
         } else {
-            /* For unlogged users */
-            const i = await db.cart.get({ item_id: item._id });
-            if (i) {
-                const new_q = Number(i.quantity) + Number(amount);
-                await db.cart.update(i.id, { quantity: new_q });
-            } else {
-                await db.cart.add({ item_id: item._id, item, quantity: amount })
-                dispatch({ type: actions.SET_CART_COUNT, data: state.cartCount + 1 })
-            }
+            await db.cart.add({ item_id: item._id, item, quantity: amount })
+            dispatch({ type: actions.SET_CART_COUNT, data: state.cartCount + 1 })
         }
     }
     return (
