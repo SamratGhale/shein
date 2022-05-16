@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Card from "@mui/material/Card";
+import { Pagination } from "@mui/material";
 import { Modal, Stack } from "@mui/material";
 import { Box } from "@mui/system";
 import { Input } from "@mui/material";
@@ -112,10 +113,36 @@ function ProductCard({ item, setItem, handleAddCart }) {
   );
 }
 
-export default function Home(params) {
-  const { refreshData, items } = useContext(ItemsContext);
+export default function Home() {
+  const { refreshData, items, pagination, listItems } = useContext(ItemsContext);
   const [item, setItem] = useState({});
+  const [current, setCurrent] = useState(0);
+  const [searchText, setSearchText] = useState('');
   const [openAddCart, setOpenAddCart] = useState(false);
+
+  useEffect(() => {
+    handlePagination(1);
+  }, [])
+
+  const handlePagination = current_page => {
+    let _start = (current_page - 1) * pagination.limit;
+    console.log(_start)
+    setCurrent(current_page);
+    let query = { name: searchText };
+
+    return loadItemsList({
+      start: _start,
+      limit: pagination.limit,
+      ...query
+    })
+  }
+
+  const loadItemsList = query => {
+    if (!query) query = null;
+    listItems(query).then().catch(() => {
+      console.log("error");
+    });
+  }
 
   function handleAddCartClose() {
     setOpenAddCart(!openAddCart);
@@ -125,30 +152,39 @@ export default function Home(params) {
     refreshData();
   }, []);
   return (
-    <Box p={5} sx={{ margin: "80px" }}>
-      <Grid
-        container
-        spacing={8}
-        sx={{ alignItems: "center", justifyContent: "center" }}
-      >
-        {items.map((item) => {
-          return (
-            <Grid key={item._id} item>
-              <ProductCard
-                key={item._id}
-                item={item}
-                setItem={setItem}
-                handleAddCart={handleAddCartClose}
-              />
-            </Grid>
-          );
-        })}
-        <AddToCartModal
-          item={item}
-          open={openAddCart}
-          handleClose={handleAddCartClose}
-        />
+    <div>
+      <Box p={5} sx={{ margin: "80px" }}>
+        <Grid
+          container
+          spacing={8}
+          sx={{ alignItems: "center", justifyContent: "center" }}
+        >
+          {items.map((item) => {
+            return (
+              <Grid key={item._id} item>
+                <ProductCard
+                  key={item._id}
+                  item={item}
+                  setItem={setItem}
+                  handleAddCart={handleAddCartClose}
+                />
+              </Grid>
+            );
+          })}
+          <AddToCartModal
+            item={item}
+            open={openAddCart}
+            handleClose={handleAddCartClose}
+          />
+        </Grid>
+      </Box>
+      <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
+        <Grid item>
+          <Pagination count={10} page={current} onChange={(e, v) => {
+            handlePagination(v);
+          }} shape="rounded" />
+        </Grid>
       </Grid>
-    </Box>
+    </div >
   );
 }

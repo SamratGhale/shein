@@ -11,7 +11,7 @@ const initialState = {
     cart: [],
     cartCount: 0,
     refresh: false,
-    pagination: { limit: 10, start: 0, total: 0, currentPage: 0, totalPages: 0 }
+    pagination: { limit: 8, start: 0, total: 0, currentPage: 0, totalPages: 0 }
 }
 
 export const ItemsContext = createContext(initialState);
@@ -26,6 +26,15 @@ export const ItemsContextProvider = ({ children }) => {
         return await Service.getById(id);
     }
 
+    async function listItems(query) {
+        Service.getAllItems(query).then((data) => {
+            dispatch({ type: actions.SET_ITEMS, data: data });
+        }).catch(err => {
+            throw err;
+        })
+    }
+
+    /*
     useEffect(() => {
         if (state.refresh == true) {
             try {
@@ -38,6 +47,7 @@ export const ItemsContextProvider = ({ children }) => {
             }
         }
     })
+    */
     useEffect(() => {
         async function update() {
             if (getUser()) {
@@ -78,9 +88,11 @@ export const ItemsContextProvider = ({ children }) => {
                 items: state.items,
                 cart: state.cart,
                 cartCount: state.cartCount,
+                pagination: state.pagination,
                 refreshData,
                 addToCart,
-                getById
+                getById,
+                listItems
             }}
         >
             {children}

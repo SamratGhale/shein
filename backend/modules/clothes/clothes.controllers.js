@@ -1,5 +1,6 @@
 const ClothesModel = require("./clothes.model");
 const fs = require("fs");
+const { DataUtils } = require("../../utils/data");
 
 const Clothes = {
   async add(data) {
@@ -54,10 +55,17 @@ const Clothes = {
       throw { message: "Could't add the item please try again", code: 400 };
     }
   },
-  async list() {
-    const res = await ClothesModel.find().lean();
-    res.forEach(async (item, i) => {
-      res[i].files = fs.readdirSync(`./modules/clothes/images/${item._id}`);
+  async list({ start, limit }) {
+    const query = [];
+    console.log(start, limit)
+    const res = await DataUtils.paging({
+      start,
+      limit,
+      model: ClothesModel,
+      query
+    });
+    res.data.forEach(async (item, i) => {
+      res.data[i].files = fs.readdirSync(`./modules/clothes/images/${item._id}`);
     });
     return res;
   },
@@ -107,7 +115,15 @@ const Clothes = {
 module.exports = {
   Clothes,
   register: (req) => Clothes.add(req.payload),
-  list: (req) => Clothes.list(),
+  list: (req) => {
+    console.log(req.query)
+    const start = req.query.start || 0;
+    const limit = req.query.limit || 8;
+    return Clothes.list({
+      start,
+      limit
+    })
+  },
   decreaseItem: (req) => {
     return Clothes.decreaseItem(req.params.id, req.payload.qty);
   },
