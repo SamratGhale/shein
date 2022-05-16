@@ -9,15 +9,15 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 const darkTheme = createTheme({
   palette: {
     type: "light",
-    primary: {
-      main: "#96cb76",
-    },
-    secondary: {
-      main: "#352ac1",
-    },
-    text: {
-      primary: "#fff",
-    },
+    // primary: {
+    //   main: "#96cb76",
+    // },
+    // secondary: {
+    //   main: "#352ac1",
+    // },
+    // text: {
+    //   primary: "#fff",
+    // },
   },
   typography: {
     fontSize: 17,

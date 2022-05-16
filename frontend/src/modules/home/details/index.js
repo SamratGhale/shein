@@ -13,6 +13,7 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { makeStyles } from "@mui/styles";
 import AddIcon from "@mui/icons-material/Add";
+import CircleIcon from "@mui/icons-material/Circle";
 
 import RemoveIcon from "@mui/icons-material/Remove";
 
@@ -62,9 +63,13 @@ const ItemDetail = (params) => {
   // const classes = useStyles();
 
   return item ? (
-    <Grid container sx={{ mt: 10, ml: 20, mb: 100 }} gap={6}>
-      <Grid item>
-        <Box item xs={4} sx={{ height: 450, width: 400 }}>
+    <Grid
+      container
+      sx={{ alignItems: "center", justifyContent: "center" }}
+      gap={6}
+    >
+      <Grid item sx={{ backgroundColor: "white" }}>
+        <Box item xs={4} sx={{ padding: 2, height: 450, width: 400 }}>
           <AutoPlaySwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={activeStep}
@@ -94,6 +99,7 @@ const ItemDetail = (params) => {
             activeStep={activeStep}
             nextButton={
               <Button
+                sx={{ fontWeight: "bold" }}
                 size="small"
                 onClick={handleNext}
                 disabled={activeStep === item.files.length - 1}
@@ -109,6 +115,7 @@ const ItemDetail = (params) => {
             backButton={
               <Button
                 size="small"
+                sx={{ fontWeight: "bold" }}
                 onClick={handleBack}
                 disabled={activeStep === 0}
               >
@@ -126,9 +133,9 @@ const ItemDetail = (params) => {
       <Grid item>
         <Card
           sx={{
-            height: 600,
-            width: 950,
-
+            maxHeight: 600,
+            maxWidth: 1150,
+            backgroundColor: "white",
             color: "black",
             padding: "12px",
             fontFamily: "Nunito",
@@ -166,7 +173,7 @@ const ItemDetail = (params) => {
                 -{item.discount}%
               </Typography>
             </Typography>
-            //quantity ko lagi
+            {/* //quantity ko lagi */}
             <Grid container sx={{ mt: 8, alignItems: "center" }} gap={3}>
               <Grid item>
                 <Typography variant="body1">Quantity</Typography>
@@ -184,15 +191,53 @@ const ItemDetail = (params) => {
               </Grid>
             </Grid>
             {/* quantity sakyo */}
-            <Grid container gap={2}>
-              <Grid item xs={6}>
-                <Button>Buy Now</Button>
+            <Grid container columns={16} sx={{ mt: 6, ml: 4 }}>
+              <Grid item xs={8}>
+                <Button sx={{ width: "85%", height: 75 }} variant="contained">
+                  Buy Now
+                </Button>
               </Grid>
-              <Grid item xs={6}>
-                <Button>Add To Cart</Button>
+              <Grid item xs={8}>
+                <Button sx={{ width: "85%", height: 75 }} variant="contained">
+                  Add to Cart
+                </Button>
               </Grid>
             </Grid>
           </CardContent>
+        </Card>
+      </Grid>
+
+      {/* Description points Card */}
+      <Grid item>
+        <Card
+          sx={{
+            height: 350,
+            width: 1560,
+            backgroundColor: "white",
+            color: "black",
+            padding: "30px",
+            fontFamily: "Nunito",
+          }}
+        >
+          <Typography variant="h5" sx={{ mb: 3 }}>
+            Product Details of {item.item_name}
+          </Typography>
+          <Grid
+            container
+            columns={16}
+            sx={{ height: 200, backgroundColor: "white" }}
+          >
+            {item.description.map((desc) => {
+              return (
+                <Grid item xs={8}>
+                  <Typography variant="body1">
+                    <CircleIcon sx={{ fontSize: 8, mr: 2 }} />
+                    {desc}
+                  </Typography>
+                </Grid>
+              );
+            })}
+          </Grid>
         </Card>
       </Grid>
     </Grid>
