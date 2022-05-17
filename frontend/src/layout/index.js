@@ -22,7 +22,7 @@ function DashBoardLayout() {
       }}>
 
       <NavBar />
-      <Box sx={{padding: 3}}>
+      <Box sx={{ padding: 3 }}>
         {paths[paths.length - 1] !== "" ? (
           <Breadcrumbs aria-label="breadcrumb">
             <Link underline="hover" color="inherit" href="/">

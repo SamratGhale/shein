@@ -1,7 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
 import Card from "@mui/material/Card";
+import queryString from 'query-string';
+import { FormControl } from "@mui/material";
+import { InputLabel } from "@mui/material";
+import { Select } from "@mui/material";
+import { MenuItem } from "@mui/material";
+import { Paper } from "@mui/material";
 import { Pagination } from "@mui/material";
-import { Modal, Stack } from "@mui/material";
+import { Modal } from "@mui/material";
 import { Box } from "@mui/system";
 import { Input } from "@mui/material";
 import { makeStyles, styled } from "@mui/styles";
@@ -20,11 +26,12 @@ import { CLOTHES_IMAGE } from "../../constants/api";
 import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import { motion, AnimatePresence, AnimateSharedLayout } from "framer-motion";
+import { Stack } from "@mui/material";
 
 import { ItemsContext } from "./context";
 
 import { ButtonGroup } from "@mui/material";
+import { getAllTags } from "./services";
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
@@ -39,6 +46,15 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
+
+const Item = styled(Paper)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
+  ...theme.typography.body2,
+  padding: theme.spacing(1),
+  textAlign: 'center',
+  color: theme.palette.text.secondary,
+}));
+
 
 function AddToCartModal({ item, open, handleClose }) {
   const { addToCart } = useContext(ItemsContext);
@@ -139,7 +155,7 @@ function ProductCard({ item, setItem, handleAddCart, handleProductModal }) {
 }
 
 export default function Home() {
-  const { refreshData, items, pagination, listItems } = useContext(ItemsContext);
+  const { refreshData, items, pagination, listItems, search, setSearch } = useContext(ItemsContext);
   const [item, setItem] = useState({});
   const [current, setCurrent] = useState(0);
   const [searchText, setSearchText] = useState('');
@@ -281,12 +297,21 @@ export default function Home() {
   //   //   "error"
   //   // );
   // }
+  const [age, setAge] = React.useState('');
+
+  const handleChange = (event) => {
+    setAge(event.target.value);
+  };
+  const [tags, setTags] = useState([]);
 
   useEffect(() => {
+    getAllTags().then(data => {
+      console.log(data)
+      setTags(data);
+    });
     refreshData();
   }, []);
   return (
-<<<<<<< HEAD
     <Box p={5} sx={{ margin: "80px" }}>
       <Grid
         container
@@ -306,24 +331,48 @@ export default function Home() {
             </Grid>
           );
         })}
+      </Grid>
 
-        <AddToCartModal
-          item={item}
-          open={openAddCart}
-          handleClose={handleAddCartClose}
-        />
-        {/* <ProductModal
+      <AddToCartModal
+        item={item}
+        open={openAddCart}
+        handleClose={handleAddCartClose}
+      />
+      {/* <ProductModal
           item={item}
           open={openProductModal}
           handleClose={handleProductModalClose}
         /> */}
-=======
-    <div>
+      <Item >
+        <FormControl sx={{ m: 1, minWidth: 300 }}>
+          <InputLabel id="demo-simple-select-autowidth-label">Select Category</InputLabel>
+          <Select
+            labelId="demo-simple-select-autowidth-label"
+            id="demo-simple-select-autowidth"
+            value={age}
+            onChange={handleChange}
+            autoWidth
+            label="Select Category"
+          >
+            <MenuItem value="">
+              <em>None</em>
+            </MenuItem>
+            {tags.map((t) => {
+              return (
+                <MenuItem onClick={() => {
+                  const parsed = queryString.parse(window.location.search);
+                  parsed["category"] = t;
+                  window.location.search = queryString.stringify(parsed);
+                }} key={t} value={t}>{t}</MenuItem>
+              )
+            })}
+          </Select>
+        </FormControl>
+      </Item>
       <Box p={5} sx={{ margin: "80px" }}>
         <Grid
           container
           spacing={8}
-          sx={{ alignItems: "center", justifyContent: "center" }}
         >
           {items.map((item) => {
             return (
@@ -350,8 +399,7 @@ export default function Home() {
             handlePagination(v);
           }} shape="rounded" />
         </Grid>
->>>>>>> 1e9e5c75e9bc19b8512d8893ce36d1b0645571ed
       </Grid>
-    </div >
+    </Box>
   );
 }

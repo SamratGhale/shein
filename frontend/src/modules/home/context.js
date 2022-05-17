@@ -10,6 +10,7 @@ const initialState = {
     items: [],
     cart: [],
     cartCount: 0,
+    search: '',
     refresh: false,
     pagination: { limit: 8, start: 0, total: 0, currentPage: 0, totalPages: 0 }
 }
@@ -24,6 +25,10 @@ export const ItemsContextProvider = ({ children }) => {
     }
     async function getById(id) {
         return await Service.getById(id);
+    }
+
+    async function setSearch(search) {
+        dispatch({ type: actions.SET_SEARCH, data: search });
     }
 
     async function listItems(query) {
@@ -92,7 +97,8 @@ export const ItemsContextProvider = ({ children }) => {
                 refreshData,
                 addToCart,
                 getById,
-                listItems
+                listItems,
+                setSearch
             }}
         >
             {children}

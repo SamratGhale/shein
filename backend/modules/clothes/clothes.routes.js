@@ -63,6 +63,11 @@ const routes = {
     path: "/{id}",
     description: "Get item by id",
   },
+  getAllTags: {
+    method: "GET",
+    path: "/tags",
+    description: "Get all tags",
+  }
 };
 
 function register(app) {

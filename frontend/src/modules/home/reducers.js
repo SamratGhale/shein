@@ -10,6 +10,8 @@ const reducer = (state, action) => {
             return { ...state, cart: action.data }
         case actions.SET_CART_COUNT:
             return { ...state, cartCount: action.data }
+        case actions.SET_SEARCH:
+            return { ...state, search: action.data }
     }
 }
 export default reducer;

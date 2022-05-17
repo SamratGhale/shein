@@ -15,6 +15,15 @@ export async function getAllItems(query) {
     }
 }
 
+export async function getAllTags() {
+    try {
+        const res = await axios.get(CLOTHES + '/tags');
+        return res.data;
+    } catch (err) {
+        throw err;
+    }
+}
+
 export async function getById(id) {
     try {
         const res = await axios.get(CLOTHES + '/' + id);

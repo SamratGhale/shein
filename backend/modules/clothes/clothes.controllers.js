@@ -82,6 +82,15 @@ const Clothes = {
       return await ClothesModel.findByIdAndUpdate(id, data);
     }
   },
+  async getAllTags() {
+    const found = await ClothesModel.find().lean();
+    const ret = new Set();
+    found.forEach(i => {
+      i.tags.forEach((j) => ret.add(j));
+    })
+    return Array.from(ret);
+  },
+
   async archive(id) {
     return ClothesModel.findOneAndUpdate(
       { _id: id, is_archived: false },
@@ -135,4 +144,5 @@ module.exports = {
   },
   getById: (req) => Clothes.getById(req.params.id),
   archive: (req) => Clothes.archive(req.params.id),
+  getAllTags: (req) => Clothes.getAllTags(),
 };
