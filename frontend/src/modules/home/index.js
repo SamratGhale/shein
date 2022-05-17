@@ -22,6 +22,10 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import { CLOTHES_IMAGE } from "../../constants/api";
+import SwipeableViews from 'react-swipeable-views';
+import { autoPlay } from 'react-swipeable-views-utils';
+
+import { Stack } from "@mui/material";
 
 import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -303,7 +307,6 @@ export default function Home() {
     setAge(event.target.value);
   };
   const [tags, setTags] = useState([]);
-
   useEffect(() => {
     getAllTags().then(data => {
       console.log(data)
@@ -312,6 +315,7 @@ export default function Home() {
     refreshData();
   }, []);
   return (
+<<<<<<< HEAD
     <Box p={5} sx={{ margin: "80px" }}>
       <Grid
         container
@@ -343,14 +347,15 @@ export default function Home() {
           open={openProductModal}
           handleClose={handleProductModalClose}
         /> */}
+=======
+    <>
+>>>>>>> 0114f32 (rebase)
       <Item >
         <FormControl sx={{ m: 1, minWidth: 300 }}>
           <InputLabel id="demo-simple-select-autowidth-label">Select Category</InputLabel>
           <Select
             labelId="demo-simple-select-autowidth-label"
             id="demo-simple-select-autowidth"
-            value={age}
-            onChange={handleChange}
             autoWidth
             label="Select Category"
           >
@@ -400,6 +405,10 @@ export default function Home() {
           }} shape="rounded" />
         </Grid>
       </Grid>
+<<<<<<< HEAD
     </Box>
+=======
+    </ >
+>>>>>>> 0114f32 (rebase)
   );
 }
