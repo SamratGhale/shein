@@ -4,11 +4,12 @@ import { getUserToken } from '../../utils/sessionManager';
 
 const access_token = getUserToken();
 
-export async function getAllItems() {
+export async function getAllItems(query) {
+    console.log(query)
     try {
-        const res = await axios.get(CLOTHES);
+        const res = await axios(`${CLOTHES}`, { params: query });
         console.log(res.data);
-        return res.data;
+        return res.data.data;
     } catch (err) {
         console.error(err);
     }
