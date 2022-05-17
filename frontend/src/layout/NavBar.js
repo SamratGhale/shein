@@ -1,5 +1,7 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
+import queryString from 'query-string';
+import { TextField } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom'
 import { Link } from '@mui/material';
 import { getUser, logoutUser } from '../utils/sessionManager'
@@ -24,6 +26,8 @@ import { styled, alpha } from '@mui/material/styles';
 import { PATH_APP, PATH_PAGE, ROOTS } from '../routes/paths';
 import { db } from '../modules/home/db';
 import { ItemsContext } from '../modules/home/context';
+
+
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -187,7 +191,15 @@ const NavBar = () => {
               </Button>
             ))}
           </Box>
-          <Search>
+          <Search
+            onKeyDown={(e) => {
+              if (e.keyCode == 13) {
+                const parsed = queryString.parse(window.location.search);
+                parsed["search"] = e.target.value;
+                window.location.search = queryString.stringify(parsed);
+              }
+            }}
+          >
             <SearchIconWrapper>
               <SearchIcon />
             </SearchIconWrapper>
