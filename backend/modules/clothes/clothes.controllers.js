@@ -18,7 +18,7 @@ const Clothes = {
           console.log(image.hapi.filename.split("."));
           var arr = image.hapi.filename.split(".");
           const ext = arr[arr.length - 1];
-          if (!["img", "jpg", "png", "gif", "jpeg"].includes(ext)) {
+          if (!["img", "jpg", "png", "gif", "jpeg", "jfif"].includes(ext)) {
             failed = true;
             ClothesModel.findByIdAndDelete(res.id).then(() => {
               fs.rmSync(dir, { recursive: true, force: true });

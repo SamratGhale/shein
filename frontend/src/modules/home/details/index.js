@@ -65,11 +65,12 @@ const ItemDetail = (params) => {
   return item ? (
     <Grid
       container
-      sx={{ alignItems: "center", justifyContent: "center" }}
+      sx={{ alignItems: "center", justifyContent: "center", ml: 3 }}
       gap={6}
+      columns={16}
     >
-      <Grid item sx={{ backgroundColor: "white" }}>
-        <Box item xs={4} sx={{ padding: 2, height: 450, width: 400 }}>
+      <Grid xs={4} item sx={{ backgroundColor: "white" }}>
+        <Box sx={{ padding: 2, height: 450, width: 400 }}>
           <AutoPlaySwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={activeStep}
@@ -82,10 +83,11 @@ const ItemDetail = (params) => {
                   <Box
                     component="img"
                     sx={{
-                      display: "block",
                       overflow: "hidden",
-                      width: "100%",
-                      height: "50%",
+                      width: 368,
+                      height: 376,
+                      maxWidth: 368,
+                      maxHeight: 376,
                     }}
                     src={`${CLOTHES_IMAGE}${item._id}/${item.files[0]}`}
                   />
@@ -130,7 +132,7 @@ const ItemDetail = (params) => {
           />
         </Box>
       </Grid>
-      <Grid item>
+      <Grid item xs={10}>
         <Card
           sx={{
             maxHeight: 600,
