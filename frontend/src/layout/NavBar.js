@@ -194,9 +194,7 @@ const NavBar = () => {
           <Search
             onKeyDown={(e) => {
               if (e.keyCode == 13) {
-                const parsed = queryString.parse(window.location.search);
-                parsed["search"] = e.target.value;
-                window.location.search = queryString.stringify(parsed);
+                window.location.search = queryString.stringify({ search: e.target.value });
               }
             }}
           >

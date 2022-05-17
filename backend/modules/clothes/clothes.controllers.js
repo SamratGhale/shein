@@ -55,15 +55,35 @@ const Clothes = {
       throw { message: "Could't add the item please try again", code: 400 };
     }
   },
-  async list({ start, limit }) {
+  async list({ start, limit, search, category }) {
     const query = [];
     console.log(start, limit)
+    if (search) {
+      query.push({
+        $match: {
+          'item_name': {
+            $regex: new RegExp(search, 'gi')
+          }
+        }
+      });
+    }
+    if (category) {
+      query.push({
+        $match: {
+          'tags': {
+            $in: [category]
+          }
+        }
+      });
+    }
     const res = await DataUtils.paging({
       start,
       limit,
       model: ClothesModel,
       query
     });
+    console.log(res);
+
     res.data.forEach(async (item, i) => {
       res.data[i].files = fs.readdirSync(`./modules/clothes/images/${item._id}`);
     });
@@ -99,7 +119,6 @@ const Clothes = {
   },
   async decreaseItem(id, qty) {
     const item = await this.getById(id);
-    console.log(qty);
     if (!item) {
       throw { message: "Item not found", code: 400 };
     } else if (item.quantity < qty) {
@@ -111,7 +130,6 @@ const Clothes = {
   },
   async increaseItem(id, qty) {
     const item = await this.getById(id);
-    console.log(qty);
     if (!item) {
       throw { message: "Item not found", code: 400 };
     } else {
@@ -128,9 +146,13 @@ module.exports = {
     console.log(req.query)
     const start = req.query.start || 0;
     const limit = req.query.limit || 8;
+    const category = req.query.category || '';
+    const search = req.query.search || '';
     return Clothes.list({
       start,
-      limit
+      limit,
+      category,
+      search
     })
   },
   decreaseItem: (req) => {

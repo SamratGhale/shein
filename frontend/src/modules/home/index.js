@@ -163,20 +163,34 @@ export default function Home() {
   const [openProductModal, setOpenProductModal] = useState(false);
 
   useEffect(() => {
-    handlePagination(1);
-  }, [])
+    const query = queryString.parse(window.location.search);
 
-  const handlePagination = current_page => {
-    let _start = (current_page - 1) * pagination.limit;
-    console.log(_start)
-    setCurrent(current_page);
-    let query = { name: searchText };
+    let page = 0
+
+    if (query["page"]) {
+      page = Number(query["page"]);
+    } else {
+      page = 1;
+    }
+
+    let _start = (page - 1) * pagination.limit;
+    setCurrent(page);
+
+
+
+    getAllTags().then(data => {
+      console.log(data)
+      setTags(data);
+    });
 
     return loadItemsList({
       start: _start,
       limit: pagination.limit,
       ...query
     })
+  }, [])
+
+  const handlePagination = current_page => {
   }
 
   const loadItemsList = query => {
@@ -206,110 +220,9 @@ export default function Home() {
     boxShadow: 24,
     p: 4,
   };
+  const [category, setCategory] = React.useState('');
 
-  // function ProductModal({ item, open, handleClose }) {
-  //   const theme = useTheme();
-  //   const [activeStep, setActiveStep] = React.useState(0);
-
-  //   const handleStepChange = (step) => {
-  //     setActiveStep(step);
-  //   };
-
-  //   const handleNext = () => {
-  //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  //   };
-
-  //   const handleBack = () => {
-  //     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  //   };
-
-  //   // return item ? (
-  //   //   <Modal open={open} onClose={handleClose}>
-  //   //     <Grid container sx={modal} columns={16} direction="row" gap={5}>
-  //   //       <Grid item xs={5} sx={{ backgroundColor: "white" }}>
-  //   //         <Box item xs={4} sx={{ padding: 2, height: 450, width: 400 }}>
-  //   //           <AutoPlaySwipeableViews
-  //   //             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-  //   //             index={activeStep}
-  //   //             onChangeIndex={handleStepChange}
-  //   //             enableMouseEvents
-  //   //           >
-  //   //             {item.files.map((step, index) => (
-  //   //               <div key={step}>
-  //   //                 {Math.abs(activeStep - index) <= 2 ? (
-  //   //                   <Box
-  //   //                     component="img"
-  //   //                     sx={{
-  //   //                       display: "block",
-  //   //                       overflow: "hidden",
-  //   //                       width: "100%",
-  //   //                       height: "50%",
-  //   //                     }}
-  //   //                     src={`${CLOTHES_IMAGE}${item._id}/${item.files[0]}`}
-  //   //                   />
-  //   //                 ) : null}
-  //   //               </div>
-  //   //             ))}
-  //   //           </AutoPlaySwipeableViews>
-  //   //           <MobileStepper
-  //   //             steps={item.files.length}
-  //   //             position="static"
-  //   //             activeStep={activeStep}
-  //   //             nextButton={
-  //   //               <Button
-  //   //                 sx={{ fontWeight: "bold" }}
-  //   //                 size="small"
-  //   //                 onClick={handleNext}
-  //   //                 disabled={activeStep === item.files.length - 1}
-  //   //               >
-  //   //                 Next
-  //   //                 {theme.direction === "rtl" ? (
-  //   //                   <KeyboardArrowLeft />
-  //   //                 ) : (
-  //   //                   <KeyboardArrowRight />
-  //   //                 )}
-  //   //               </Button>
-  //   //             }
-  //   //             backButton={
-  //   //               <Button
-  //   //                 size="small"
-  //   //                 sx={{ fontWeight: "bold" }}
-  //   //                 onClick={handleBack}
-  //   //                 disabled={activeStep === 0}
-  //   //               >
-  //   //                 {theme.direction === "rtl" ? (
-  //   //                   <KeyboardArrowRight />
-  //   //                 ) : (
-  //   //                   <KeyboardArrowLeft />
-  //   //                 )}
-  //   //                 Back
-  //   //               </Button>
-  //   //             }
-  //   //           />
-  //   //         </Box>
-  //   //       </Grid>
-  //   //       <Grid item xs={10} sx={{ backgroundColor: "white" }}>
-  //   //         HEllo
-  //   //       </Grid>
-  //   //     </Grid>
-  //   //   </Modal>
-  //   // ) : (
-  //   //   "error"
-  //   // );
-  // }
-  const [age, setAge] = React.useState('');
-
-  const handleChange = (event) => {
-    setAge(event.target.value);
-  };
   const [tags, setTags] = useState([]);
-  useEffect(() => {
-    getAllTags().then(data => {
-      console.log(data)
-      setTags(data);
-    });
-    refreshData();
-  }, []);
   return (
     <Box>
       <Item >
@@ -319,6 +232,7 @@ export default function Home() {
             labelId="demo-simple-select-autowidth-label"
             id="demo-simple-select-autowidth"
             autoWidth
+            value={category}
             label="Select Category"
           >
             <MenuItem value="">
@@ -328,6 +242,7 @@ export default function Home() {
               return (
                 <MenuItem onClick={() => {
                   const parsed = queryString.parse(window.location.search);
+                  delete parsed["search"];
                   parsed["category"] = t;
                   window.location.search = queryString.stringify(parsed);
                 }} key={t} value={t}>{t}</MenuItem>
@@ -362,8 +277,10 @@ export default function Home() {
       </Box>
       <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
         <Grid item>
-          <Pagination count={10} page={current} onChange={(e, v) => {
-            handlePagination(v);
+          <Pagination count={Math.round(items.length / pagination.limit) + 1} page={current} onChange={(e, v) => {
+            const parced = queryString.parse(window.location.search);
+            parced["page"] = v;
+            window.location.search = queryString.stringify(parced);
           }} shape="rounded" />
         </Grid>
       </Grid>
