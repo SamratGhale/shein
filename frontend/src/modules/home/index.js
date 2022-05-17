@@ -22,10 +22,6 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import { CLOTHES_IMAGE } from "../../constants/api";
-import SwipeableViews from 'react-swipeable-views';
-import { autoPlay } from 'react-swipeable-views-utils';
-
-import { Stack } from "@mui/material";
 
 import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
@@ -315,41 +311,7 @@ export default function Home() {
     refreshData();
   }, []);
   return (
-<<<<<<< HEAD
-    <Box p={5} sx={{ margin: "80px" }}>
-      <Grid
-        container
-        spacing={8}
-        sx={{ alignItems: "center", justifyContent: "center" }}
-      >
-        {items.map((item) => {
-          return (
-            <Grid key={item._id} item>
-              <ProductCard
-                key={item._id}
-                item={item}
-                setItem={setItem}
-                handleAddCart={handleAddCartClose}
-                handleProductModal={handleProductModalClose}
-              />
-            </Grid>
-          );
-        })}
-      </Grid>
-
-      <AddToCartModal
-        item={item}
-        open={openAddCart}
-        handleClose={handleAddCartClose}
-      />
-      {/* <ProductModal
-          item={item}
-          open={openProductModal}
-          handleClose={handleProductModalClose}
-        /> */}
-=======
-    <>
->>>>>>> 0114f32 (rebase)
+    <Box>
       <Item >
         <FormControl sx={{ m: 1, minWidth: 300 }}>
           <InputLabel id="demo-simple-select-autowidth-label">Select Category</InputLabel>
@@ -405,10 +367,6 @@ export default function Home() {
           }} shape="rounded" />
         </Grid>
       </Grid>
-<<<<<<< HEAD
     </Box>
-=======
-    </ >
->>>>>>> 0114f32 (rebase)
   );
 }
