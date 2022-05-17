@@ -55,9 +55,9 @@ const Clothes = {
       throw { message: "Could't add the item please try again", code: 400 };
     }
   },
-  async list({ start, limit, search, category }) {
+  async list({ start, limit, search, category, min_price, max_price }) {
+    console.log(min_price, max_price)
     const query = [];
-    console.log(start, limit)
     if (search) {
       query.push({
         $match: {
@@ -72,6 +72,24 @@ const Clothes = {
         $match: {
           'tags': {
             $in: [category]
+          }
+        }
+      });
+    }
+    if (min_price) {
+      query.push({
+        $match: {
+          item_price: {
+            $gte: min_price
+          }
+        }
+      });
+    }
+    if (max_price) {
+      query.push({
+        $match: {
+          item_price: {
+            $lte: max_price
           }
         }
       });
@@ -110,7 +128,11 @@ const Clothes = {
     })
     return Array.from(ret);
   },
-
+  async getMinMaxPrice() {
+    const min = (await ClothesModel.find().sort('item_price'))[0].item_price;
+    const max = (await ClothesModel.find().sort([['item_price', -1]]))[0].item_price;
+    return { max, min };
+  },
   async archive(id) {
     return ClothesModel.findOneAndUpdate(
       { _id: id, is_archived: false },
@@ -148,12 +170,20 @@ module.exports = {
     const limit = req.query.limit || 8;
     const category = req.query.category || '';
     const search = req.query.search || '';
+    const min_price = Number(req.query.min_price) || 0;
+    const max_price = Number(req.query.max_price) || 0;
     return Clothes.list({
       start,
       limit,
       category,
-      search
+      search,
+      min_price,
+      max_price
     })
+  },
+
+  getMinMaxPrice: () => {
+    return Clothes.getMinMaxPrice();
   },
   decreaseItem: (req) => {
     return Clothes.decreaseItem(req.params.id, req.payload.qty);

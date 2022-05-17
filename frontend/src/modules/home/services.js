@@ -62,3 +62,18 @@ export async function getMyCart() {
             });
     });
 }
+
+export async function getMinMaxPrice() {
+    return new Promise((resolve, reject) => {
+        axios.get(CLOTHES + '/minmax', {
+            headers: {
+                'access_token': access_token
+            }
+        })
+            .then((res) => {
+                resolve(res.data);
+            }).catch((err) => {
+                reject(err);
+            });
+    });
+}

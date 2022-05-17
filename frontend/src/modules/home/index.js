@@ -1,5 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
 import Card from "@mui/material/Card";
+import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import SavedSearchSharpIcon from '@mui/icons-material/SavedSearchSharp';
+import { SliderThumb } from "@mui/material";
+import { Slider } from "@mui/material";
 import queryString from 'query-string';
 import { FormControl } from "@mui/material";
 import { InputLabel } from "@mui/material";
@@ -14,26 +18,51 @@ import { makeStyles, styled } from "@mui/styles";
 import { Grid } from "@mui/material";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
-import { CardActionArea } from "@mui/material";
-import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { useTheme } from "@mui/material/styles";
 import { CLOTHES_IMAGE } from "../../constants/api";
-
-import MobileStepper from "@mui/material/MobileStepper";
-import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
-import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { Stack } from "@mui/material";
-
 import { ItemsContext } from "./context";
+import { getAllTags, getMinMaxPrice } from "./services";
+import { useSnackbar } from "react-simple-snackbar";
 
-import { ButtonGroup } from "@mui/material";
-import { getAllTags } from "./services";
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
-const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+
+const AirbnbSlider = styled(Slider)(({ theme }) => ({
+  color: '#3a8589',
+  height: 3,
+  padding: '13px 0',
+  '& .MuiSlider-thumb': {
+    height: 27,
+    width: 27,
+    backgroundColor: '#fff',
+    border: '1px solid currentColor',
+    '&:hover': {
+      boxShadow: '0 0 0 8px rgba(58, 133, 137, 0.16)',
+    },
+    '& .airbnb-bar': {
+      height: 9,
+      width: 1,
+      backgroundColor: 'currentColor',
+      marginLeft: 1,
+      marginRight: 1,
+    },
+  },
+  '& .MuiSlider-track': {
+    height: 3,
+  },
+  '& .MuiSlider-rail': {
+    color: theme.palette.mode === 'dark' ? '#bfbfbf' : '#d8d8d8',
+    opacity: theme.palette.mode === 'dark' ? undefined : 1,
+    height: 3,
+  },
+}));
 
 const style = {
   position: "absolute",
@@ -55,9 +84,26 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
+const options = {
+  position: 'top-right',
+  style: {
+    backgroundColor: 'midnightblue',
+    border: '2px solid lightgreen',
+    color: 'lightblue',
+    fontFamily: 'Menlo, monospace',
+    fontSize: '20px',
+    textAlign: 'center',
+  },
+  closeStyle: {
+    color: 'lightcoral',
+    fontSize: '16px',
+  },
+}
+
 
 function AddToCartModal({ item, open, handleClose }) {
   const { addToCart } = useContext(ItemsContext);
+  const [openSnackbar, closeSnackbar] = useSnackbar(options);
   const [quantity, setQuantity] = useState(0);
   return (
     <Modal
@@ -78,7 +124,9 @@ function AddToCartModal({ item, open, handleClose }) {
         <br></br>
         <Button
           onClick={() => {
-            addToCart(item, quantity);
+            addToCart(item, quantity).then(() => {
+              openSnackbar(`Added ${quantity} ${item.item_name}  to cart successfully`);
+            });
           }}
         >
           Add
@@ -161,9 +209,31 @@ export default function Home() {
   const [searchText, setSearchText] = useState('');
   const [openAddCart, setOpenAddCart] = useState(false);
   const [openProductModal, setOpenProductModal] = useState(false);
+  const [category, setCategory] = React.useState('');
+
+  const [priceRange, setPriceRange] = React.useState([20, 1000]);
+  const [minMaxPrice, setMinMaxPrice] = React.useState([0, 0]);
+  const [tags, setTags] = useState([]);
+  const [priceExpanded, setPriceExpanded] = useState(false);
 
   useEffect(() => {
     const query = queryString.parse(window.location.search);
+
+    getMinMaxPrice().then(res => {
+      setMinMaxPrice([res.min, res.max])
+    });
+
+    if (query["category"]) {
+      setCategory(query["category"]);
+    }
+    if (query["min_price"] && query["max_price"]) {
+      setPriceRange([Number(query["min_price"]), Number(query["max_price"])]);
+      setPriceExpanded(true);
+    }
+
+    if (query["search"]) {
+      setSearchText(query["search"]);
+    }
 
     let page = 0
 
@@ -176,10 +246,7 @@ export default function Home() {
     let _start = (page - 1) * pagination.limit;
     setCurrent(page);
 
-
-
     getAllTags().then(data => {
-      console.log(data)
       setTags(data);
     });
 
@@ -190,8 +257,6 @@ export default function Home() {
     })
   }, [])
 
-  const handlePagination = current_page => {
-  }
 
   const loadItemsList = query => {
     if (!query) query = null;
@@ -199,6 +264,7 @@ export default function Home() {
       console.log("error");
     });
   }
+
 
   function handleAddCartClose() {
     setOpenAddCart(!openAddCart);
@@ -220,36 +286,107 @@ export default function Home() {
     boxShadow: 24,
     p: 4,
   };
-  const [category, setCategory] = React.useState('');
 
-  const [tags, setTags] = useState([]);
+  function handleChangeRange(event, newValue) {
+    setPriceRange(newValue);
+  }
+
+  function AirbnbThumbComponent(props) {
+    const { children, ...other } = props;
+    return (
+      <SliderThumb {...other}>
+        {children}
+        <span className="airbnb-bar" />
+        <span className="airbnb-bar" />
+        <span className="airbnb-bar" />
+      </SliderThumb>
+    );
+  }
+
   return (
-    <Box>
+    <Box >
       <Item >
-        <FormControl sx={{ m: 1, minWidth: 300 }}>
-          <InputLabel id="demo-simple-select-autowidth-label">Select Category</InputLabel>
-          <Select
-            labelId="demo-simple-select-autowidth-label"
-            id="demo-simple-select-autowidth"
-            autoWidth
-            value={category}
-            label="Select Category"
-          >
-            <MenuItem value="">
-              <em>None</em>
-            </MenuItem>
-            {tags.map((t) => {
-              return (
-                <MenuItem onClick={() => {
+        <Grid container gap={3} sx={{ alignItems: "center", justifyContent: "center" }}>
+          {searchText ? (
+            <Grid item>
+              <Typography variant="subtitle2">Search results for "{searchText}"</Typography>
+            </Grid>
+          ) : ""}
+          <Grid item>
+            <FormControl variant="filled" sx={{ m: 1, minWidth: 300 }}>
+              <InputLabel>Select Category</InputLabel>
+              <Select
+                labelId="demo-simple-select-autowidth-label"
+                id="demo-simple-select-autowidth"
+                autoWidth
+                value={category}
+              >
+                <MenuItem value="" onClick={() => {
                   const parsed = queryString.parse(window.location.search);
-                  delete parsed["search"];
-                  parsed["category"] = t;
+                  delete parsed["category"];
                   window.location.search = queryString.stringify(parsed);
-                }} key={t} value={t}>{t}</MenuItem>
-              )
-            })}
-          </Select>
-        </FormControl>
+                }}>
+                  <em>None</em>
+                </MenuItem>
+                {tags.map((t) => {
+                  return (
+                    <MenuItem onClick={() => {
+                      const parsed = queryString.parse(window.location.search);
+                      delete parsed["search"];
+                      parsed["category"] = t;
+                      window.location.search = queryString.stringify(parsed);
+                    }} key={t} value={t}>{t}</MenuItem>
+                  )
+                })}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item sx={{ width: 300 }}>
+            <Accordion expanded={priceExpanded} onClick={() => {
+              setPriceExpanded(!priceExpanded)
+            }}>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+              >
+                <Typography gutterBottom>Select price range</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <AirbnbSlider
+                  size="small"
+                  components={{ Thumb: AirbnbThumbComponent }}
+                  getAriaLabel={(index) => (index === 0 ? 'Minimum price' : 'Maximum price')}
+                  onChange={handleChangeRange}
+                  max={minMaxPrice[1]}
+                  min={minMaxPrice[0]}
+                  value={priceRange}
+                  valueLabelDisplay="auto"
+                />
+                <Typography>Rs. {priceRange[0]} - {priceRange[1]}</Typography>
+                <Button variant="contained" color="secondary" onClick={() => {
+                  const parsed = queryString.parse(window.location.search);
+                  parsed["min_price"] = priceRange[0];
+                  parsed["max_price"] = priceRange[1];
+                  parsed["page"] = 1;
+                  window.location.search = queryString.stringify(parsed);
+                }}>
+                  <SavedSearchSharpIcon />
+                </Button>
+                {' '}
+                <Button variant="contained" color="secondary" onClick={() => {
+                  const parsed = queryString.parse(window.location.search);
+                  delete parsed["min_price"];
+                  delete parsed["max_price"];
+                  parsed["page"] = 1;
+                  window.location.search = queryString.stringify(parsed);
+                }}>
+                  <HighlightOffIcon />
+                </Button>
+              </AccordionDetails>
+            </Accordion>
+          </Grid>
+        </Grid>
       </Item>
       <Box p={5} sx={{ margin: "80px" }}>
         <Grid
@@ -284,6 +421,6 @@ export default function Home() {
           }} shape="rounded" />
         </Grid>
       </Grid>
-    </Box>
+    </Box >
   );
 }

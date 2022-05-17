@@ -67,6 +67,11 @@ const routes = {
     method: "GET",
     path: "/tags",
     description: "Get all tags",
+  },
+  getMinMaxPrice: {
+    method: "GET",
+    path: "/minmax",
+    description: "Get maximum and minimun price",
   }
 };
 

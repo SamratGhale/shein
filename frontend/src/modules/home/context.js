@@ -67,7 +67,7 @@ export const ItemsContextProvider = ({ children }) => {
             }
         }
         update();
-    }, [])
+    }, [state.refresh])
 
     async function addToCart(item, amount) {
         /* For unlogged users */
@@ -87,6 +87,7 @@ export const ItemsContextProvider = ({ children }) => {
             }
         }
     }
+
     return (
         <ItemsContext.Provider
             value={{

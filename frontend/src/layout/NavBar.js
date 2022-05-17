@@ -1,5 +1,7 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
+import { useAutocomplete } from '@mui/material';
+import { Autocomplete } from '@mui/material';
 import queryString from 'query-string';
 import { TextField } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom'
@@ -24,8 +26,8 @@ import AdbIcon from '@mui/icons-material/Adb';
 
 import { styled, alpha } from '@mui/material/styles';
 import { PATH_APP, PATH_PAGE, ROOTS } from '../routes/paths';
-import { db } from '../modules/home/db';
 import { ItemsContext } from '../modules/home/context';
+import { getAllTags } from '../modules/home/services';
 
 
 
@@ -43,6 +45,29 @@ const Search = styled('div')(({ theme }) => ({
     marginLeft: theme.spacing(3),
     width: 'auto',
   },
+}));
+
+const Label = styled('label')({
+  display: 'block',
+});
+
+const Input = styled('input')(({ theme }) => ({
+  width: 200,
+  backgroundColor: theme.palette.background.paper,
+  color: theme.palette.getContrastText(theme.palette.background.paper),
+}));
+
+const Listbox = styled('ul')(({ theme }) => ({
+  width: 200,
+  margin: 0,
+  padding: 0,
+  zIndex: 1,
+  position: 'absolute',
+  listStyle: 'none',
+  color: 'black',
+  backgroundColor: theme.palette.background.paper,
+  overflow: 'auto',
+  maxHeight: 200,
 }));
 
 
@@ -87,7 +112,14 @@ const pages = ['Products', 'Pricing', 'Blog'];
 const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [tags, setTags] = React.useState([]);
   const { cartCount } = React.useContext(ItemsContext);
+
+  React.useEffect(() => {
+    getAllTags().then(res => {
+      setTags(res);
+    })
+  }, [])
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -103,6 +135,17 @@ const NavBar = () => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const {
+    getRootProps,
+    getInputLabelProps,
+    getInputProps,
+    getListboxProps,
+    getOptionProps,
+    groupedOptions,
+  } = useAutocomplete({
+    options: tags,
+  });
 
   return (
     <AppBar position="static" color='secondary' >
@@ -191,21 +234,35 @@ const NavBar = () => {
               </Button>
             ))}
           </Box>
-          <Search
-            onKeyDown={(e) => {
-              if (e.keyCode == 13) {
-                window.location.search = queryString.stringify({ search: e.target.value });
-              }
-            }}
-          >
-            <SearchIconWrapper>
-              <SearchIcon />
-            </SearchIconWrapper>
-            <StyledInputBase
-              placeholder="Search…"
-              inputProps={{ 'aria-label': 'search' }}
-            />
-          </Search>
+
+
+          <div>
+            <div {...getRootProps()}>
+              <Search
+
+              >
+                <SearchIconWrapper>
+                  <SearchIcon />
+                </SearchIconWrapper>
+                <StyledInputBase
+                  {...getInputProps()}
+                  placeholder="Search…"
+                  onKeyDown={(e) => {
+                    if (e.keyCode == 13) {
+                      window.location = `/?${queryString.stringify({ search: e.target.value })}`;
+                    }
+                  }}
+                />
+                {groupedOptions.length > 0 ? (
+                  <Listbox {...getListboxProps()}>
+                    {groupedOptions.map((option, index) => {
+                      return <MenuItem {...getOptionProps({ option, index })}>{option}</MenuItem>
+                    })}
+                  </Listbox>
+                ) : null}
+              </Search>
+            </div>
+          </div>
 
           <IconButton
             size="large"
