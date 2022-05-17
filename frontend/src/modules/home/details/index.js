@@ -70,7 +70,7 @@ const ItemDetail = (params) => {
       columns={16}
     >
       <Grid xs={4} item sx={{ backgroundColor: "white" }}>
-        <Box sx={{ padding: 2, height: 450, width: 400 }}>
+        <Box sx={{ padding: 2, height: 450, width: 500 }}>
           <AutoPlaySwipeableViews
             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
             index={activeStep}
@@ -84,10 +84,10 @@ const ItemDetail = (params) => {
                     component="img"
                     sx={{
                       overflow: "hidden",
-                      width: 368,
-                      height: 376,
-                      maxWidth: 368,
-                      maxHeight: 376,
+                      width: 460,
+                      height: 350,
+                      // maxWidth: 400,
+                      // maxHeight: 376,
                     }}
                     src={`${CLOTHES_IMAGE}${item._id}/${item.files[0]}`}
                   />

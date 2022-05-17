@@ -57,16 +57,24 @@ const Clothes = {
   },
   async list({ start, limit }) {
     const query = [];
-    console.log(start, limit)
+    console.log(start, limit);
     const res = await DataUtils.paging({
       start,
       limit,
       model: ClothesModel,
-      query
+      query,
     });
     res.data.forEach(async (item, i) => {
-      res.data[i].files = fs.readdirSync(`./modules/clothes/images/${item._id}`);
+      if (fs.existsSync(`./modules/clothes/images/${item._id}`)) {
+        res.data[i].files = fs.readdirSync(
+          `./modules/clothes/images/${item._id}`
+        );
+      } else {
+        res.data[i].files = new Array();
+      }
     });
+    
+    console.log(res);
     return res;
   },
   async getById(_id) {
@@ -116,13 +124,13 @@ module.exports = {
   Clothes,
   register: (req) => Clothes.add(req.payload),
   list: (req) => {
-    console.log(req.query)
+    console.log(req.query);
     const start = req.query.start || 0;
     const limit = req.query.limit || 8;
     return Clothes.list({
       start,
-      limit
-    })
+      limit,
+    });
   },
   decreaseItem: (req) => {
     return Clothes.decreaseItem(req.params.id, req.payload.qty);

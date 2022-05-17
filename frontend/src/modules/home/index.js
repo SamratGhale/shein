@@ -16,11 +16,13 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useTheme } from "@mui/material/styles";
 import { CLOTHES_IMAGE } from "../../constants/api";
-
+import RemoveIcon from "@mui/icons-material/Remove";
+import AddIcon from "@mui/icons-material/Add";
 import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { motion, AnimatePresence, AnimateSharedLayout } from "framer-motion";
+import CloseIcon from "@mui/icons-material/Close";
 
 import { ItemsContext } from "./context";
 
@@ -86,7 +88,6 @@ const useStyles = makeStyles((theme) => ({
 
 function ProductCard({ item, setItem, handleAddCart, handleProductModal }) {
   const classes = useStyles();
-
   return (
     <Card className={classes.root}>
       <CardMedia
@@ -138,6 +139,197 @@ function ProductCard({ item, setItem, handleAddCart, handleProductModal }) {
   );
 }
 
+//Product ko modal
+
+const modal = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 1200,
+  height: 600,
+  maxHeight: 600,
+  maxWidth: 1200,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  borderRadius: 15,
+  boxShadow: 24,
+  p: 4,
+};
+
+function ProductModal({ item, open, handleClose }) {
+  console.log(item);
+  const theme = useTheme();
+  const [activeStep, setActiveStep] = React.useState(0);
+  const handleStepChange = (step) => {
+    setActiveStep(step);
+  };
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  return item ? (
+    <Modal open={open} onClose={handleClose}>
+      <Grid
+        container
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 1350,
+          height: 550,
+          bgcolor: "background.paper",
+          border: "2px solid #000",
+          boxShadow: 24,
+          p: 4,
+          borderRadius: 15,
+        }}
+        gap={4}
+        columns={16}
+        direction="row"
+      >
+        <Grid item xs={6}>
+          {/* Swipeable vies bascha */}
+          <Box sx={{ padding: 2, height: 340, width: 450, mt: 4 }}>
+            <AutoPlaySwipeableViews
+              axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+              index={activeStep}
+              onChangeIndex={handleStepChange}
+              enableMouseEvents
+            >
+              {item.files.map((step, index) => (
+                <div key={step}>
+                  {Math.abs(activeStep - index) <= 2 ? (
+                    <Box
+                      component="img"
+                      sx={{
+                        overflow: "hidden",
+                        width: 410,
+                        height: 330,
+                        // maxWidth: 330,
+                        // maxHeight: 350,
+                      }}
+                      src={`${CLOTHES_IMAGE}${item._id}/${item.files[0]}`}
+                    />
+                  ) : null}
+                </div>
+              ))}
+            </AutoPlaySwipeableViews>
+            <MobileStepper
+              steps={item.files.length}
+              position="static"
+              activeStep={activeStep}
+              nextButton={
+                <Button
+                  sx={{ fontWeight: "bold" }}
+                  size="small"
+                  onClick={handleNext}
+                  disabled={activeStep === item.files.length - 1}
+                >
+                  Next
+                  {theme.direction === "rtl" ? (
+                    <KeyboardArrowLeft />
+                  ) : (
+                    <KeyboardArrowRight />
+                  )}
+                </Button>
+              }
+              backButton={
+                <Button
+                  size="small"
+                  sx={{ fontWeight: "bold" }}
+                  onClick={handleBack}
+                  disabled={activeStep === 0}
+                >
+                  {theme.direction === "rtl" ? (
+                    <KeyboardArrowRight />
+                  ) : (
+                    <KeyboardArrowLeft />
+                  )}
+                  Back
+                </Button>
+              }
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={8}>
+          <Typography sx={{ fontFamily: "Nunito", mb: 4 }} variant="h4">
+            {item.item_name}
+          </Typography>
+          <Typography variant="subtitle2" sx={{ mb: 5 }}>
+            Tags:
+            {item.tags.map((tag) => {
+              return (
+                <ButtonGroup size="small" variant="contained">
+                  <Button
+                    sx={{
+                      ml: 1,
+                      fontSize: "12px",
+                      backgroundColor: "black",
+                      color: "white",
+                    }}
+                  >
+                    {tag}
+                  </Button>
+                </ButtonGroup>
+              );
+            })}
+          </Typography>
+          <Typography
+            sx={{ fontFamily: "Nunito", color: "green" }}
+            variant="h4"
+          >
+            Rs. {item.item_price}
+          </Typography>
+          <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+            <del>Rs.{item.item_price}</del> -{item.discount}%
+          </Typography>
+          <Grid container sx={{ mt: 8, alignItems: "center" }} gap={3}>
+            <Grid item>
+              <Typography variant="body1">Quantity</Typography>
+            </Grid>
+            <Grid item>
+              <Stack spacing={2} direction="row">
+                <Button size="small" variant="contained">
+                  <RemoveIcon sx={{ color: "black" }} />
+                </Button>
+                <Typography sx={{ pt: 1 }}>N</Typography>
+                <Button size="medium" variant="contained">
+                  <AddIcon sx={{ color: "black" }} />
+                </Button>
+              </Stack>
+            </Grid>
+          </Grid>
+          <Grid container columns={16} sx={{ mt: 6 }}>
+            <Grid item xs={8}>
+              <Button sx={{ width: "85%", height: 75 }} variant="contained">
+                Buy Now
+              </Button>
+            </Grid>
+            <Grid item xs={8}>
+              <Button sx={{ width: "85%", height: 75 }} variant="contained">
+                Add to Cart
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={1}>
+          <CloseIcon sx={{ ml: 6 }} />
+        </Grid>
+      </Grid>
+    </Modal>
+  ) : (
+    "loading"
+  );
+}
+
+//..
 export default function Home() {
   const { refreshData, items, pagination, listItems } =
     useContext(ItemsContext);
@@ -153,7 +345,6 @@ export default function Home() {
 
   const handlePagination = (current_page) => {
     let _start = (current_page - 1) * pagination.limit;
-    console.log(_start);
     setCurrent(current_page);
     let query = { name: searchText };
 
@@ -177,117 +368,16 @@ export default function Home() {
     setOpenAddCart(!openAddCart);
   }
 
+  // for toggling product modal
   function handleProductModalClose() {
     setOpenProductModal(!openProductModal);
   }
 
-  const modal = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 950,
-    height: 550,
-    bgcolor: "background.paper",
-    border: "2px solid #000",
-    boxShadow: 24,
-    p: 4,
-  };
-
-  // function ProductModal({ item, open, handleClose }) {
-  //   const theme = useTheme();
-  //   const [activeStep, setActiveStep] = React.useState(0);
-
-  //   const handleStepChange = (step) => {
-  //     setActiveStep(step);
-  //   };
-
-  //   const handleNext = () => {
-  //     setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  //   };
-
-  //   const handleBack = () => {
-  //     setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  //   };
-
-  //   // return item ? (
-  //   //   <Modal open={open} onClose={handleClose}>
-  //   //     <Grid container sx={modal} columns={16} direction="row" gap={5}>
-  //   //       <Grid item xs={5} sx={{ backgroundColor: "white" }}>
-  //   //         <Box item xs={4} sx={{ padding: 2, height: 450, width: 400 }}>
-  //   //           <AutoPlaySwipeableViews
-  //   //             axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-  //   //             index={activeStep}
-  //   //             onChangeIndex={handleStepChange}
-  //   //             enableMouseEvents
-  //   //           >
-  //   //             {item.files.map((step, index) => (
-  //   //               <div key={step}>
-  //   //                 {Math.abs(activeStep - index) <= 2 ? (
-  //   //                   <Box
-  //   //                     component="img"
-  //   //                     sx={{
-  //   //                       display: "block",
-  //   //                       overflow: "hidden",
-  //   //                       width: "100%",
-  //   //                       height: "50%",
-  //   //                     }}
-  //   //                     src={`${CLOTHES_IMAGE}${item._id}/${item.files[0]}`}
-  //   //                   />
-  //   //                 ) : null}
-  //   //               </div>
-  //   //             ))}
-  //   //           </AutoPlaySwipeableViews>
-  //   //           <MobileStepper
-  //   //             steps={item.files.length}
-  //   //             position="static"
-  //   //             activeStep={activeStep}
-  //   //             nextButton={
-  //   //               <Button
-  //   //                 sx={{ fontWeight: "bold" }}
-  //   //                 size="small"
-  //   //                 onClick={handleNext}
-  //   //                 disabled={activeStep === item.files.length - 1}
-  //   //               >
-  //   //                 Next
-  //   //                 {theme.direction === "rtl" ? (
-  //   //                   <KeyboardArrowLeft />
-  //   //                 ) : (
-  //   //                   <KeyboardArrowRight />
-  //   //                 )}
-  //   //               </Button>
-  //   //             }
-  //   //             backButton={
-  //   //               <Button
-  //   //                 size="small"
-  //   //                 sx={{ fontWeight: "bold" }}
-  //   //                 onClick={handleBack}
-  //   //                 disabled={activeStep === 0}
-  //   //               >
-  //   //                 {theme.direction === "rtl" ? (
-  //   //                   <KeyboardArrowRight />
-  //   //                 ) : (
-  //   //                   <KeyboardArrowLeft />
-  //   //                 )}
-  //   //                 Back
-  //   //               </Button>
-  //   //             }
-  //   //           />
-  //   //         </Box>
-  //   //       </Grid>
-  //   //       <Grid item xs={10} sx={{ backgroundColor: "white" }}>
-  //   //         HEllo
-  //   //       </Grid>
-  //   //     </Grid>
-  //   //   </Modal>
-  //   // ) : (
-  //   //   "error"
-  //   // );
-  // }
-
   useEffect(() => {
     refreshData();
+    console.log(items);
   }, []);
+
   return (
     <div>
       <Box p={5} sx={{ margin: "80px" }}>
@@ -296,23 +386,36 @@ export default function Home() {
           spacing={8}
           sx={{ alignItems: "center", justifyContent: "center" }}
         >
-          {items.map((item) => {
-            return (
-              <Grid key={item._id} item>
-                <ProductCard
-                  key={item._id}
-                  item={item}
-                  setItem={setItem}
-                  handleAddCart={handleAddCartClose}
-                />
-              </Grid>
-            );
-          })}
+          {items
+            ? items.map((item) => {
+                return (
+                  <Grid key={item._id} item>
+                    <ProductCard
+                      key={item._id}
+                      item={item}
+                      setItem={setItem}
+                      handleAddCart={handleAddCartClose}
+                      handleProductModal={handleProductModalClose}
+                    />
+                  </Grid>
+                );
+              })
+            : ""}
+
           <AddToCartModal
             item={item}
             open={openAddCart}
             handleClose={handleAddCartClose}
           />
+          {item.item_name ? (
+            <ProductModal
+              item={item}
+              open={openProductModal}
+              handleClose={handleProductModalClose}
+            />
+          ) : (
+            ""
+          )}
         </Grid>
       </Box>
       <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
