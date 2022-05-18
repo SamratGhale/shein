@@ -24,7 +24,18 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { CLOTHES_IMAGE } from "../../constants/api";
+<<<<<<< HEAD
 import { Stack } from "@mui/material";
+=======
+import RemoveIcon from "@mui/icons-material/Remove";
+import AddIcon from "@mui/icons-material/Add";
+import MobileStepper from "@mui/material/MobileStepper";
+import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
+import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
+import { motion, AnimatePresence, AnimateSharedLayout } from "framer-motion";
+import CloseIcon from "@mui/icons-material/Close";
+
+>>>>>>> origin/UI
 import { ItemsContext } from "./context";
 import { getAllTags, getMinMaxPrice } from "./services";
 import { useSnackbar } from "react-simple-snackbar";
@@ -136,7 +147,6 @@ const useStyles = makeStyles((theme) => ({
 
 function ProductCard({ item, setItem, handleAddCart, handleProductModal }) {
   const classes = useStyles();
-
   return (
     <Card className={classes.root}>
       <CardMedia
@@ -188,11 +198,207 @@ function ProductCard({ item, setItem, handleAddCart, handleProductModal }) {
   );
 }
 
+//Product ko modal
+
+const modal = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 1200,
+  height: 600,
+  maxHeight: 600,
+  maxWidth: 1200,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  borderRadius: 15,
+  boxShadow: 24,
+  p: 4,
+};
+
+function ProductModal({ item, open, handleClose }) {
+  console.log(item);
+  const theme = useTheme();
+  const [activeStep, setActiveStep] = React.useState(0);
+  const handleStepChange = (step) => {
+    setActiveStep(step);
+  };
+
+  const handleNext = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep + 1);
+  };
+
+  const handleBack = () => {
+    setActiveStep((prevActiveStep) => prevActiveStep - 1);
+  };
+
+  return item ? (
+    <Modal open={open} onClose={handleClose}>
+      <Grid
+        container
+        sx={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 1350,
+          height: 550,
+          bgcolor: "background.paper",
+          border: "2px solid #000",
+          boxShadow: 24,
+          p: 4,
+          borderRadius: 15,
+        }}
+        gap={4}
+        columns={16}
+        direction="row"
+      >
+        <Grid item xs={6}>
+          {/* Swipeable vies bascha */}
+          <Box sx={{ padding: 2, height: 340, width: 450, mt: 4 }}>
+            <AutoPlaySwipeableViews
+              axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+              index={activeStep}
+              onChangeIndex={handleStepChange}
+              enableMouseEvents
+            >
+              {item.files.map((step, index) => (
+                <div key={step}>
+                  {Math.abs(activeStep - index) <= 2 ? (
+                    <Box
+                      component="img"
+                      sx={{
+                        overflow: "hidden",
+                        width: 410,
+                        height: 330,
+                        // maxWidth: 330,
+                        // maxHeight: 350,
+                      }}
+                      src={`${CLOTHES_IMAGE}${item._id}/${item.files[0]}`}
+                    />
+                  ) : null}
+                </div>
+              ))}
+            </AutoPlaySwipeableViews>
+            <MobileStepper
+              steps={item.files.length}
+              position="static"
+              activeStep={activeStep}
+              nextButton={
+                <Button
+                  sx={{ fontWeight: "bold" }}
+                  size="small"
+                  onClick={handleNext}
+                  disabled={activeStep === item.files.length - 1}
+                >
+                  Next
+                  {theme.direction === "rtl" ? (
+                    <KeyboardArrowLeft />
+                  ) : (
+                    <KeyboardArrowRight />
+                  )}
+                </Button>
+              }
+              backButton={
+                <Button
+                  size="small"
+                  sx={{ fontWeight: "bold" }}
+                  onClick={handleBack}
+                  disabled={activeStep === 0}
+                >
+                  {theme.direction === "rtl" ? (
+                    <KeyboardArrowRight />
+                  ) : (
+                    <KeyboardArrowLeft />
+                  )}
+                  Back
+                </Button>
+              }
+            />
+          </Box>
+        </Grid>
+        <Grid item xs={8}>
+          <Typography sx={{ fontFamily: "Nunito", mb: 4 }} variant="h4">
+            {item.item_name}
+          </Typography>
+          <Typography variant="subtitle2" sx={{ mb: 5 }}>
+            Tags:
+            {item.tags.map((tag) => {
+              return (
+                <ButtonGroup size="small" variant="contained">
+                  <Button
+                    sx={{
+                      ml: 1,
+                      fontSize: "12px",
+                      backgroundColor: "black",
+                      color: "white",
+                    }}
+                  >
+                    {tag}
+                  </Button>
+                </ButtonGroup>
+              );
+            })}
+          </Typography>
+          <Typography
+            sx={{ fontFamily: "Nunito", color: "green" }}
+            variant="h4"
+          >
+            Rs. {item.item_price}
+          </Typography>
+          <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+            <del>Rs.{item.item_price}</del> -{item.discount}%
+          </Typography>
+          <Grid container sx={{ mt: 8, alignItems: "center" }} gap={3}>
+            <Grid item>
+              <Typography variant="body1">Quantity</Typography>
+            </Grid>
+            <Grid item>
+              <Stack spacing={2} direction="row">
+                <Button size="small" variant="contained">
+                  <RemoveIcon sx={{ color: "black" }} />
+                </Button>
+                <Typography sx={{ pt: 1 }}>N</Typography>
+                <Button size="medium" variant="contained">
+                  <AddIcon sx={{ color: "black" }} />
+                </Button>
+              </Stack>
+            </Grid>
+          </Grid>
+          <Grid container columns={16} sx={{ mt: 6 }}>
+            <Grid item xs={8}>
+              <Button sx={{ width: "85%", height: 75 }} variant="contained">
+                Buy Now
+              </Button>
+            </Grid>
+            <Grid item xs={8}>
+              <Button sx={{ width: "85%", height: 75 }} variant="contained">
+                Add to Cart
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid item xs={1}>
+          <CloseIcon sx={{ ml: 6 }} />
+        </Grid>
+      </Grid>
+    </Modal>
+  ) : (
+    "loading"
+  );
+}
+
+//..
 export default function Home() {
+<<<<<<< HEAD
   const { refreshData, items, pagination, listItems, search, setSearch } = useContext(ItemsContext);
+=======
+  const { refreshData, items, pagination, listItems } =
+    useContext(ItemsContext);
+>>>>>>> origin/UI
   const [item, setItem] = useState({});
   const [current, setCurrent] = useState(0);
-  const [searchText, setSearchText] = useState('');
+  const [searchText, setSearchText] = useState("");
   const [openAddCart, setOpenAddCart] = useState(false);
   const [openProductModal, setOpenProductModal] = useState(false);
   const [category, setCategory] = React.useState('');
@@ -203,6 +409,7 @@ export default function Home() {
   const [priceExpanded, setPriceExpanded] = useState(false);
 
   useEffect(() => {
+<<<<<<< HEAD
     const query = queryString.parse(window.location.search);
 
     getMinMaxPrice().then(res => {
@@ -235,10 +442,20 @@ export default function Home() {
     getAllTags().then(data => {
       setTags(data);
     });
+=======
+    handlePagination(1);
+  }, []);
+
+  const handlePagination = (current_page) => {
+    let _start = (current_page - 1) * pagination.limit;
+    setCurrent(current_page);
+    let query = { name: searchText };
+>>>>>>> origin/UI
 
     return loadItemsList({
       start: _start,
       limit: pagination.limit,
+<<<<<<< HEAD
       ...query
     })
   }, [])
@@ -248,18 +465,32 @@ export default function Home() {
     if (!query) query = null;
     listItems(query).then().catch(() => {
       console.log("error");
+=======
+      ...query,
+>>>>>>> origin/UI
     });
-  }
+  };
+
+  const loadItemsList = (query) => {
+    if (!query) query = null;
+    listItems(query)
+      .then()
+      .catch(() => {
+        console.log("error");
+      });
+  };
 
 
   function handleAddCartClose() {
     setOpenAddCart(!openAddCart);
   }
 
+  // for toggling product modal
   function handleProductModalClose() {
     setOpenProductModal(!openProductModal);
   }
 
+<<<<<<< HEAD
   const modal = {
     position: "absolute",
     top: "50%",
@@ -374,32 +605,55 @@ export default function Home() {
           </Grid>
         </Grid>
       </Item>
+=======
+  useEffect(() => {
+    refreshData();
+    console.log(items);
+  }, []);
+
+  return (
+    <div>
+>>>>>>> origin/UI
       <Box p={5} sx={{ margin: "80px" }}>
         <Grid
           container
           spacing={8}
         >
-          {items.map((item) => {
-            return (
-              <Grid key={item._id} item>
-                <ProductCard
-                  key={item._id}
-                  item={item}
-                  setItem={setItem}
-                  handleAddCart={handleAddCartClose}
-                />
-              </Grid>
-            );
-          })}
+          {items
+            ? items.map((item) => {
+                return (
+                  <Grid key={item._id} item>
+                    <ProductCard
+                      key={item._id}
+                      item={item}
+                      setItem={setItem}
+                      handleAddCart={handleAddCartClose}
+                      handleProductModal={handleProductModalClose}
+                    />
+                  </Grid>
+                );
+              })
+            : ""}
+
           <AddToCartModal
             item={item}
             open={openAddCart}
             handleClose={handleAddCartClose}
           />
+          {item.item_name ? (
+            <ProductModal
+              item={item}
+              open={openProductModal}
+              handleClose={handleProductModalClose}
+            />
+          ) : (
+            ""
+          )}
         </Grid>
       </Box>
       <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
         <Grid item>
+<<<<<<< HEAD
           <Pagination count={Math.round(items.length / pagination.limit) + 1} page={current} onChange={(e, v) => {
             const parced = queryString.parse(window.location.search);
             parced["page"] = v;
@@ -408,5 +662,18 @@ export default function Home() {
         </Grid>
       </Grid>
     </Box >
+=======
+          <Pagination
+            count={10}
+            page={current}
+            onChange={(e, v) => {
+              handlePagination(v);
+            }}
+            shape="rounded"
+          />
+        </Grid>
+      </Grid>
+    </div>
+>>>>>>> origin/UI
   );
 }

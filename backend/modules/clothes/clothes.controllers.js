@@ -98,13 +98,21 @@ const Clothes = {
       start,
       limit,
       model: ClothesModel,
-      query
+      query,
     });
     console.log(res);
 
     res.data.forEach(async (item, i) => {
-      res.data[i].files = fs.readdirSync(`./modules/clothes/images/${item._id}`);
+      if (fs.existsSync(`./modules/clothes/images/${item._id}`)) {
+        res.data[i].files = fs.readdirSync(
+          `./modules/clothes/images/${item._id}`
+        );
+      } else {
+        res.data[i].files = new Array();
+      }
     });
+
+    console.log(res);
     return res;
   },
   async getById(_id) {
@@ -165,7 +173,7 @@ module.exports = {
   Clothes,
   register: (req) => Clothes.add(req.payload),
   list: (req) => {
-    console.log(req.query)
+    console.log(req.query);
     const start = req.query.start || 0;
     const limit = req.query.limit || 8;
     const category = req.query.category || '';
