@@ -151,7 +151,7 @@ function ProductCard({ item, setItem, handleAddCart, handleProductModal }) {
           sx={{ alignItems: "center", justifyContent: "center" }}
         >
           <Grid item xs={12}>
-            <Typography variant="body2">{item.item_name}</Typography>
+            <Typography variant="body2">{item.item_name.slice(0, 40)}{item.item_name.length > 40 ? "..." : ""}</Typography>
             <Typography variant="subtitle2" sx={{ mt: 2 }}>
               Rs. {item.item_price}
             </Typography>
