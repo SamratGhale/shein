@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import Card from "@mui/material/Card";
+import snakOptions from "../../constants/snakOptions";
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import SavedSearchSharpIcon from '@mui/icons-material/SavedSearchSharp';
 import { SliderThumb } from "@mui/material";
@@ -84,26 +85,11 @@ const Item = styled(Paper)(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const options = {
-  position: 'top-right',
-  style: {
-    backgroundColor: 'midnightblue',
-    border: '2px solid lightgreen',
-    color: 'lightblue',
-    fontFamily: 'Menlo, monospace',
-    fontSize: '20px',
-    textAlign: 'center',
-  },
-  closeStyle: {
-    color: 'lightcoral',
-    fontSize: '16px',
-  },
-}
 
 
 function AddToCartModal({ item, open, handleClose }) {
   const { addToCart } = useContext(ItemsContext);
-  const [openSnackbar, closeSnackbar] = useSnackbar(options);
+  const [openSnackbar, closeSnackbar] = useSnackbar(snakOptions);
   const [quantity, setQuantity] = useState(0);
   return (
     <Modal

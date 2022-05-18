@@ -18,6 +18,7 @@ export const PATH_PAGE = {
   auth: {
     login: merge_path(ROOTS.auth, '/login'),
     signup: merge_path(ROOTS.auth, '/signup'),
+    verify: merge_path(ROOTS.auth, '/verify/:token'),
     resetPassword: merge_path(ROOTS.auth, '/reset-password'),
   },
   comingSoon: '/coming-soon'

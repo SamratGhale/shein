@@ -10,10 +10,16 @@ module.exports = {
     payload: Joi.object({
       email: Joi.string().optional().description('user email'),
       password: Joi.string().optional().description('user password'),
+      phone: Joi.number().optional().description('user phone'),
       role: Joi.string().optional().description("user role")
     }),
   },
   auth: {
+    params: Joi.object({
+      token: Joi.string(),
+    }),
+  },
+  registerEmail: {
     params: Joi.object({
       token: Joi.string(),
     }),

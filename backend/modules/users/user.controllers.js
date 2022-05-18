@@ -1,13 +1,14 @@
 const UserModel = require('./user.model')
 const bcrypt = require('bcrypt');
+const Common = require('../../utils/common');
 const { OAuth2Client } = require('google-auth-library')
 const jwt = require('jsonwebtoken');
-const Role= require('./role.controllers').Role;
+const Role = require('./role.controllers').Role;
 require('dotenv').config();
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
-const User= {
+const User = {
     async add(data) {
         return await this.register(data);
     },
@@ -20,23 +21,30 @@ const User= {
 
     async update(request) {
         console.log(request.payload);
-        const res = await UserModel.findOneAndUpdate({_id: request.params.id}, request.payload);
+        const res = await UserModel.findOneAndUpdate({ _id: request.params.id }, request.payload);
         return res;
     },
 
-    async validateToken(token){
+    async validateToken(token) {
         const decoded = jwt.verify(token, process.env.TOKEN_KEY);
-        const user = await UserModel.findOne({ email: decoded.email, is_approved: true, is_archived: false});
-        if(!user){
-            throw {message: "Token not correct please login and try again!", code:400};
+        const user = await UserModel.findOne({ email: decoded.email, is_approved: true, is_archived: false });
+        if (!user) {
+            throw { message: "Token not correct please login and try again!", code: 400 };
         }
         const permissions = await Role.getPermissions(user.role);
-        return {user, permissions};
+        return { user, permissions };
+    },
+    async registerEmail(request) {
+        const token =
+            request.params.token || request.headers.access_token || request.cookies.access_token;
+        const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+        const user = await UserModel.findOneAndUpdate({ email: decoded.email, is_archived: false }, { is_registered: true });
+        return user;
     },
     async auth(request) {
         try {
             const token =
-                request.params.token|| request.headers.access_token || request.cookies.access_token;
+                request.params.token || request.headers.access_token || request.cookies.access_token;
             const { user, permissions } = await User.validateToken(token);
 
             delete user.password;
@@ -48,45 +56,45 @@ const User= {
             throw Error(`ERROR: ${e}`);
         }
     },
-    async changePassword(req){
+    async changePassword(req) {
         token = req.headers.access_token;
-        const { oldPassword,newPassword} = req.payload;
+        const { oldPassword, newPassword } = req.payload;
         const decoded = jwt.verify(token, process.env.TOKEN_KEY);
         const user = await UserModel.findOne({ email: decoded.email });
         if (user) {
-            try{
+            try {
                 //const res = await this.login({email: user.email, password: oldPassword});
                 const salt = parseInt(process.env.TOKEN_KEY);
                 encrypted_password = await bcrypt.hash(newPassword, salt);
-                const done = await UserModel.findOneAndUpdate({email: decoded.email},{password: encrypted_password});
-                if(done){
-                    return {message: "Password change successfully"};
+                const done = await UserModel.findOneAndUpdate({ email: decoded.email }, { password: encrypted_password });
+                if (done) {
+                    return { message: "Password change successfully" };
                 }
-            }catch(err){
+            } catch (err) {
                 throw err;
             }
         } else {
-            throw {message: "Token not correct please login and try again!", code:400};
+            throw { message: "Token not correct please login and try again!", code: 400 };
         }
     },
-    async findByRoles(role){
+    async findByRoles(role) {
         return User.model.find({ role: role, is_archived: false }).select('-password');
     },
-    async findById(id){
-        return User.model.findOne({ _id: id, is_archived: false}).select('-password');
+    async findById(id) {
+        return User.model.findOne({ _id: id, is_archived: false }).select('-password');
     },
 
     async register(data) {
-        var {email, password, role } =  data;
+        var { email, phone, password, role } = data;
         role = role.toUpperCase();
 
-        if(!(email && password)){
+        if (!(email && password)) {
             throw "All input is required";
         }
 
-        const u= await UserModel.findOne({email: email});
-        if(u){
-            throw {message: "User email already exists!", code:400};
+        const u = await UserModel.findOne({ email: email });
+        if (u) {
+            throw { message: "User email already exists!", code: 400 };
         }
         const salt = process.env.TOKEN_KEY;
         encrypted_password = await bcrypt.hash(password, parseInt(salt));
@@ -94,23 +102,24 @@ const User= {
         const user = await UserModel.create({
             email: email.toLowerCase(),
             password: encrypted_password,
-            role : role,
-            is_approved:false,
-            google_account:false 
+            role: role,
+            is_registered: false,
+            google_account: false,
+            phone
         });
         const token = jwt.sign(
-            {user_id : user._id, email, role: user.role, is_approved:user.is_approved},
+            { user_id: user._id, email, role: user.role, is_approved: user.is_approved },
             salt
         );
-        user.token  = token;
+        Common.sentMailVerificationLink(user, token);
         return user;
     },
-    async register_google(payload){
-        const {email, name} = payload;
+    async register_google(payload) {
+        const { email, name } = payload;
         const user = await UserModel.create({
             email: email.toLowerCase(),
-            role : "USER",
-            is_approved:true,
+            role: "USER",
+            is_approved: true,
             google_account: true,
             is_registered: true
         });
@@ -126,45 +135,51 @@ const User= {
                 audience: process.env.GOOGLE_CLIENT_ID,
             })
 
-            const {email, name} = ticket.getPayload();
-            var u= await UserModel.findOne({email: email});
+            const { email, name } = ticket.getPayload();
+            var u = await UserModel.findOne({ email: email });
             console.log(u)
-            if(!u){
+            if (!u) {
                 u = await this.register_google({ email, name });
             }
             const token = jwt.sign(
                 { user_id: u._id, email, role: u.role, is_approved: u.is_approved },
                 salt
             );
-            return {user: u, token: token};
+            return { user: u, token: token };
         } catch (err) {
             console.log(err);
             throw { message: "Google login failed", code: 404 }
         }
     },
 
-    async login(data){
-        try{
-            const {email, password} = data;
+    async login(data) {
+        try {
+            const { email, password } = data;
             if (!(email && password)) {
                 throw "All input is required";
             }
             var user = await UserModel.findOne({ email });
+            if (user.google_account) {
+                throw { message: "User dosen't exist", code: 400 }
+            }
+            if (!user.is_registered) {
+                throw { message: "Please verify email first", code: 400 }
+            }
             if (user) {
-                if(await bcrypt.compare(password, user.password)){
+                if (await bcrypt.compare(password, user.password)) {
                     const token = jwt.sign(
-                        {user_id : user._id, email, role: user.role},
+                        { user_id: user._id, email, role: user.role },
                         process.env.TOKEN_KEY,
                     );
                     permissions = await Role.getPermissions(user.role);
-                    return {user, permissions, token};
+                    return { user, permissions, token };
                 }
-                else{
-                    throw {message :"Invalid password", code: 400};
+                else {
+                    throw { message: "Invalid password", code: 400 };
                 }
             }
-            else{
-                throw {message :"Invalid Email or password", code: 400};
+            else {
+                throw { message: "Invalid Email or password", code: 400 };
             }
 
         } catch (err) {
@@ -177,7 +192,7 @@ const User= {
         return UserModel.findOneAndUpdate({ _id: id, is_archived: false }, { is_archived: true });
     },
     async approve(id) {
-        return UserModel.findOneAndUpdate({ _id: id }, [{$set:{is_approved:{$eq:[false,"$is_approved"]}}}]);
+        return UserModel.findOneAndUpdate({ _id: id }, [{ $set: { is_approved: { $eq: [false, "$is_approved"] } } }]);
     },
 }
 
@@ -185,21 +200,22 @@ module.exports = {
     User,
     add: (req) => User.add(req.payload),
     list: (req) => {
-      const start = req.query.start || 0;
-      const limit = req.query.limit || 20;
-      const from = req.query.from || null;
-      return User.list(start, limit, from);
+        const start = req.query.start || 0;
+        const limit = req.query.limit || 20;
+        const from = req.query.from || null;
+        return User.list(start, limit, from);
     },
-    getById: (req) =>             User.getById(req.params.id),
-    register: (req) =>            User.register(req.payload),
-    login: (req) =>               User.login(req.payload),
-    google_login: (req) =>        User.google_login(req.params.cred),
-    archive: (req) =>             User.archive(req.params.id),
-    approve: (req) =>             User.approve(req.params.id),
-    findById: (req) =>            User.findById(req.params.id),
-    findByRoles: (req) =>      User.findByRoles(req.params.role),
-    validateToken : (req) =>  User.validateToken(req.params.token),
-    update:(req)=>User.update(req),
-    changePassword:(req)=> User.changePassword(req),
-    auth:(req)=> User.auth(req),
-  };
+    getById: (req) => User.getById(req.params.id),
+    register: (req) => User.register(req.payload),
+    login: (req) => User.login(req.payload),
+    google_login: (req) => User.google_login(req.params.cred),
+    archive: (req) => User.archive(req.params.id),
+    approve: (req) => User.approve(req.params.id),
+    findById: (req) => User.findById(req.params.id),
+    findByRoles: (req) => User.findByRoles(req.params.role),
+    validateToken: (req) => User.validateToken(req.params.token),
+    update: (req) => User.update(req),
+    changePassword: (req) => User.changePassword(req),
+    auth: (req) => User.auth(req),
+    registerEmail: (req) => User.registerEmail(req)
+};

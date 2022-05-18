@@ -8,7 +8,7 @@ const routes = {
     path: '',
     description: 'List all users',
     permissions: [USER.READ, USER.ADMIN]
-   },
+  },
   register: {
     method: 'POST',
     path: '/register',
@@ -21,7 +21,8 @@ const routes = {
     },
     //permissions: [USER.WRITE, USER.ADMIN]
   },
-  changePassword: { method: 'PUT',
+  changePassword: {
+    method: 'PUT',
     path: '/changepassword/{token}',
     description: 'Change User password',
     uploadPayload: {
@@ -76,6 +77,11 @@ const routes = {
     method: 'POST',
     path: '/google_login/{cred}',
     description: 'Login using google',
+  },
+  registerEmail: {
+    method: 'POST',
+    path: '/validate/{token}',
+    description: 'Verify email of a user',
   },
 };
 
