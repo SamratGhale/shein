@@ -14,6 +14,8 @@ import { Paper } from "@mui/material";
 import { Pagination } from "@mui/material";
 import { Modal } from "@mui/material";
 import { Box } from "@mui/system";
+import { ButtonGroup } from "@mui/material";
+import { useTheme } from "@emotion/react";
 import { Input } from "@mui/material";
 import { makeStyles, styled } from "@mui/styles";
 import { Grid } from "@mui/material";
@@ -24,9 +26,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { CLOTHES_IMAGE } from "../../constants/api";
-<<<<<<< HEAD
 import { Stack } from "@mui/material";
-=======
 import RemoveIcon from "@mui/icons-material/Remove";
 import AddIcon from "@mui/icons-material/Add";
 import MobileStepper from "@mui/material/MobileStepper";
@@ -35,7 +35,6 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { motion, AnimatePresence, AnimateSharedLayout } from "framer-motion";
 import CloseIcon from "@mui/icons-material/Close";
 
->>>>>>> origin/UI
 import { ItemsContext } from "./context";
 import { getAllTags, getMinMaxPrice } from "./services";
 import { useSnackbar } from "react-simple-snackbar";
@@ -45,6 +44,7 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
+const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
 const AirbnbSlider = styled(Slider)(({ theme }) => ({
   color: '#3a8589',
@@ -390,12 +390,7 @@ function ProductModal({ item, open, handleClose }) {
 
 //..
 export default function Home() {
-<<<<<<< HEAD
   const { refreshData, items, pagination, listItems, search, setSearch } = useContext(ItemsContext);
-=======
-  const { refreshData, items, pagination, listItems } =
-    useContext(ItemsContext);
->>>>>>> origin/UI
   const [item, setItem] = useState({});
   const [current, setCurrent] = useState(0);
   const [searchText, setSearchText] = useState("");
@@ -409,7 +404,6 @@ export default function Home() {
   const [priceExpanded, setPriceExpanded] = useState(false);
 
   useEffect(() => {
-<<<<<<< HEAD
     const query = queryString.parse(window.location.search);
 
     getMinMaxPrice().then(res => {
@@ -442,34 +436,13 @@ export default function Home() {
     getAllTags().then(data => {
       setTags(data);
     });
-=======
-    handlePagination(1);
-  }, []);
-
-  const handlePagination = (current_page) => {
-    let _start = (current_page - 1) * pagination.limit;
-    setCurrent(current_page);
-    let query = { name: searchText };
->>>>>>> origin/UI
 
     return loadItemsList({
       start: _start,
       limit: pagination.limit,
-<<<<<<< HEAD
       ...query
     })
   }, [])
-
-
-  const loadItemsList = query => {
-    if (!query) query = null;
-    listItems(query).then().catch(() => {
-      console.log("error");
-=======
-      ...query,
->>>>>>> origin/UI
-    });
-  };
 
   const loadItemsList = (query) => {
     if (!query) query = null;
@@ -490,7 +463,6 @@ export default function Home() {
     setOpenProductModal(!openProductModal);
   }
 
-<<<<<<< HEAD
   const modal = {
     position: "absolute",
     top: "50%",
@@ -519,6 +491,11 @@ export default function Home() {
       </SliderThumb>
     );
   }
+
+  useEffect(() => {
+    refreshData();
+    console.log(items);
+  }, []);
 
   return (
     <Box >
@@ -605,15 +582,7 @@ export default function Home() {
           </Grid>
         </Grid>
       </Item>
-=======
-  useEffect(() => {
-    refreshData();
-    console.log(items);
-  }, []);
 
-  return (
-    <div>
->>>>>>> origin/UI
       <Box p={5} sx={{ margin: "80px" }}>
         <Grid
           container
@@ -621,18 +590,18 @@ export default function Home() {
         >
           {items
             ? items.map((item) => {
-                return (
-                  <Grid key={item._id} item>
-                    <ProductCard
-                      key={item._id}
-                      item={item}
-                      setItem={setItem}
-                      handleAddCart={handleAddCartClose}
-                      handleProductModal={handleProductModalClose}
-                    />
-                  </Grid>
-                );
-              })
+              return (
+                <Grid key={item._id} item>
+                  <ProductCard
+                    key={item._id}
+                    item={item}
+                    setItem={setItem}
+                    handleAddCart={handleAddCartClose}
+                    handleProductModal={handleProductModalClose}
+                  />
+                </Grid>
+              );
+            })
             : ""}
 
           <AddToCartModal
@@ -653,27 +622,13 @@ export default function Home() {
       </Box>
       <Grid container sx={{ alignItems: "center", justifyContent: "center" }}>
         <Grid item>
-<<<<<<< HEAD
           <Pagination count={Math.round(items.length / pagination.limit) + 1} page={current} onChange={(e, v) => {
             const parced = queryString.parse(window.location.search);
             parced["page"] = v;
             window.location.search = queryString.stringify(parced);
           }} shape="rounded" />
-        </Grid>
-      </Grid>
+        </Grid >
+      </Grid >
     </Box >
-=======
-          <Pagination
-            count={10}
-            page={current}
-            onChange={(e, v) => {
-              handlePagination(v);
-            }}
-            shape="rounded"
-          />
-        </Grid>
-      </Grid>
-    </div>
->>>>>>> origin/UI
   );
 }
