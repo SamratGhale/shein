@@ -1,12 +1,12 @@
 import React, { createContext, useEffect, useReducer } from 'react';
 import userReduce from './reducers';
 import * as Service from './services';
-import API from '../../constants/api';
+//import API from '../../constants/api';
 import axios from 'axios';
 import { getUserToken } from '../../utils/sessionManager';
 import actions from './actions';
 const access_token = getUserToken();
-const USER = API.USER;
+//const USER = API.USER;
 
 const initialState = {
   user_info: {},

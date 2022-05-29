@@ -1,7 +1,8 @@
 import * as Yup from 'yup';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useFormik, Form, FormikProvider } from 'formik';
+import { UserContext } from '../../../modules/users/context';
 // material
 import { Link, Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -12,6 +13,8 @@ import Iconify from '../../../components/Iconify';
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const { userLogin } = useContext(UserContext);
+
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -27,8 +30,10 @@ export default function LoginForm() {
       remember: true,
     },
     validationSchema: LoginSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    onSubmit: (values) => {
+      console.log(values)
+      userLogin(values);
+      //navigate('/dashboard', { replace: true });
     },
   });
 
@@ -73,17 +78,10 @@ export default function LoginForm() {
         </Stack>
 
         <Stack direction="row" alignItems="center" justifyContent="space-between" sx={{ my: 2 }}>
-          <FormControlLabel
-            control={<Checkbox {...getFieldProps('remember')} checked={values.remember} />}
-            label="Remember me"
-          />
 
-          <Link component={RouterLink} variant="subtitle2" to="#" underline="hover">
-            Forgot password?
-          </Link>
         </Stack>
 
-        <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+        <LoadingButton fullWidth size="large" type="submit" variant="contained" >
           Login
         </LoadingButton>
       </Form>

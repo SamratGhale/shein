@@ -5,7 +5,7 @@ import { logoutUser, getUserToken, saveUser, saveUserPermissions, saveUserToken 
 const access_token = getUserToken();
 export async function login(payload) {
   return new Promise((resolve, reject) => {
-    axios.post(AUTH, payload)
+    axios.post(USER + '/login', payload)
       .then((res) => {
         saveUser(res.data.user);
         saveUserToken(res.data.token);

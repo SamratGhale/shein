@@ -14,11 +14,11 @@ import { PATH_APP } from './paths';
 
 // ----------------------------------------------------------------------
 
-export default function Router() {
+export default function Router({ isLoggedIn }) {
   return useRoutes([
     {
       path: '/',
-      element: <DashboardLayout />,
+      element: isLoggedIn ? <DashboardLayout /> : <Navigate to='/login' />,
       children: [
         { path: 'app', element: <DashboardApp /> },
         { path: '', element: <DashboardApp /> },
