@@ -9,7 +9,9 @@ import Page from '../components/Page';
 import Logo from '../components/Logo';
 // sections
 import { LoginForm } from '../sections/auth/login';
-import AuthSocial from '../sections/auth/AuthSocial';
+import { GoogleLogin } from '@react-oauth/google';
+import { GoogleOAuthProvider } from '@react-oauth/google';
+
 
 // ----------------------------------------------------------------------
 
@@ -53,6 +55,8 @@ const ContentStyle = styled('div')(({ theme }) => ({
   flexDirection: 'column',
   padding: theme.spacing(12, 0),
 }));
+const client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID
+
 
 // ----------------------------------------------------------------------
 
@@ -62,6 +66,7 @@ export default function Login() {
   const mdUp = useResponsive('up', 'md');
 
   return (
+          <GoogleOAuthProvider clientId={client_id}>
     <Page title="Login">
       <RootStyle>
         <HeaderStyle>
@@ -71,7 +76,7 @@ export default function Login() {
             <Typography variant="body2" sx={{ mt: { md: -2 } }}>
               Don’t have an account? {''}
               <Link variant="subtitle2" component={RouterLink} to="/register">
-                Get started
+                Register Account
               </Link>
             </Typography>
           )}
@@ -93,7 +98,7 @@ export default function Login() {
               <Typography variant="body2" align="center" sx={{ mt: 3 }}>
                 Don’t have an account?{' '}
                 <Link variant="subtitle2" component={RouterLink} to="/register">
-                  Get started
+                  Register Account
                 </Link>
               </Typography>
             )}
@@ -101,5 +106,6 @@ export default function Login() {
         </Container>
       </RootStyle>
     </Page>
+    </GoogleOAuthProvider>
   );
 }

@@ -7,7 +7,6 @@ const routes = {
     method: 'GET',
     path: '',
     description: 'List all users',
-    permissions: [USER.READ, USER.ADMIN]
   },
   register: {
     method: 'POST',
@@ -50,7 +49,7 @@ const routes = {
     description: 'Update user',
     permissions: [USER.WRITE, USER.ADMIN]
   },
-  findById: {
+  getById: {
     method: 'GET',
     path: '/{id}',
     description: 'Get user by id',

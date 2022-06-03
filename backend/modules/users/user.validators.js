@@ -8,9 +8,13 @@ module.exports = {
   },
   register: {
     payload: Joi.object({
+      firstName: Joi.string().optional().description('First Name'),
+      lastName: Joi.string().optional().description('Last Name'),
       email: Joi.string().optional().description('user email'),
       password: Joi.string().optional().description('user password'),
+      address : Joi.string().optional().description('users address password'),
       phone: Joi.number().optional().description('user phone'),
+      is_registered: Joi.boolean().optional().description('is user is registered'),
       role: Joi.string().optional().description("user role")
     }),
   },
@@ -57,8 +61,13 @@ module.exports = {
       id: Joi.objectId(),
     }),
     payload: Joi.object({
+      firstName: Joi.string().optional().description('First Name'),
+      lastName: Joi.string().optional().description('Last Name'),
       email: Joi.string().optional().description('user email'),
       password: Joi.string().optional().description('user password'),
+      address : Joi.string().optional().description('users address password'),
+      phone: Joi.number().optional().description('user phone'),
+      is_registered: Joi.boolean().optional().description('is user is registered'),
       role: Joi.string().optional().description("user role")
     }),
   },

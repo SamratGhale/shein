@@ -1,10 +1,13 @@
 import * as Yup from 'yup';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useFormik, Form, FormikProvider } from 'formik';
+import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
+import { UserContext } from '../../../modules/users/context';
 // material
 import { Stack, TextField, IconButton, InputAdornment } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { ROOTS } from '../../../routes/paths';
 // component
 import Iconify from '../../../components/Iconify';
 
@@ -14,6 +17,9 @@ export default function RegisterForm() {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
+  const {enqueueSnackbar, closeSnackbar} = useSnackbar();
+
+  const { addUser } = useContext(UserContext);
 
   const RegisterSchema = Yup.object().shape({
     firstName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('First name required'),
@@ -27,11 +33,20 @@ export default function RegisterForm() {
       firstName: '',
       lastName: '',
       email: '',
+      phone: '',
       password: '',
     },
     validationSchema: RegisterSchema,
-    onSubmit: () => {
-      navigate('/dashboard', { replace: true });
+    onSubmit: async(values) => {
+      try {
+        const res = await addUser(values);
+        enqueueSnackbar("Register Successful please wait for admin to accept your account!", { variant: "success" })
+        window.location = ROOTS.app;
+      } catch (err) {
+        enqueueSnackbar(err.response.data.message, { variant: "error" })
+        console.log(err.response.data.message);
+        return;
+      }
     },
   });
 
@@ -71,6 +86,14 @@ export default function RegisterForm() {
 
           <TextField
             fullWidth
+            autoComplete="phone"
+            type="text"
+            label="Phone Number"
+            {...getFieldProps('phone')}
+          />
+
+          <TextField
+            fullWidth
             autoComplete="current-password"
             type={showPassword ? 'text' : 'password'}
             label="Password"
@@ -88,7 +111,7 @@ export default function RegisterForm() {
             helperText={touched.password && errors.password}
           />
 
-          <LoadingButton fullWidth size="large" type="submit" variant="contained" loading={isSubmitting}>
+          <LoadingButton fullWidth size="large" type="submit" variant="contained" >
             Register
           </LoadingButton>
         </Stack>

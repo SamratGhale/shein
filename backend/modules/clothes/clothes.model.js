@@ -29,7 +29,7 @@ const schema = {
     default: 1,
   },
   description: {
-    type: Array,
+    type: String,
     description: "description of item",
   },
   tags: {

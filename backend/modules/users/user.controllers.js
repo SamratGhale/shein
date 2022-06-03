@@ -16,6 +16,7 @@ const User = {
         return UserModel.find();
     },
     async getById(_id) {
+        console.log(_id);
         return UserModel.findOne({ _id, is_archived: false });
     },
 
@@ -85,16 +86,23 @@ const User = {
     },
 
     async register(data) {
-        var { email, phone, password, role } = data;
+        var {firstName,is_registered, lastName,address, email, phone, password, role } = data;
         role = role.toUpperCase();
 
         if (!(email && password)) {
             throw "All input is required";
         }
 
-        const u = await UserModel.findOne({ email: email });
+        const u = await UserModel.findOne({ email});
+        const p = await UserModel.findOne({ phone });
         if (u) {
             throw { message: "User email already exists!", code: 400 };
+        }
+        if (p) {
+            throw { message: "Phone already exists!", code: 400 };
+        }
+        if(!is_registered){
+            is_registered = false;
         }
         const salt = process.env.TOKEN_KEY;
         encrypted_password = await bcrypt.hash(password, parseInt(salt));
@@ -102,8 +110,11 @@ const User = {
         const user = await UserModel.create({
             email: email.toLowerCase(),
             password: encrypted_password,
-            role: role,
-            is_registered: false,
+            role,
+            firstName,
+            lastName,
+            address,
+            is_registered,
             google_account: false,
             phone
         });
@@ -111,7 +122,9 @@ const User = {
             { user_id: user._id, email, role: user.role, is_approved: user.is_approved },
             salt
         );
-        Common.sentMailVerificationLink(user, token);
+        if(!is_registered){
+            Common.sentMailVerificationLink(user, token);
+        }
         return user;
     },
     async register_google(payload) {
@@ -159,13 +172,13 @@ const User = {
                 throw "All input is required";
             }
             var user = await UserModel.findOne({ email });
-            if (user.google_account) {
-                throw { message: "User dosen't exist", code: 400 }
-            }
-            if (!user.is_registered) {
-                throw { message: "Please verify email first", code: 400 }
-            }
             if (user) {
+                if (user.google_account) {
+                    throw { message: "User dosen't exist", code: 400 }
+                }
+                if (!user.is_registered) {
+                    throw { message: "Please verify email first", code: 400 }
+                }
                 if (await bcrypt.compare(password, user.password)) {
                     const token = jwt.sign(
                         { user_id: user._id, email, role: user.role },
@@ -206,7 +219,19 @@ module.exports = {
         return User.list(start, limit, from);
     },
     getById: (req) => User.getById(req.params.id),
-    register: (req) => User.register(req.payload),
+    register: async (req) => {
+        if(req.payload.is_registered){
+            const token = req.query.access_token || req.headers.access_token;
+            if(!token){
+                throw {message: "1 only admin can add add user with is_registered set true", code :400};
+            }
+           const {user, permissions} = await User.validateToken(token);
+           if(user.role != "ADMIN" && user.role != "SUPER ADMIN"){
+                throw {message: "2 only admin can add add user with is_registered set true", code :400};
+           }
+        }
+        return User.register(req.payload)
+    },
     login: (req) => User.login(req.payload),
     google_login: (req) => User.google_login(req.params.cred),
     archive: (req) => User.archive(req.params.id),

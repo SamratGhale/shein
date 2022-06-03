@@ -4,26 +4,28 @@ import Router from './routes/routes';
 import ThemeProvider from './theme';
 // components
 import ScrollToTop from './components/ScrollToTop';
+import { SnackbarProvider } from 'notistack';
 import { BaseOptionChartStyle } from './components/chart/BaseOptionChart';
 import { UserContextProvider } from './modules/users/context';
-import { getUser } from './utils/sessionManager';
 
-const isLoggedIn = () => {
-  const currentUser = getUser();
-  console.log(currentUser)
-  return currentUser != null;
-}
 
 // ----------------------------------------------------------------------
 
 export default function App() {
   return (
     <UserContextProvider>
-      <ThemeProvider>
-        <ScrollToTop />
-        <BaseOptionChartStyle />
-        <Router isLoggedIn={isLoggedIn()} />
-      </ThemeProvider>
+      <SnackbarProvider 
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+       maxSnack={3}>
+        <ThemeProvider>
+          <ScrollToTop />
+          <BaseOptionChartStyle />
+          <Router />
+        </ThemeProvider>
+      </SnackbarProvider>
     </UserContextProvider>
   );
 }

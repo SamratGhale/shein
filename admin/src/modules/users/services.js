@@ -46,6 +46,7 @@ export async function getAllUser() {
         'access_token': access_token
       }
     });
+    console.log(res)
     return res.data;
   } catch (err) {
     console.error(err);

@@ -11,14 +11,20 @@ import Register from '../pages/Register';
 import Products from '../pages/Products';
 import DashboardApp from '../pages/DashboardApp';
 import { PATH_APP } from './paths';
+import { getUser } from '../utils/sessionManager';
 
 // ----------------------------------------------------------------------
 
-export default function Router({ isLoggedIn }) {
+const isLoggedIn = () => {
+  const currentUser = getUser();
+  console.log(currentUser)
+  return currentUser != null;
+}
+export default function Router() {
   return useRoutes([
     {
       path: '/',
-      element: isLoggedIn ? <DashboardLayout /> : <Navigate to='/login' />,
+      element: isLoggedIn() ? <DashboardLayout /> : <Navigate to='/login' />,
       children: [
         { path: 'app', element: <DashboardApp /> },
         { path: '', element: <DashboardApp /> },

@@ -1,18 +1,23 @@
 import * as Yup from 'yup';
 import { useContext, useState } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google';
 import { useFormik, Form, FormikProvider } from 'formik';
+import { useSnackbar } from 'notistack';
 import { UserContext } from '../../../modules/users/context';
 // material
 import { Link, Stack, Checkbox, TextField, IconButton, InputAdornment, FormControlLabel } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 // component
 import Iconify from '../../../components/Iconify';
+import { PATH_APP, PATH_PAGE, ROOTS } from '../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
 export default function LoginForm() {
   const navigate = useNavigate();
+
+  const {enqueueSnackbar, closeSnackbar} = useSnackbar();
   const { userLogin } = useContext(UserContext);
 
 
@@ -31,9 +36,14 @@ export default function LoginForm() {
     },
     validationSchema: LoginSchema,
     onSubmit: (values) => {
-      console.log(values)
-      userLogin(values);
-      //navigate('/dashboard', { replace: true });
+      userLogin(values).then((res) => {
+        enqueueSnackbar("Login Successful!", { variant: "success" })
+        navigate('/app',{replace: true})
+      }).catch(err => {
+        enqueueSnackbar(err.response.data.message, { variant: "error" })
+        console.log(err.response.data.message);
+      });
+      //window.location = ROOTS.app;
     },
   });
 
@@ -85,6 +95,15 @@ export default function LoginForm() {
           Login
         </LoadingButton>
       </Form>
+      <GoogleLogin
+        onSuccess={credentialResponse => {
+          //googleLogin(credentialResponse.credential)
+          console.log(credentialResponse);
+        }}
+        onError={() => {
+          console.log('Login Failed');
+        }}
+      />
     </FormikProvider>
   );
 }

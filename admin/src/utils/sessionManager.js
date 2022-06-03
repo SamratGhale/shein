@@ -2,8 +2,8 @@ import { PATH_PAGE } from "../routes/paths";
 
 export function getUser() {
   if (
-    localStorage.getItem('currentUser') &&
-    Object.keys(localStorage.getItem('currentUser')).length
+    localStorage.getItem('currentUser') 
+    //&& Object.keys(localStorage.getItem('currentUser')).length
   ) {
     return JSON.parse(localStorage.getItem('currentUser'));
   }

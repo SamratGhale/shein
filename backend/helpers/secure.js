@@ -1,4 +1,4 @@
-// const { User } = require('../modules/users/user.controllers');
+const { User } = require('../modules/users/user.controllers');
 
 const Secure = async (reoutePermissions, req) => {
   if (reoutePermissions.length === 0) return true;
@@ -7,10 +7,10 @@ const Secure = async (reoutePermissions, req) => {
   if (!token) throw Error('No access token was sent');
 
   try {
-    //const decoded = await User.validateToken(token);
-    //const {user, permissions} = decoded;
-    //return permissions.some((permission)=>reoutePermissions.includes(permission));
-    return true;
+    const decoded = await User.validateToken(token);
+    console.log(decoded)
+    const {user, permissions} = decoded;
+    return permissions.some((permission)=>reoutePermissions.includes(permission));
   } catch (e) {
     return false;
   }

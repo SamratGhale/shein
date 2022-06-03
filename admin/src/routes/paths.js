@@ -4,7 +4,7 @@ function merge_path(base, submerge_path) {
 
 export const ROOTS = {
   auth: '/auth',
-  root: '/',
+  root: '',
   app: 'app',
   admin: '/admin',
   error: '/error'
@@ -16,7 +16,7 @@ export const PATH_HOME = {
 
 export const PATH_PAGE = {
   auth: {
-    login: merge_path(ROOTS.auth, '/login'),
+    login: merge_path(ROOTS.root, '/login'),
     signup: merge_path(ROOTS.auth, '/signup'),
     waitForApprove: merge_path(ROOTS.auth, '/waitforapprove'),
     resetPassword: merge_path(ROOTS.auth, '/reset-password'),

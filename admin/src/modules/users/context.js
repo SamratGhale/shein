@@ -17,7 +17,6 @@ const initialState = {
 export const UserContext = createContext(initialState);
 export const UserContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(userReduce, initialState);
-
   async function userLogin(payload) {
     var form = new FormData();
     form.append("email", payload.email);
@@ -48,16 +47,18 @@ export const UserContextProvider = ({ children }) => {
     var form = new FormData();
     form.append("email", payload.email);
     form.append("password", payload.password);
-    form.append("role", payload.role);
+    form.append("firstName", payload.firstName);
+    form.append("lastName", payload.lastName);
+    form.append("phone", payload.phone);
+    form.append("role", "STAFF");
     return await Service.addUser(form);
   }
 
 
   async function getAllUser() {
     try {
-      const res = await Service.getAllUser();
-      console.log(res.data)
-      dispatch({ type: actions.SET_LIST, data: res.data })
+      const data = await Service.getAllUser();
+      dispatch({ type: actions.SET_LIST, data})
     } catch (err) {
       console.log(err)
     }
