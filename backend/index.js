@@ -26,6 +26,7 @@ mongoose.connect(db, {
 });
 const server = new Hapi.Server({
   port,
+  host:'0.0.0.0',
   router: {
     stripTrailingSlash: true,
   },

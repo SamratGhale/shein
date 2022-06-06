@@ -7,7 +7,13 @@ const access_token = getUserToken();
 export async function getAllItems(query) {
   console.log(query);
   try {
-    const res = await axios(`${CLOTHES}`, { params: query });
+    const res = await axios(`${CLOTHES}`, { params: query },
+      {
+        headers: {
+          access_token: access_token
+        }
+      }
+    );
     console.log(res.data.data);
     return res.data.data;
   } catch (err) {
@@ -17,7 +23,12 @@ export async function getAllItems(query) {
 
 export async function getAllTags() {
   try {
-    const res = await axios.get(CLOTHES + '/tags');
+    const res = await axios.get(CLOTHES + '/tags',
+    {
+      headers:{
+        access_token: access_token
+      }
+    });
     return res.data;
   } catch (err) {
     throw err;

@@ -39,7 +39,6 @@ export const ItemsContextProvider = ({ children }) => {
         })
     }
 
-    /*
     useEffect(() => {
         if (state.refresh == true) {
             try {
@@ -51,8 +50,7 @@ export const ItemsContextProvider = ({ children }) => {
                 console.log(err);
             }
         }
-    })
-    */
+    }, [state.refresh])
     useEffect(() => {
         async function update() {
             if (getUser()) {

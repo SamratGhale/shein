@@ -53,4 +53,4 @@ const ClothesSchema = mongoose.Schema(schema, {
 
 ClothesSchema.index({ item_code: 1 }, { unique: true });
 
-module.exports = mongoose.model("clothes", ClothesSchema);
+module.exports = mongoose.model("Clothes", ClothesSchema);

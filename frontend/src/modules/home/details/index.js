@@ -49,9 +49,9 @@ const ItemDetail = (params) => {
   useEffect(() => {
     const init = async () => {
       try {
+        console.log(id);
         const res = await getById(id);
-        console.log(res);
-        setItem(res);
+        console.log(res)
       } catch (err) {
         console.log(err);
         window.location = PATH_APP.root;
