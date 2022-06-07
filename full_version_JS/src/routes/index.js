@@ -96,6 +96,19 @@ export default function Router() {
           ]
         },
         {
+          path: 'orders',
+          children: [
+            { element: <Navigate to="/dashboard/e-commerce/shop" replace /> },
+            { path: 'shop', element: <EcommerceShop /> },
+            { path: 'product/:id', element: <EcommerceProductDetails /> },
+            { path: 'list', element: <OrdersList/> },
+            { path: 'product/new', element: <EcommerceProductCreate /> },
+            { path: 'product/:id/edit', element: <EcommerceProductCreate /> },
+            { path: 'checkout', element: <EcommerceCheckout /> },
+            { path: 'invoice', element: <EcommerceInvoice /> }
+          ]
+        },
+        {
           path: 'user',
           children: [
             { element: <Navigate to="/dashboard/user/profile" replace /> },
@@ -238,6 +251,7 @@ const GeneralBooking = Loadable(lazy(() => import('../pages/dashboard/GeneralBoo
 const EcommerceShop = Loadable(lazy(() => import('../pages/dashboard/EcommerceShop')));
 const EcommerceProductDetails = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductDetails')));
 const EcommerceProductList = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductList')));
+const OrdersList= Loadable(lazy(() => import('../pages/dashboard/OrdersList')));
 const EcommerceProductCreate = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductCreate')));
 const EcommerceCheckout = Loadable(lazy(() => import('../pages/dashboard/EcommerceCheckout')));
 const EcommerceInvoice = Loadable(lazy(() => import('../pages/dashboard/EcommerceInvoice')));

@@ -22,7 +22,7 @@ export function logout() {
 export async function verifyToken() {
   try {
     const res = await axios.post(`${USER}/validate/${access_token}`);
-    console.log(res)
+  
     saveUser(res.data);
     return ({ sucess: true, status: 200, data: res.data })
   } catch (err) {

@@ -1,4 +1,4 @@
-const CartModel = require('./cart.model');
+const CartModel = require('./cart_items.model');
 const fs = require('fs');
 
 const { User } = require('../users/user.controllers');

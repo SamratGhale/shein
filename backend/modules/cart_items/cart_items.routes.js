@@ -1,5 +1,5 @@
-const controllers = require('./cart.controllers')
-const validators = require('./cart.validators')
+const controllers = require('./cart_items.controllers')
+const validators = require('./cart_items.validators')
 
 const routes = {
     add: {

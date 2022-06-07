@@ -72,6 +72,14 @@ export const PATH_DASHBOARD = {
     checkout: path(ROOTS_DASHBOARD, '/e-commerce/checkout'),
     invoice: path(ROOTS_DASHBOARD, '/e-commerce/invoice')
   },
+  orders: {
+    root: path(ROOTS_DASHBOARD, '/orders'),
+    list: path(ROOTS_DASHBOARD, '/orders/list'),
+    newProduct: path(ROOTS_DASHBOARD, '/orders/product/new'),
+    editById: path(ROOTS_DASHBOARD, '/orders/product/nike-blazer-low-77-vintage/edit'),
+    checkout: path(ROOTS_DASHBOARD, '/orders/checkout'),
+    invoice: path(ROOTS_DASHBOARD, '/orders/invoice'),
+  },
   blog: {
     root: path(ROOTS_DASHBOARD, '/blog'),
     posts: path(ROOTS_DASHBOARD, '/blog/posts'),

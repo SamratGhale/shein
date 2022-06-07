@@ -57,6 +57,7 @@ import App from './App';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import reportWebVitals from './reportWebVitals';
 import { ClothesContextProvider } from './contexts/ClothesContext';
+import {OrdersContextProvider} from './contexts/OrdersContext';
 
 // ----------------------------------------------------------------------
 
@@ -70,9 +71,11 @@ ReactDOM.render(
               <BrowserRouter>
                 <ClothesContextProvider>
                   <UserContextProvider>
+                    <OrdersContextProvider>
                     <AuthProvider>
                       <App />
                     </AuthProvider>
+                    </OrdersContextProvider>
                   </UserContextProvider>
                 </ClothesContextProvider>
               </BrowserRouter>

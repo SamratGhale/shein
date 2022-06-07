@@ -95,6 +95,5 @@ export const ClothesContextProvider = ({ children }) => {
     >
       {children}
     </ClothesContext.Provider>
-  );
-
+ )
 }

@@ -85,13 +85,11 @@ const sidebarConfig = [
         path: PATH_DASHBOARD.eCommerce.root,
         icon: ICONS.cart,
         children: [
-          { title: 'cart', path: PATH_DASHBOARD.eCommerce.shop },
-          { title: 'product', path: PATH_DASHBOARD.eCommerce.productById },
-          { title: 'list', path: PATH_DASHBOARD.eCommerce.list },
-          { title: 'create', path: PATH_DASHBOARD.eCommerce.newProduct },
-          { title: 'edit', path: PATH_DASHBOARD.eCommerce.editById },
-          { title: 'checkout', path: PATH_DASHBOARD.eCommerce.checkout },
-          { title: 'invoice', path: PATH_DASHBOARD.eCommerce.invoice }
+          { title: 'list', path: PATH_DASHBOARD.orders.list },
+          { title: 'create', path: PATH_DASHBOARD.orders.newProduct },
+          { title: 'edit', path: PATH_DASHBOARD.orders.editById },
+          { title: 'checkout', path: PATH_DASHBOARD.orders.checkout },
+          { title: 'invoice', path: PATH_DASHBOARD.orders.invoice }
         ]
       },
 
