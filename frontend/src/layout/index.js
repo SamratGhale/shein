@@ -19,8 +19,8 @@ function DashBoardLayout() {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
-      }}>
 
+      }}>
       <NavBar />
       <Box sx={{ padding: 3 }}>
         {paths[paths.length - 1] !== "" ? (
@@ -30,7 +30,7 @@ function DashBoardLayout() {
             </Link>
             {paths.slice(1).map((p) => {
               return (
-                <Link underline="hover" color="inherit" >
+                <Link key={p} underline="hover" color="inherit" >
                   {p}
                 </Link>
               )
@@ -40,7 +40,6 @@ function DashBoardLayout() {
 
       </Box>
       <Outlet />
-
       <Footer />
     </Box>
   )

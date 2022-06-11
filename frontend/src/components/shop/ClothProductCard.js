@@ -1,10 +1,10 @@
 import { Box, Card, Link, Typography, Stack, Grid } from '@mui/material';
 import { CLOTHES_IMAGE } from '../../constants/api';
 import { styled } from "@mui/material/styles";
-import {fCurrency} from "../../utils/formatNumber";
+import { fCurrency } from "../../utils/formatNumber";
 import { PATH_APP } from '../../routes/paths';
-import {paramCase} from 'change-case';
-import {Link as RouterLink} from "react-router-dom";
+import { paramCase } from 'change-case';
+import { Link as RouterLink } from "react-router-dom";
 
 
 const ProductImgStyle = styled('img')({
@@ -25,20 +25,20 @@ export default function ClothProductCard({ cloth }) {
         <Card>
             <Box sx={{ pt: '100%', position: 'relative' }}>
                 <ProductImgStyle
-                    alt={cloth.item_name}
+                    alt="Shophalic 24/7"
                     src={CLOTHES_IMAGE + '/' + _id + '/' + files[0]}
                 />
             </Box>
 
             <Stack spacing={2} sx={{ p: 3 }}>
-                <Link to={linkTo} color="inherit" component={RouterLink}>
+                <Link sx={{textDecoration: "none"}}to={linkTo} color="inherit" component={RouterLink}>
                     <Typography variant="subtitle2" noWrap>
                         {item_name}
                     </Typography>
                 </Link>
                 <Stack direction="row" alignItems="center" justifyContent="gap-between">
                     <Typography variant="subtitle1">
-                        <Typography component="span" variant="body1" sx={{color: 'GrayText.disabled', textDecoration: 'line-through'}}>
+                        <Typography component="span" variant="body1" sx={{ color: 'GrayText.disabled', textDecoration: 'line-through' }}>
                             {item_price && fCurrency(item_price)}
                         </Typography>
                         &nbsp;

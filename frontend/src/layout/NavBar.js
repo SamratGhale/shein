@@ -23,11 +23,13 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import InputBase from '@mui/material/InputBase';
 import AdbIcon from '@mui/icons-material/Adb';
-
+import Grid from "@mui/material/Grid"
+import Stack from "@mui/material/Stack"
 import { styled, alpha } from '@mui/material/styles';
 import { PATH_APP, PATH_PAGE, ROOTS } from '../routes/paths';
 import { ItemsContext } from '../modules/home/context';
 import { getAllTags } from '../modules/home/services';
+import Logo from "../logo.png";
 
 
 
@@ -107,7 +109,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = ['Products', 'Contact Us', 'My Orders'];
 
 const NavBar = () => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -148,122 +150,125 @@ const NavBar = () => {
   });
 
   return (
-    <AppBar position="static" color='secondary' >
-      <Container maxWidth="lg">
-        <Toolbar disableGutters>
-          <Link variant='secondary' to={ROOTS.app} component={RouterLink} style={{ textDecoration: 'none' }}>
-            <Typography
-              variant="h6"
-              noWrap
-              sx={{
-                mr: 2,
-                display: { xs: 'none', md: 'flex' },
-                fontFamily: 'monospace',
-                fontWeight: 700,
-                letterSpacing: '.3rem',
-                textDecoration: 'none',
-              }}
-            >
-              SHEIN
-            </Typography>
+    <AppBar position="static" sx={{ backgroundColor: 'white', color: "black", maxHeight: 75 }} >
+      <Grid container sx={{ maxWidth: "4000", width: "4000", alignItems: "center" }} gap={3}>
+        <Grid item xs={4}>
+          <Link variant='secondary' to={ROOTS.app} component={RouterLink} style={{ textDecoration: 'none' }} >
+            <img alt="Shopaholic Logo" src={Logo} style={{ maxWidth: 120 }} />
           </Link>
+        </Grid>
 
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton
-              size="large"
-              aria-label="account of current user"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              onClick={handleOpenNavMenu}
-              color="inherit"
-            >
-              <MenuIcon />
-            </IconButton>
-            <Menu
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { xs: 'block', md: 'none' },
-              }}
-            >
-              {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-          <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
+        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+          <IconButton
+            size="large"
+            aria-label="account of current user"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            onClick={handleOpenNavMenu}
+            color="inherit"
+          >
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            id="menu-appbar"
+            anchorEl={anchorElNav}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+            open={Boolean(anchorElNav)}
+            onClose={handleCloseNavMenu}
             sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
+              display: { xs: 'block', md: 'none' },
             }}
           >
-            LOGO
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Button
-                key={page}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-              >
-                {page}
-              </Button>
+              <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <Typography textAlign="center" color="black">{page}</Typography>
+              </MenuItem>
             ))}
-          </Box>
+          </Menu>
+        </Box>
+        {/* 
+        <AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+        <Typography
+          variant="h5"
+          noWrap
+          component="a"
+          href=""
+          sx={{
+            mr: 2,
+            display: { xs: 'flex', md: 'none' },
+            flexGrow: 1,
+            fontFamily: 'monospace',
+            fontWeight: 700,
+            letterSpacing: '.3rem',
+            color: 'inherit',
+            textDecoration: 'none',
+          }}
+        >
+          LOGO
+        </Typography>
+        */}
+
+        <Grid item xs={3}>
+          <Stack
+            direction="row"
+            gap={3} sx={{ alignItems: "center", justifyContent: "center" }}>
+            <Link
+              to={ROOTS.app} component={RouterLink} onClick={handleCloseNavMenu}
+              sx={{ fontSize: 15, fontWeight: "bold", color: 'black', display: 'block', textDecoration: "none" }}
+            >
+              Products
+            </Link>
+            <Link
+              to={PATH_APP.app.contactus} component={RouterLink} onClick={handleCloseNavMenu}
+              sx={{ fontSize: 15, fontWeight: "bold", color: 'black', display: 'block', textDecoration: "none" }}
+            >
+              ContactUs
+            </Link>
+            <Link
+              to={PATH_APP.app.orders} component={RouterLink} onClick={handleCloseNavMenu}
+              sx={{ fontSize: 15, fontWeight: "bold", color: 'black', display: 'block', textDecoration: "none" }}
+
+            >
+              My Orders
+            </Link>
+          </Stack>
+        </Grid>
 
 
-          <div>
-            <div {...getRootProps()}>
-              <Search
+        <Grid item sx={{ backgroundColor: "#f1f1f1" }}>
+          <Search>
+            <SearchIconWrapper>
+              <SearchIcon sx={{ maxWidth: 20 }} />
+            </SearchIconWrapper>
+            <StyledInputBase
+              {...getInputProps()}
+              placeholder=" Search…"
+              style={{ fontSize: 14 }}
+              onKeyDown={(e) => {
+                if (e.keyCode == 13) {
+                  window.location = `/?${queryString.stringify({ search: e.target.value })}`;
+                }
+              }}
+            />
+            {groupedOptions.length > 0 ? (
+              <Listbox {...getListboxProps()}>
+                {groupedOptions.map((option, index) => {
+                  return <MenuItem {...getOptionProps({ option, index })}>{option}</MenuItem>
+                })}
+              </Listbox>
+            ) : null}
+          </Search>
+        </Grid>
 
-              >
-                <SearchIconWrapper>
-                  <SearchIcon />
-                </SearchIconWrapper>
-                <StyledInputBase
-                  {...getInputProps()}
-                  placeholder="Search…"
-                  onKeyDown={(e) => {
-                    if (e.keyCode == 13) {
-                      window.location = `/?${queryString.stringify({ search: e.target.value })}`;
-                    }
-                  }}
-                />
-                {groupedOptions.length > 0 ? (
-                  <Listbox {...getListboxProps()}>
-                    {groupedOptions.map((option, index) => {
-                      return <MenuItem {...getOptionProps({ option, index })}>{option}</MenuItem>
-                    })}
-                  </Listbox>
-                ) : null}
-              </Search>
-            </div>
-          </div>
-
+        <Grid item>
           <IconButton
             size="large"
             aria-label="cart"
@@ -272,14 +277,19 @@ const NavBar = () => {
           >
             <Link to={PATH_APP.app.cart} component={RouterLink}>
               <StyledBadge badgeContent={cartCount} color="success">
-                <ShoppingCartIcon />
+                <ShoppingCartIcon sx={{ maxWidth: 25 }} />
               </StyledBadge>
             </Link>
           </IconButton>
+
+        </Grid>
+
+
+        <Grid item>
           {getUser() == null ? (
             <MenuItem>
-              <Link to={PATH_PAGE.auth.login} component={RouterLink}>
-                <Typography>Login</Typography>
+              <Link sx={{ textDecoration: "none" }} to={PATH_PAGE.auth.login} component={RouterLink}>
+                <Typography sx={{ color: "black" }}>Login</Typography>
               </Link>
             </MenuItem>
           ) : (
@@ -291,7 +301,7 @@ const NavBar = () => {
           )}
 
           <Menu
-            sx={{ mt: '45px' }}
+            sx={{ mt: '45px', color: "black" }}
             id="menu-appbar"
             anchorEl={anchorElUser}
             anchorOrigin={{
@@ -309,16 +319,14 @@ const NavBar = () => {
             <MenuItem onClick={handleCloseUserMenu}>
               <Typography textAlign="center">My Orders</Typography>
             </MenuItem>
-            <MenuItem onClick={handleCloseUserMenu}>
-              <Typography textAlign="center">My Account</Typography>
-            </MenuItem>
             <MenuItem onClick={logoutUser}>
               <Typography textAlign="center">Logout</Typography>
             </MenuItem>
           </Menu>
-        </Toolbar>
-      </Container>
-    </AppBar>
+
+        </Grid>
+      </Grid>
+    </AppBar >
   );
 };
 export default NavBar;

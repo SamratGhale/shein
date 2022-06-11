@@ -1,7 +1,11 @@
-import { useLiveQuery } from 'dexie-react-hooks';
+/*
+* TODO
+* make it better!
+* you could dispatch the pagination instead of calling api 
+*/
+
 import React, { createContext, useEffect, useReducer } from 'react';
 import clothesReducer from './reducers';
-import { db } from './db';
 import * as Service from './services';
 import * as actions from './actions';
 import { getUser } from '../../utils/sessionManager';
@@ -12,7 +16,7 @@ const initialState = {
     cartCount: 0,
     search: '',
     refresh: false,
-    pagination: { limit: 8, start: 0, total: 0, currentPage: 0, totalPages: 0 }
+    pagination: { limit: 12, start: 0, total: 0, currentPage: 0, totalPages: 0 }
 }
 
 export const ItemsContext = createContext(initialState);
@@ -39,51 +43,68 @@ export const ItemsContextProvider = ({ children }) => {
         })
     }
 
+
+    useEffect(() => {
+        if (getUser()) {
+            Service.getMyCart().then((myCarts) => {
+                dispatch({ type: actions.SET_CART_DATA, data: myCarts })
+                dispatch({ type: actions.SET_CART_COUNT, data: myCarts.length })
+            });
+        }
+    }, [])
+
     useEffect(() => {
         if (state.refresh == true) {
             try {
                 Service.getAllItems().then((data) => {
                     dispatch({ type: actions.SET_ITEMS, data: data });
-                    dispatch({ type: actions.REGRESH_DATA });
                 })
+                if (getUser()) {
+                    Service.getMyCart().then((myCarts) => {
+                        dispatch({ type: actions.SET_CART_DATA, data: myCarts })
+                        dispatch({ type: actions.SET_CART_COUNT, data: myCarts.length })
+                    });
+
+                }
+                dispatch({ type: actions.REGRESH_DATA });
             } catch (err) {
                 console.log(err);
             }
         }
     }, [state.refresh])
-    useEffect(() => {
-        async function update() {
-            if (getUser()) {
-                const myCarts = await Service.getMyCart();
-                dispatch({ type: actions.SET_CART_DATA, data: myCarts })
-                dispatch({ type: actions.SET_CART_COUNT, data: myCarts.length })
-            } else {
-                const c = await db.cart.count();
-                const arr = await db.cart.toArray();
-                dispatch({ type: actions.SET_CART_DATA, data: arr })
-                dispatch({ type: actions.SET_CART_COUNT, data: c })
-            }
-        }
-        update();
-    }, [state.refresh])
 
     async function addToCart(item, amount) {
-        /* For unlogged users */
-        if (getUser()) {
-            const form = new FormData();
-            form.append("item_id", item._id);
-            form.append("quantity", amount);
-            return await Service.addToCart(form);
-        } else {
-            const i = await db.cart.get({ item_id: item._id });
-            if (i) {
-                const new_q = Number(i.quantity) + Number(amount);
-                await db.cart.update(i.id, { quantity: new_q });
-            } else {
-                await db.cart.add({ item_id: item._id, item, quantity: amount })
-                dispatch({ type: actions.SET_CART_COUNT, data: state.cartCount + 1 })
-            }
+        const form = new FormData();
+        form.append("item_id", item._id);
+        form.append("quantity", amount);
+        return await Service.addToCart(form);
+    }
+
+    async function addOrder(data) {
+        const form = new FormData();
+        form.append("payment_method", data.payment_method);
+        form.append("delivery_type", data.delivery_type);
+        form.append("location", data.location);
+
+        /* 
+        * TODO
+        * to change this for order items directly
+        */
+        const items = state.cart.filter((i)=> i.is_selected == true);
+
+        items.forEach((i)=>{
+            form.append("items", JSON.stringify(i));
+        })
+
+        return await Service.addOrder(form);
+    }
+
+    async function updateCart(id, data, refresh = true) {
+        const res = await Service.updateCart(id, data);
+        if (refresh) {
+            dispatch({ type: actions.REGRESH_DATA });
         }
+        return res;
     }
 
     return (
@@ -97,7 +118,9 @@ export const ItemsContextProvider = ({ children }) => {
                 addToCart,
                 getById,
                 listItems,
-                setSearch
+                setSearch,
+                updateCart,
+                addOrder
             }}
         >
             {children}

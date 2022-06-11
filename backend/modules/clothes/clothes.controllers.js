@@ -93,6 +93,7 @@ const Clothes = {
         }
       });
     }
+    console.log("start", start)
     const res = await DataUtils.paging({
       start,
       limit,

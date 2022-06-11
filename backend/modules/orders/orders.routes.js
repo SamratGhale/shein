@@ -13,6 +13,9 @@ const routes = {
       allow: "multipart/form-data",
     },
   },
+
+
+
   list: {
     method: "GET",
     path: "",

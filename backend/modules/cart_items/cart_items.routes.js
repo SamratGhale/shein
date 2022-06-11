@@ -17,6 +17,11 @@ const routes = {
         method: "GET",
         path: "",
         description: "Get my cart items"
+    },
+    update: {
+        method: "PUT",
+        path: "/{id}",
+        description: "update cart",
     }
 };
 

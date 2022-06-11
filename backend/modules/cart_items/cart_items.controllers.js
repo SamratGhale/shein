@@ -1,5 +1,6 @@
 const CartModel = require('./cart_items.model');
 const fs = require('fs');
+const { DataUtils } = require('../../utils/data');
 
 const { User } = require('../users/user.controllers');
 
@@ -14,13 +15,14 @@ const Cart = {
             if (!user) {
                 throw { message: "Invalid user", code: 404 };
             }
-            const exists = await CartModel.findOne({ user: user._id, item: item_id, is_archived: false });
+            const exists = await CartModel.findOne({ user: user._id, item_id, is_archived: false });
+            console.log(exists);
             if (exists) {
                 return await CartModel.findByIdAndUpdate(exists._id, { quantity: exists.quantity + quantity });
             } else {
                 const cart = {
-                    item: item_id,
-                    user: user._id,
+                    item_id,
+                    user_id: user._id,
                     quantity: quantity
                 }
                 return await CartModel.create(cart);
@@ -29,16 +31,50 @@ const Cart = {
             throw err;
         }
     },
+
+    async update(id, data, token){
+        const cart_item = await CartModel.findById(id);
+        const user =  await User.validateToken(token);
+        if(!cart_item){
+            throw {message: "Cart dosen't exist", code :404};
+        }
+        console.log(user.user._id)
+        console.log(cart_item.user_id)
+        if(!user.user._id.equals(cart_item.user_id)){
+            throw {message: "You are not the owner of this cart!", code :400};
+        }
+        return await CartModel.findByIdAndUpdate(id, data);
+    },
     async getMyCart(token) {
         const user = (await User.validateToken(token)).user;
         if (!user) {
             throw { message: "Invalid user", code: 404 };
         }
-        const res = await CartModel.find({ user: user._id, is_archived: false }).populate('item').lean();
-        res.forEach(async (item, i) => {
-            res[i].item.files = fs.readdirSync(`./modules/clothes/images/${item.item._id}`);
+        const query = []
+        query.push({
+            $lookup:{
+                from: 'clothes',
+                localField: 'item_id',
+                foreignField: '_id',
+                as:'item'
+            }
         })
-        return res;
+
+        const res = await DataUtils.paging({
+            sort :{created_at : -1},
+            model:CartModel,
+            query
+        })
+
+
+        res.data.forEach(async (item, i) => {
+            if(item.item[0]){
+                res.data[i].item[0].files = fs.readdirSync(`./modules/clothes/images/${item.item[0]._id}`);
+            }
+        })
+
+        console.log(res.data);
+        return res.data;
 
     }
 }
@@ -52,5 +88,10 @@ module.exports = {
     getMyCart: (req) => {
         const token = req.params.token || req.headers.access_token;
         return Cart.getMyCart(token);
-    }
+    },
+    update: (req) => {
+        const token = req.params.token || req.headers.access_token;
+        const id = req.params.id;
+        return Cart.update(id, req.payload, token);
+    },
 }

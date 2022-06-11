@@ -8,54 +8,112 @@ import { PATH_PAGE } from '../../routes/paths';
 import { signUp } from './services';
 import { useSnackbar } from 'react-simple-snackbar';
 import snakOptions from '../../constants/snakOptions';
+import Avatar from '@mui/material/Avatar';
+import CssBaseline from '@mui/material/CssBaseline';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+
+const theme = createTheme();
 
 const SignUp = () => {
   const [openSnackbar, closeSnackbar] = useSnackbar(snakOptions);
-  const handleSignup = async () => {
-    const form = new FormData();
-    form.append("email", email);
-    form.append("phone", phone);
-    form.append("password", password);
-    form.append("role", "USER");
-    signUp(form).then((res) => {
+  const handleSignup = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log(data);
+    data.append('role', "USER");
+    signUp(data).then((res) => {
       openSnackbar("Register successful please check your email for conformation");
     }).catch((err) => {
       console.log(err.response.data.message);
       openSnackbar(err.response.data.message);
     });
   }
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [phone, setPhone] = useState(null);
   return (
-    <Grid
-      container
-      spacing={0}
-      justifyContent="center"
-    >
-      <Box component="form">
-        <FormControl variant="standard">
-          <InputLabel >Email</InputLabel>
-          <Input value={email} onChange={(e) => setEmail(e.target.value)} />
-        </FormControl>
-        <br />
-        <FormControl variant="standard">
-          <InputLabel >Phone Number</InputLabel>
-          <Input value={phone} onChange={(e) => setPhone(e.target.value)} type="number" />
-        </FormControl>
-        <br />
-        <FormControl variant="standard">
-          <InputLabel >Password</InputLabel>
-          <Input value={password} onChange={(e) => setPassword(e.target.value)} type="password" />
-        </FormControl>
-        <br />
-        <Button onClick={async () => { await handleSignup() }} color="success">Submit</Button>
-        <br />
-        <Link variant='subtitle2' to={PATH_PAGE.auth.login} component={RouterLink} style={{ textDecoration: 'none' }} >
-          Already have an account? Log In
-        </Link>
-      </Box>
-    </Grid>
+    <Grid sx={{ mb: 20 }}>
+      <ThemeProvider theme={theme}>
+        <Container component="main" maxWidth="xs">
+          <CssBaseline />
+          <Box
+            sx={{
+              marginTop: 8,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+              <LockOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign Up
+            </Typography>
+            <Box component="form" onSubmit={handleSignup} noValidate sx={{ mt: 1 }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+              />
+
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="phone"
+                label="Phone"
+                type="phone"
+                id="phone"
+                autoComplete='phone'
+              />
+
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+              />
+
+
+
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              /*
+              onClick={async () => {
+                await handleSignup()
+              }}
+              */
+              >
+                Sign Up
+              </Button>
+              <Grid container>
+                <Grid item>
+                  <Link sx={{ textDecoration: "none" }} to={PATH_PAGE.auth.login} component={RouterLink} variant="body2">
+                    Already have an account? Log In
+                  </Link>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Container>
+      </ThemeProvider>
+    </Grid >
   )
 }
 export default SignUp;

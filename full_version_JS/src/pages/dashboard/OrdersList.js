@@ -24,7 +24,6 @@ import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 
 // ----------------------------------------------------------------------
 const columns = [
-  { field: 'username', headerName: 'User Name', width: 120 },
   {
     field: 'payment_method',
     headerName: 'Payment Method',
@@ -50,7 +49,7 @@ const columns = [
     field: 'location',
     headerName: 'Delievery Address',
     type: 'string',
-    width: 250,
+    width: 150,
     editable: false,
   },
   {
@@ -61,8 +60,8 @@ const columns = [
   },
   {
     field: 'delivery_duedate',
-    headerName: 'Delivery Charge',
-    width: 160,
+    headerName: 'Delivery Due Date',
+    width: 200,
   }
 ];
 

@@ -20,6 +20,6 @@ const handleOpen = (event) => {
        onClick={handleOpen}
        endIcon={<Icon icon={open ? chevronUpFill : chevronDownFill }/>}>
         Sort By:&nbsp;
-      </Button>
+      </Button> 
     )
 }

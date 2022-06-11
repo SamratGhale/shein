@@ -8,31 +8,17 @@ AuthProtect.propTypes = {
   children: PropTypes.node
 };
 
-function AuthProtect({ children, authorizedUsers }) {
-  if(authorizedUsers.length===0){
-    return <>{children}</>;
-  }
+function AuthProtect({ children}) {
   const currentUser = getUser();
+
   if (!currentUser) {
     return <Navigate to={PATH_PAGE.auth.login} />;
   }
-  const { role, is_approved } = currentUser;
-  if (!is_approved) {
+  const { role, is_registered, is_archived} = currentUser;
+  if (!is_registered || is_archived) {
     return <Navigate to={PATH_PAGE.auth.waitForApprove} />;
   }
-  const { isLoading } = { isLoading: false };
-  if (isLoading) {
-    return(
-        <div>
-            Loading..
-        </div>
-    )
-  }
-  if (authorizedUsers && authorizedUsers.includes(role)) {
-    return <>{children}</>;
-  } else {
-    return <Navigate to={ROOTS.app} />;
-  }
+  return <>{children}</>;
 }
 
 export default AuthProtect;

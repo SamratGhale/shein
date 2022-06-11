@@ -2,10 +2,34 @@ const mongoose = require("mongoose");
 const { PAYMENT_METHODS, ORDER_STATUS, PLACEMENT } = require("../../constants/order");
 const commonSchema = require("../../helpers/schema");
 
+const order_item ={
+  item_id: {
+    type: mongoose.Schema.ObjectId,
+    ref: 'clothes', 
+    required: true
+  },
+  quantity: {
+    type: Number,
+    default: 1,
+    description: "Quantity of items",
+    required: true
+  },
+}
+
 const schema = {
   user_id: {
     type: mongoose.Schema.ObjectId,
     ref: 'User', required: true
+  },
+
+  
+  /* 
+  * TODO
+  * security check ? 
+  */
+  subTotal:{
+    type: Number,
+    required: false,
   },
   payment_method: {
     type: String,
@@ -54,6 +78,11 @@ const schema = {
     description: "Delivery Due date",
     required: true
   },
+  items: [{
+    type: order_item,
+    description: "Array of items in the order",
+    required: true,
+  }],
   ...commonSchema,
 };
 

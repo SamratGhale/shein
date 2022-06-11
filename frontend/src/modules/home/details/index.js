@@ -3,7 +3,7 @@ import React from "react";
 import { useContext, useState, useEffect } from "react";
 import { PATH_APP } from "../../../routes/paths";
 import { ItemsContext } from "../context";
-import { Grid, Box, Button, Card, ButtonGroup, Stack } from "@mui/material";
+import { Grid, Box, Button, Card, ButtonGroup, Stack, Modal, Input } from "@mui/material";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 import { CLOTHES_IMAGE } from "../../../constants/api";
@@ -14,22 +14,72 @@ import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { makeStyles } from "@mui/styles";
 import AddIcon from "@mui/icons-material/Add";
 import CircleIcon from "@mui/icons-material/Circle";
-
 import RemoveIcon from "@mui/icons-material/Remove";
+import { useSnackbar } from "react-simple-snackbar";
+import snakOptions from "../../../constants/snakOptions";
+
+
 
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
 
-// const useStyles = makeStyles((theme) => ({
-//   card: {
-//     backgroundColor: "#fff",
-//   },
-// }));
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
+function AddToCartModal({ item, open, handleClose }) {
+  const { addToCart } = useContext(ItemsContext);
+  const [openSnackbar, closeSnackbar] = useSnackbar(snakOptions);
+  const [quantity, setQuantity] = useState(0);
+  return (
+    <Modal
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <Box sx={style}>
+        <Typography>Enter the amount to add</Typography>
+        <Input
+          value={quantity}
+          onChange={(e) => {
+            setQuantity(e.target.value);
+          }}
+          type="number"
+        />
+        <br></br>
+        <Button
+          onClick={() => {
+            addToCart(item, quantity).then(() => {
+              openSnackbar(`Added ${quantity} ${item.item_name}  to cart successfully`);
+            });
+          }}
+        >
+          Add
+        </Button>
+      </Box>
+    </Modal>
+  );
+}
 
 const ItemDetail = (params) => {
   const { getById } = useContext(ItemsContext);
   const paths = window.location.pathname.split("/");
   const id = paths[paths.length - 1];
   const [item, setItem] = useState(null);
+
+  const [openAddCart, setOpenAddCart] = useState(false);
+
+
+
+
 
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
@@ -49,9 +99,8 @@ const ItemDetail = (params) => {
   useEffect(() => {
     const init = async () => {
       try {
-        console.log(id);
         const res = await getById(id);
-        console.log(res)
+        setItem(res);
       } catch (err) {
         console.log(err);
         window.location = PATH_APP.root;
@@ -62,7 +111,13 @@ const ItemDetail = (params) => {
 
   // const classes = useStyles();
 
+  function handleAddCartClose() {
+    setOpenAddCart(!openAddCart);
+  }
+
+
   return item ? (
+
     <Grid
       container
       sx={{ alignItems: "center", justifyContent: "center", ml: 3 }}
@@ -151,7 +206,7 @@ const ItemDetail = (params) => {
               Tags:
               {item.tags.map((tag) => {
                 return (
-                  <ButtonGroup size="small" variant="contained">
+                  <ButtonGroup key={tag} size="small" variant="contained">
                     <Button
                       sx={{
                         ml: 1,
@@ -200,7 +255,9 @@ const ItemDetail = (params) => {
                 </Button>
               </Grid>
               <Grid item xs={8}>
-                <Button sx={{ width: "85%", height: 75 }} variant="contained">
+                <Button sx={{ width: "85%", height: 75 }} variant="contained" onClick={() => {
+                  handleAddCartClose();
+                }}>
                   Add to Cart
                 </Button>
               </Grid>
@@ -229,7 +286,7 @@ const ItemDetail = (params) => {
             columns={16}
             sx={{ height: 200, backgroundColor: "white" }}
           >
-            {item.description.map((desc) => {
+            {/* {item.description.map((desc) => {
               return (
                 <Grid item xs={8}>
                   <Typography variant="body1">
@@ -238,10 +295,17 @@ const ItemDetail = (params) => {
                   </Typography>
                 </Grid>
               );
-            })}
+            })} */}
+            {item.description}
           </Grid>
         </Card>
       </Grid>
+
+      <AddToCartModal item={item} open={openAddCart} handleAddCart={handleAddCartClose} />
+
+
+
+
     </Grid>
   ) : (
     "loading"
@@ -249,3 +313,45 @@ const ItemDetail = (params) => {
 };
 
 export default ItemDetail;
+
+// import { useEffect, useState, useContext } from "react";
+// import { ItemsContext } from '../context';
+// import { Container, Card, Grid } from '@mui/material';
+// import ClothesDetailCarasoul from "./ClothesDetailCarasoul";
+
+// export default function ProductDetails() {
+//   const paths = window.location.pathname.split("/");
+//   const id = paths[paths.length - 1];
+//   const [product, setProduct] = useState(null);
+//   const { getById } = useContext(ItemsContext);
+
+//   useEffect(() => {
+//     const init = async () => {
+//       try {
+//         const res = await getById(id);
+//         setProduct(res);
+//         console.log(res.item_name);
+//       } catch (err) {
+//         console.log(err);
+//       }
+//     }
+//     init();
+//   }, [])
+
+
+//   return (
+//     <Container>
+//       <>
+//         <Card>
+//           <Grid container>
+//             <Grid item>
+//               <ClothesDetailCarasoul product={product} />
+//             </Grid>
+//           </Grid>
+//         </Card>
+//       </>
+//     </Container>
+
+//   )
+// }
+

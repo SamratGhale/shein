@@ -1,20 +1,21 @@
+/*
+* TODO
+* checkout
+* remove esewa() and put it in services.js
+*/
+
 import * as React from "react";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
 import { Button, Box, Stack } from "@mui/material";
-import Divider from "@mui/material/Divider";
-import ListItemText from "@mui/material/ListItemText";
-import ListItemAvatar from "@mui/material/ListItemAvatar";
+import { useNavigate } from "react-router-dom";
 import { CLOTHES_IMAGE } from "../../../constants/api";
-import Avatar from "@mui/material/Avatar";
 import Typography from "@mui/material/Typography";
 import { ItemsContext } from "../context";
 import { Grid } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import CloseIcon from "@mui/icons-material/Close";
 import AddIcon from "@mui/icons-material/Add";
-
 import RemoveIcon from "@mui/icons-material/Remove";
+import { Checkbox } from "@mui/material";
+import { PATH_APP } from "../../../routes/paths";
 
 function esewa() {
 
@@ -51,9 +52,31 @@ function esewa() {
   post(path, params);
 }
 export default function AlignItemsList() {
-  const { cart, addToCart, refreshData } = React.useContext(ItemsContext);
+  const { cart, addToCart, refreshData, updateCart } = React.useContext(ItemsContext);
 
-  const [data, setData] = React.useState([]);
+  function getAllSelected(){
+    const res = cart.filter(c=>c.is_selected == false);
+    return res.length === 0;
+  }
+
+  async function selectAll(){
+
+    var b= true;
+    if(getAllSelected()){
+      b = false;
+    }
+    await Promise.all(cart.map(async (c)=>{
+      await updateCart(c._id, {is_selected: b}, false)
+    }))
+    refreshData();
+  }
+
+  function updateSelectedItems(item){
+    updateCart(item._id, {is_selected: !item.is_selected})
+  }
+  const navigate = useNavigate();
+
+
 
   return (
     <>
@@ -63,6 +86,8 @@ export default function AlignItemsList() {
       >
         Items Added to the Cart
       </Typography>
+
+
       <Grid
         container
         sx={{
@@ -70,6 +95,7 @@ export default function AlignItemsList() {
           justifyContent: "center",
         }}
       >
+
         <Grid
           container
           gap={2}
@@ -79,7 +105,14 @@ export default function AlignItemsList() {
             padding: 10,
           }}
         >
-          {cart
+          {cart.length ? (
+            <div>
+
+              <Checkbox checked={getAllSelected()} onChange={selectAll} />
+              <Typography variant="body2"> Select all</Typography>
+            </div>
+          ) : ("")}
+          {cart.length
             ? cart.map((item, i) => {
               return (
                 <Grid item key={i}>
@@ -95,7 +128,10 @@ export default function AlignItemsList() {
                     }}
                     gap={3}
                   >
-                    <Grid item xs={3} sx={{ ml: 2 }}>
+                    <Grid item xs={1}>
+                      <Checkbox checked={item.is_selected} onChange={()=>updateSelectedItems(item)} />
+                    </Grid>
+                    <Grid item xs={3}>
                       <Box
                         component="img"
                         sx={{
@@ -104,20 +140,20 @@ export default function AlignItemsList() {
                           maxHeight: 150,
                           maxWidth: 150,
                         }}
-                        src={`${CLOTHES_IMAGE}${item.item._id}/${item.item.files[0]}`}
+                        src={`${CLOTHES_IMAGE}${item.item_id}/${item.item[0].files[0]}`}
                       />
                     </Grid>
-                    <Grid item sx={{ color: "black" }} xs={11}>
+                    <Grid item sx={{ color: "black" }} xs={9}>
                       <Typography variant="h6" sx={{ mt: 3, mb: 2 }}>
-                        {item.item.item_name}
+                        {item.item[0].item_name}
                       </Typography>
                       <Typography variant="body1" sx={{ mb: 2 }}>
-                        Rs. {item.item.item_price * item.quantity}
+                        Rs. {item.item[0].item_price * item.quantity}
                       </Typography>
                       <Stack spacing={2} direction="row">
                         <Button disabled={item.quantity == 1} size="small" variant="contained"
                           onClick={() => {
-                            addToCart(item.item, -1).then(refreshData);
+                            addToCart(item.item[0], -1).then(refreshData);
                           }}
                         >
                           <RemoveIcon sx={{ color: "black" }} />
@@ -128,7 +164,7 @@ export default function AlignItemsList() {
                         <Button size="small" variant="contained"
                           onClick={() => {
                             console.log("apple");
-                            addToCart(item.item, 1).then(refreshData);
+                            addToCart(item.item[0], 1).then(refreshData);
                           }}
                         >
                           <AddIcon sx={{ color: "black" }} />
@@ -145,15 +181,19 @@ export default function AlignItemsList() {
                 </Grid>
               );
             })
-            : " Loading... "}
-        </Grid>
-        <Grid
-          container
-          sx={{ alignItems: "center", justifyContent: "center", mt: 3 }}
-        >
-          <Grid item sx={{ mb: 4, fontFamily: "Nunito" }}>
-            <Button variant="contained" onClick={esewa}>Checkout</Button>
-          </Grid>
+            : "Your cart is empty "}
+          {cart ? (
+            <Grid
+              container
+              sx={{ alignItems: "center", justifyContent: "center", mt: 3 }}
+            >
+              <Grid item sx={{ mb: 4, fontFamily: "Nunito" }}>
+                <Button variant="contained" onClick={()=>{
+                  navigate(PATH_APP.app.checkout);
+                }} >Proceed to checkout</Button>
+              </Grid>
+            </Grid>
+          ) : ("")}
         </Grid>
       </Grid>
     </>

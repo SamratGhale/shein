@@ -1,11 +1,10 @@
 import axios from "axios";
-import { CLOTHES, CART } from "../../constants/api";
+import { CLOTHES, CART, ORDER } from "../../constants/api";
 import { getUserToken } from "../../utils/sessionManager";
 
 const access_token = getUserToken();
 
 export async function getAllItems(query) {
-  console.log(query);
   try {
     const res = await axios(`${CLOTHES}`, { params: query },
       {
@@ -14,7 +13,6 @@ export async function getAllItems(query) {
         }
       }
     );
-    console.log(res.data.data);
     return res.data.data;
   } catch (err) {
     console.error(err);
@@ -53,7 +51,6 @@ export async function addToCart(payload) {
       })
       .then((res) => {
         resolve(res);
-        console.log(res);
       })
       .catch((err) => {
         reject(err);
@@ -64,6 +61,36 @@ export async function addToCart(payload) {
 export async function getMyCart() {
   return new Promise((resolve, reject) => {
     axios.get(CART, {
+      headers: {
+        'access_token': access_token
+      }
+    })
+      .then((res) => {
+        resolve(res.data);
+      }).catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+export async function updateCart(id, data) {
+  return new Promise((resolve, reject) => {
+    axios.put(CART + '/' + id, data, {
+      headers: {
+        'access_token': access_token
+      }
+    })
+      .then((res) => {
+        resolve(res.data);
+      }).catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+export async function addOrder(data) {
+  return new Promise((resolve, reject) => {
+    axios.post(ORDER, data, {
       headers: {
         'access_token': access_token
       }

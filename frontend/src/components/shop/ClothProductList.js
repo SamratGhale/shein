@@ -1,17 +1,17 @@
 import React from 'react';
 import ClothProductCard from "./ClothProductCard";
-import {Grid} from "@mui/material"
+import { Grid } from "@mui/material"
 
-export default function ClothProductList({cloths}) {
+export default function ClothProductList({ cloths }) {
     //console.log(cloths);
     return (
-        <Grid container spacing={3}>
+        <Grid container spacing={3} gap={5} sx={{ alignItems: "center", justifyContent: "Center" }}>
             {
                 cloths.map((cloth) => {
                     return (
-                    <Grid key={cloth._id}  item xs={12} sm={6} md={3}>
-                        <ClothProductCard cloth={cloth}/>
-                    </Grid>
+                        <Grid key={cloth._id} item xs={12} sm={6} md={3}>
+                            <ClothProductCard cloth={cloth} />
+                        </Grid>
                     )
                 })
             }

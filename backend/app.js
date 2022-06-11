@@ -97,13 +97,13 @@
         }
         if(route.uploadPayload){
           c.config.payload = Object.assign({}, route.uploadPayload);
+          c.config.plugins = {
+            'hapi-swagger': {
+              payloadType: 'form',
+              consumes: ['multipart/form-data'],
+            },
+          };
         }
-        c.config.plugins = {
-          'hapi-swagger': {
-            payloadType: 'form',
-            consumes: ['multipart/form-data'],
-          },
-        };
         approutes.push(c)
       });
       this.server.route(approutes);

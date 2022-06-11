@@ -102,7 +102,7 @@ export default function Router() {
             { path: 'shop', element: <EcommerceShop /> },
             { path: 'product/:id', element: <EcommerceProductDetails /> },
             { path: 'list', element: <OrdersList/> },
-            { path: 'product/new', element: <EcommerceProductCreate /> },
+            { path: 'new', element: <OrderCreate /> },
             { path: 'product/:id/edit', element: <EcommerceProductCreate /> },
             { path: 'checkout', element: <EcommerceCheckout /> },
             { path: 'invoice', element: <EcommerceInvoice /> }
@@ -252,6 +252,7 @@ const EcommerceShop = Loadable(lazy(() => import('../pages/dashboard/EcommerceSh
 const EcommerceProductDetails = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductDetails')));
 const EcommerceProductList = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductList')));
 const OrdersList= Loadable(lazy(() => import('../pages/dashboard/OrdersList')));
+const OrderCreate = Loadable(lazy(() => import('../pages/dashboard/OrderCreate')));
 const EcommerceProductCreate = Loadable(lazy(() => import('../pages/dashboard/EcommerceProductCreate')));
 const EcommerceCheckout = Loadable(lazy(() => import('../pages/dashboard/EcommerceCheckout')));
 const EcommerceInvoice = Loadable(lazy(() => import('../pages/dashboard/EcommerceInvoice')));

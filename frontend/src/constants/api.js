@@ -6,5 +6,6 @@ module.exports = {
     CLOTHES: base_url + '/clothes',
     USER: base_url + '/user',
     CART: base_url + '/Cart',
+    ORDER: base_url + '/Order',
     CLOTHES_IMAGE: server_url + '/modules/clothes/images/'
 }
