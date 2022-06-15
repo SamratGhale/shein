@@ -3,6 +3,7 @@ import { PATH_DASHBOARD } from '../../routes/paths';
 // components
 import Label from '../../components/Label';
 import SvgIconStyle from '../../components/SvgIconStyle';
+import ReceiptIcon from '@mui/icons-material/Receipt';
 
 // ----------------------------------------------------------------------
 
@@ -22,7 +23,7 @@ const ICONS = {
   ecommerce: getIcon('ic_ecommerce'),
   analytics: getIcon('ic_analytics'),
   dashboard: getIcon('ic_dashboard'),
-  booking: getIcon('ic_booking')
+  booking: getIcon('ic_booking'),
 };
 
 const sidebarConfig = [
@@ -82,8 +83,8 @@ const sidebarConfig = [
       },
       {
         title: 'Invoices',
-        path: PATH_DASHBOARD.eCommerce.root,
-        icon: ICONS.cart,
+          path: PATH_DASHBOARD.eCommerce.root,
+          icon: <ReceiptIcon/>,
         children: [
           { title: 'list', path: PATH_DASHBOARD.orders.list },
           { title: 'create', path: PATH_DASHBOARD.orders.newProduct },

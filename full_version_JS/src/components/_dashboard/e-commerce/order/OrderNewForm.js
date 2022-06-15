@@ -89,6 +89,7 @@ export default function OrderNewForm({ isEdit, id }) {
       name: currentProduct?.item_name || '',
       description: currentProduct?.description || '',
       images: currentProduct?.images || [],
+      items : currentProduct?.items|| [],
       code: currentProduct?.item_code|| '',
       quantity: currentProduct?.quantity|| '',
       price: currentProduct?.item_price || '',
@@ -163,8 +164,8 @@ export default function OrderNewForm({ isEdit, id }) {
       <Form noValidate autoComplete="off" onSubmit={handleSubmit}>
         <Grid container spacing={3}>
           <Grid item xs={12} md={8}>
-            <Card sx={{ p: 3 }}>
-              <Stack spacing={3}>
+            <Stack spacing={3}>
+              <Card sx={{ p: 3 }}>
                 <TextField
                   fullWidth
                   label="User ID"
@@ -172,47 +173,7 @@ export default function OrderNewForm({ isEdit, id }) {
                   error={Boolean(touched.name && errors.name)}
                   helperText={touched.name && errors.name}
                 />
-
-                <div>
-                  <LabelStyle>Description</LabelStyle>
-                  <QuillEditor
-                    simple
-                    id="product-description"
-                    value={values.description}
-                    onChange={(val) => setFieldValue('description', val)}
-                    error={Boolean(touched.description && errors.description)}
-                  />
-                  {touched.description && errors.description && (
-                    <FormHelperText error sx={{ px: 2 }}>
-                      {touched.description && errors.description}
-                    </FormHelperText>
-                  )}
-                </div>
-
-                <div>
-                  <LabelStyle>Add Images</LabelStyle>
-                  <UploadMultiFile
-                    showPreview
-                    maxSize={3145728}
-                    accept="image/*"
-                    files={values.images}
-                    onDrop={handleDrop}
-                    onRemove={handleRemove}
-                    onRemoveAll={handleRemoveAll}
-                    error={Boolean(touched.images && errors.images)}
-                  />
-                  {touched.images && errors.images && (
-                    <FormHelperText error sx={{ px: 2 }}>
-                      {touched.images && errors.images}
-                    </FormHelperText>
-                  )}
-                </div>
-              </Stack>
-            </Card>
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <Stack spacing={3}>
+              </Card>
               <Card sx={{ p: 3 }}>
                 <FormControlLabel
                   control={<Switch {...getFieldProps('inStock')} checked={values.inStock} />}
@@ -223,38 +184,13 @@ export default function OrderNewForm({ isEdit, id }) {
                 <Stack spacing={3}>
                   <TextField fullWidth label="Product Code" {...getFieldProps('code')} />
                   <TextField fullWidth type="number" label="Quantity " {...getFieldProps('quantity')} />
-
-                  <FormControl fullWidth>
-                    <InputLabel>Category</InputLabel>
-                    <Select label="Category" native {...getFieldProps('category')} value={values.category}>
-                      {CATEGORY_OPTION.map((category) => (
-                        <optgroup key={category.group} label={category.group}>
-                          {category.classify.map((classify) => (
-                            <option key={classify} value={classify}>
-                              {classify}
-                            </option>
-                          ))}
-                        </optgroup>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <Autocomplete
-                    multiple
-                    freeSolo
-                    value={values.tags}
-                    onChange={(event, newValue) => {
-                      setFieldValue('tags', newValue);
-                    }}
-                    options={TAGS_OPTION.map((option) => option)}
-                    renderTags={(value, getTagProps) =>
-                      value.map((option, index) => (
-                        <Chip {...getTagProps({ index })} key={option} size="small" label={option} />
-                      ))
-                    }
-                    renderInput={(params) => <TextField label="Tags" {...params} />}
-                  />
                 </Stack>
               </Card>
+            </Stack>
+          </Grid>
+
+          <Grid item xs={12} md={4}>
+            <Stack spacing={3}>
 
               <Card sx={{ p: 3 }}>
                 <Stack spacing={3}>
@@ -291,7 +227,7 @@ export default function OrderNewForm({ isEdit, id }) {
               </Card>
 
               <LoadingButton type="submit" fullWidth variant="contained" size="large" loading={isSubmitting}>
-                {!isEdit ? 'Create Product' : 'Save Changes'}
+                {!isEdit ? 'Create Order' : 'Save Order'}
               </LoadingButton>
             </Stack>
           </Grid>

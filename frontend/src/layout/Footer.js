@@ -10,25 +10,12 @@ import InstagramIcon from "@mui/icons-material/Instagram";
 import { Grid, Stack } from "@mui/material";
 import CopyrightIcon from '@mui/icons-material/Copyright';
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="text.secondary">
-      {'Copyright © '}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{' '}
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
 const Footer = () => {
   return (
-    <Grid container sx={{ backgroundColor: "white", border: 1 }}>
+    <Grid container sx={{ backgroundColor: "white", borderTop: 2 }}>
       <Grid item xs={12} sx={{ mb: 6 }}>
-        <Grid container sx={{ alignItems: "center", justifyContent: "center", padding: 5 }} gap={90}>
-          <Grid item>
+        <Grid container sx={{ justifyContent: "space-evenly", alignItems: "center", padding: 5 }} >
+          <Grid item >
             <Stack spacing={3}>
               <Typography variant="h6">Payment Methods</Typography>
               <Stack direction="row" gap={5}>
@@ -51,7 +38,7 @@ const Footer = () => {
         </Grid>
       </Grid>
       <Grid item xs={12}>
-        <Grid container sx={{ alignItems: "center", justifyContent: "center", backgroundColor: "#bfbdb8" }} spacing={2} gap={25}>
+        <Grid container sx={{ alignItems: "center", justifyContent: "center", backgroundColor: "#bfbdb8" }} spacing={2} >
           <Grid item sx={{ mb: 2 }}>
             <Typography variant="body2">
               <CopyrightIcon sx={{ maxHeight: 15 }} />2022 Shophalic 24/7 All Rights Reserved

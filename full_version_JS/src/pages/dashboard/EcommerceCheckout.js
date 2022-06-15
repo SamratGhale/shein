@@ -25,7 +25,6 @@ import {
 
 // ----------------------------------------------------------------------
 
-const STEPS = ['Cart', 'Billing & address', 'Payment'];
 
 const QontoConnector = styled(StepConnector)(({ theme }) => ({
   top: 10,
@@ -82,7 +81,6 @@ export default function EcommerceCheckout() {
   const isMountedRef = useIsMountedRef();
   const { checkout } = useSelector((state) => state.product);
   const { cart, billing, activeStep } = checkout;
-  const isComplete = activeStep === STEPS.length;
 
   useEffect(() => {
     if (isMountedRef.current) {
@@ -104,44 +102,13 @@ export default function EcommerceCheckout() {
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
             {
-              name: 'E-Commerce',
+              name: 'Order',
               href: PATH_DASHBOARD.eCommerce.root
             },
             { name: 'Checkout' }
           ]}
         />
-
-        <Grid container justifyContent={isComplete ? 'center' : 'flex-start'}>
-          <Grid item xs={12} md={8} sx={{ mb: 5 }}>
-            <Stepper alternativeLabel activeStep={activeStep} connector={<QontoConnector />}>
-              {STEPS.map((label) => (
-                <Step key={label}>
-                  <StepLabel
-                    StepIconComponent={QontoStepIcon}
-                    sx={{
-                      '& .MuiStepLabel-label': {
-                        typography: 'subtitle2',
-                        color: 'text.disabled'
-                      }
-                    }}
-                  >
-                    {label}
-                  </StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-          </Grid>
-        </Grid>
-
-        {!isComplete ? (
-          <>
-            {activeStep === 0 && <CheckoutCart />}
-            {activeStep === 1 && <CheckoutBillingAddress />}
-            {activeStep === 2 && billing && <CheckoutPayment />}
-          </>
-        ) : (
-          <CheckoutOrderComplete open={isComplete} />
-        )}
+            <CheckoutCart />
       </Container>
     </Page>
   );

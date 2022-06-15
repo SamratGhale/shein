@@ -13,8 +13,16 @@ const routes = {
       allow: "multipart/form-data",
     },
   },
-
-
+  update: {
+    method: "PUT",
+    path: "/{id}",
+    description: "update an order",
+  },
+  getById: {
+    method: "GET",
+    path: "/{id}",
+    description: "Get order by id",
+  },
 
   list: {
     method: "GET",

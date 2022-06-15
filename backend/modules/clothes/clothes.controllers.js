@@ -93,7 +93,6 @@ const Clothes = {
         }
       });
     }
-    console.log("start", start)
     const res = await DataUtils.paging({
       start,
       limit,
@@ -115,6 +114,21 @@ const Clothes = {
   },
   async getById(_id) {
     const ret = await ClothesModel.findOne({ _id, is_archived: false }).lean();
+    if(!ret){
+      throw {message: `Item with code ${item_code} dosen't exist`, code : 404};
+    }
+    if(fs.existsSync(`./modules/clothes/images/${ret._id}`)){
+      ret.files = fs.readdirSync(`./modules/clothes/images/${ret._id}`);
+    }else{
+      ret.files = []
+    }
+    return ret;
+  },
+  async getByItemCode(item_code) {
+    const ret = await ClothesModel.findOne({ item_code, is_archived: false }).lean();
+    if(!ret){
+      throw {message: `Item with code ${item_code} dosen't exist`, code : 404};
+    }
     if(fs.existsSync(`./modules/clothes/images/${ret._id}`)){
       ret.files = fs.readdirSync(`./modules/clothes/images/${ret._id}`);
     }else{
@@ -261,6 +275,7 @@ module.exports = {
     return Clothes.update(req.params.id, req.payload);
   },
   getById: (req) => Clothes.getById(req.params.id),
+  getByItemCode: (req) => Clothes.getByItemCode(req.params.item_code),
   archive: (req) => Clothes.archive(req.params.id),
   getAllTags: (req) => Clothes.getAllTags(),
 };

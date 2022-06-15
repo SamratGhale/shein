@@ -59,6 +59,19 @@ export async function getById(id) {
     console.error(err);
   }
 }
+export async function getByItemCode(item_code) {
+  try {
+    const res = await axios.get(CLOTHES+`/itemcode/${item_code}`, {
+      headers: {
+        'access_token': access_token
+      }
+    });
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }
+}
 
 export async function updateClothes(id, data) {
   try {

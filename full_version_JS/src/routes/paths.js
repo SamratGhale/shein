@@ -76,7 +76,7 @@ export const PATH_DASHBOARD = {
     root: path(ROOTS_DASHBOARD, '/orders'),
     list: path(ROOTS_DASHBOARD, '/orders/list'),
     newProduct: path(ROOTS_DASHBOARD, '/orders/new'),
-    editById: path(ROOTS_DASHBOARD, '/orders/product/nike-blazer-low-77-vintage/edit'),
+    editById: path(ROOTS_DASHBOARD, '/orders/checkout/nike-blazer-low-77-vintage/edit'),
     checkout: path(ROOTS_DASHBOARD, '/orders/checkout'),
     invoice: path(ROOTS_DASHBOARD, '/orders/invoice'),
   },

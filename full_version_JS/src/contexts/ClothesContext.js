@@ -49,6 +49,13 @@ export const ClothesContextProvider = ({ children }) => {
       throw err;
     }
   }
+  async function getByItemCode(id) {
+    try {
+      return await Service.getByItemCode(id);
+    } catch (err) {
+      throw err;
+    }
+  }
   async function updateClothes(id, payload) {
     try {
       var form = new FormData();
@@ -90,7 +97,8 @@ export const ClothesContextProvider = ({ children }) => {
         getById,
         refreshData,
         addCloth,
-        updateClothes
+        updateClothes,
+        getByItemCode
       }}
     >
       {children}

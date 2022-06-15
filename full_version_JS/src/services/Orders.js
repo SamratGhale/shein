@@ -20,3 +20,48 @@ export async function getAllOrders() {
     console.error(err);
   }
 }
+
+
+export async function addOrder(data) {
+  return new Promise((resolve, reject) => {
+    axios.post(ORDER, data, {
+      headers: {
+        'access_token': access_token
+      }
+    })
+      .then((res) => {
+        resolve(res.data);
+      }).catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+export async function getById(id) {
+  return new Promise((resolve, reject) => {
+    axios.get(ORDER + `/${id}`, {
+      headers: {
+        'access_token': access_token
+      }
+    })
+      .then((res) => {
+        resolve(res.data);
+      }).catch((err) => {
+        reject(err);
+      });
+  });
+}
+export async function updateOrder(id, data) {
+  return new Promise((resolve, reject) => {
+    axios.put(ORDER + `/${id}`,data, {
+      headers: {
+        'access_token': access_token
+      }
+    })
+      .then((res) => {
+        resolve(res.data);
+      }).catch((err) => {
+        reject(err);
+      });
+  });
+}

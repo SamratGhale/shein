@@ -3,7 +3,6 @@ Shophalic 24/7 project:
 functionalities:
 
 Home page:
-advertisement banner
 
 Navbar:
 Avatar ma user ko hunu paryo
@@ -11,25 +10,19 @@ Avatar ma user ko hunu paryo
 Detail Page:
 AutoSwipeable Views ma eutai matra images haru airako cha
 
+UI :
 
-UI
-Layout:
-Responsive Design(Mobile, Smaller screen)
-Footer set( already set on Home, Contact)
+Navbar Responsive
 
+Product Details Page
 
 My Orders page
 
-Checkout page
+Order Details Page
 
-Cart page
-responseive (media query)
+Checkout page (Payment Boxes and Payment type)
 
-
-Task: 
-Product Detail Design
-Make advertisement banner
-
+Cart page responsive
 
 
 

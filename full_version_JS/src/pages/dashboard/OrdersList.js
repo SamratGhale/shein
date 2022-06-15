@@ -1,7 +1,5 @@
 import { Icon } from '@iconify/react';
-import Label from '../../components/Label';
 import { useState, useEffect } from 'react';
-import useClothes from '../../hooks/useClothes';
 import useOrders from '../../hooks/useOrders';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
@@ -22,13 +20,26 @@ import useSettings from '../../hooks/useSettings';
 import Page from '../../components/Page';
 import HeaderBreadcrumbs from '../../components/HeaderBreadcrumbs';
 
+const getFullUser = (params) => {
+  let firstName = params.row.user_detail[0].firstName;
+  let lastName = params.row.user_detail[0].lastName;
+  if(!firstName && !lastName){
+    return params.row.user_detail[0].email;
+  }
+  firstName = firstName? firstName : "";
+  lastName = lastName? lastName : "";
+
+  return `${firstName} ${lastName}`
+}
+
+
 // ----------------------------------------------------------------------
 const columns = [
   {
     field: 'payment_method',
     headerName: 'Payment Method',
     type: 'string',
-    width: 100,
+    width: 130,
     editable: false,
   },
   {
@@ -36,32 +47,47 @@ const columns = [
     headerName: 'Order Status',
     type: 'string',
     width: 130,
+    renderCell:(params)=>{
+      var color = ""
+      if     (params.value === "placed")color =  "warning";
+      else if(params.value === "on_delivery")color =  "info";
+      else if(params.value === "completed")color =  "success";
+      else if(params.value === "cancled")color =  "error";
+      return <Chip variant='outlined' label={params.value} color={color}/>
+    },
     editable: false,
   },
   {
     field: 'delivery_type',
     headerName: 'Delievery Type',
     type: 'string',
-    width: 100,
+    width: 140,
     editable: false,
   },
   {
-    field: 'location',
-    headerName: 'Delievery Address',
+    field: 'username',
+    headerName: 'Customer',
     type: 'string',
+    valueGetter: getFullUser,
     width: 150,
     editable: false,
-  },
-  {
-    field: 'delivery_charge',
-    type: "string",
-    headerName: 'Delievery Charge',
-    width: 160,
   },
   {
     field: 'delivery_duedate',
     headerName: 'Delivery Due Date',
     width: 200,
+  },
+  {
+    field: "click",
+    headerName: "Click",
+    width: 120,
+    renderCell: (params) => {
+       // you will find row info in params
+      return (<Button
+        component={RouterLink}
+        to={PATH_DASHBOARD.orders.checkout + `/${params.row._id}/edit`}
+        variant='contained'>View Details</Button>)
+    }
   }
 ];
 
@@ -69,41 +95,35 @@ const columns = [
 
 export default function UserList() {
   const { themeStretch } = useSettings();
-  const theme = useTheme();
-  const {orderList, refreshData} = useOrders();
-  const [orders , setOrders] = useState([]);
+  const { orderList, refreshData } = useOrders();
+  const [orders, setOrders] = useState([]);
 
-  useEffect(()=>{
+  useEffect(() => {
     refreshData();
-  },[])
+  }, [])
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log(orderList);
-    if(orderList.length){
+    if (orderList.length) {
       setOrders(orderList);
-    }  
-  },[orderList])
-
-
- console.log(orders);
- 
- 
+    }
+  }, [orderList])
 
   return (
-    <Page title="User: List | Minimal-UI">
+    <Page title="Orders: List">
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading="Orders List"
           links={[
             { name: 'Dashboard', href: PATH_DASHBOARD.root },
-            { name: 'User', href: PATH_DASHBOARD.user.root },
+            { name: 'Orders', href: PATH_DASHBOARD.orders.root},
             { name: 'List' }
           ]}
           action={
             <Button
               variant="contained"
               component={RouterLink}
-              to={PATH_DASHBOARD.eCommerce.newProduct}
+              to={PATH_DASHBOARD.orders.newProduct}
               startIcon={<Icon icon={plusFill} />}
             >
               Add New Order

@@ -6,6 +6,11 @@ module.exports = {
       id: Joi.objectId(),
     }),
   },
+  getByItemCode: {
+    params: Joi.object({
+      item_code: Joi.string(),
+    }),
+  },
   register: {
     payload: Joi.object({
       item_name: Joi.string().description("Item's Name"),

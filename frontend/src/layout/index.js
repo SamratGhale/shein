@@ -6,6 +6,9 @@ import { Breadcrumbs } from '@mui/material';
 import { Link } from '@mui/material';
 import React, { useState } from "react";
 import { Outlet } from 'react-router-dom';
+import AB from "../ab.png";
+
+
 DashBoardLayout.prototype = {
   children: PropTypes.node
 }
@@ -21,6 +24,7 @@ function DashBoardLayout() {
         minHeight: '100vh',
 
       }}>
+      <img src={AB} />
       <NavBar />
       <Box sx={{ padding: 3 }}>
         {paths[paths.length - 1] !== "" ? (

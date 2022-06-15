@@ -30,7 +30,7 @@ export default function ProductListHead({
 
   return (
     <TableHead>
-      <TableRow>
+      <TableRow key={1}>
         <TableCell padding="checkbox">
           <Checkbox
             indeterminate={numSelected > 0 && numSelected < rowCount}
@@ -38,9 +38,9 @@ export default function ProductListHead({
             onChange={onSelectAllClick}
           />
         </TableCell>
-        {headLabel.map((headCell) => (
-          <TableCell
-            key={headCell.id}
+        {headLabel.map((headCell) => {
+          return (<TableCell
+            key={headCell._id}
             align={headCell.alignRight ? 'right' : 'left'}
             sortDirection={orderBy === headCell.id ? order : false}
           >
@@ -56,7 +56,8 @@ export default function ProductListHead({
               ) : null}
             </TableSortLabel>
           </TableCell>
-        ))}
+          )
+        })}
       </TableRow>
     </TableHead>
   );

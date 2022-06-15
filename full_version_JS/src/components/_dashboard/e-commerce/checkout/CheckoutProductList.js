@@ -22,6 +22,7 @@ import getColorName from '../../../../utils/getColorName';
 import { fCurrency } from '../../../../utils/formatNumber';
 //
 import { MIconButton } from '../../../@material-extend';
+import { CLOTHES_IMAGE } from '../../../../_apis_/constants';
 
 // ----------------------------------------------------------------------
 
@@ -96,15 +97,17 @@ export default function ProductList({ formik, onDelete, onIncreaseQuantity, onDe
 
         <TableBody>
           {products.map((product) => {
-            const { id, name, size, price, color, cover, quantity, available } = product;
+            const { _id, item_name, size, item_price, color, files, cart_quantity, available } = product;
             return (
-              <TableRow key={id}>
+              <TableRow key={_id}>
                 <TableCell>
                   <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <ThumbImgStyle alt="product image" src={cover} />
+                    {files ?(
+                      <ThumbImgStyle alt="product image" src={CLOTHES_IMAGE +`/${_id}/`+ files[0]} />
+                    ):""}
                     <Box>
                       <Typography noWrap variant="subtitle2" sx={{ maxWidth: 240, mb: 0.5 }}>
-                        {name}
+                        {item_name}
                       </Typography>
 
                       <Stack
@@ -131,21 +134,22 @@ export default function ProductList({ formik, onDelete, onIncreaseQuantity, onDe
                   </Box>
                 </TableCell>
 
-                <TableCell align="left">{fCurrency(price)}</TableCell>
+                <TableCell align="left">{fCurrency(item_price)}</TableCell>
 
                 <TableCell align="left">
                   <Incrementer
-                    quantity={quantity}
+                    quantity={cart_quantity}
                     available={available}
-                    onDecrease={() => onDecreaseQuantity(id)}
-                    onIncrease={() => onIncreaseQuantity(id)}
+                    onDecrease={() => onDecreaseQuantity(_id)}
+                    _
+                    onIncrease={() => onIncreaseQuantity(_id)}
                   />
                 </TableCell>
 
-                <TableCell align="right">{fCurrency(price * quantity)}</TableCell>
+                <TableCell align="right">{fCurrency(item_price * cart_quantity)}</TableCell>
 
                 <TableCell align="right">
-                  <MIconButton onClick={() => onDelete(id)}>
+                  <MIconButton onClick={() => onDelete(_id)}>
                     <Icon icon={trash2Fill} width={20} height={20} />
                   </MIconButton>
                 </TableCell>

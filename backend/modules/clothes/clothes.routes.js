@@ -63,6 +63,11 @@ const routes = {
     path: "/{id}",
     description: "Get item by id",
   },
+  getByItemCode: {
+    method: "GET",
+    path: "/itemcode/{item_code}",
+    description: "Get item by item code",
+  },
   getAllTags: {
     method: "GET",
     path: "/tags",

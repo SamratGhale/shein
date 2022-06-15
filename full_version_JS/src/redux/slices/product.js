@@ -58,7 +58,7 @@ const slice = createSlice({
 
     // DELETE PRODUCT
     deleteProduct(state, action) {
-      state.products = reject(state.products, { id: action.payload });
+      state.products = reject(state.products, { _id: action.payload });
     },
 
     //  SORT & FILTER PRODUCTS
@@ -78,7 +78,7 @@ const slice = createSlice({
     getCart(state, action) {
       const cart = action.payload;
 
-      const subtotal = sum(cart.map((product) => product.price * product.quantity));
+      const subtotal = sum(cart.map((product) => product.item_price * product.cart_quantity));
       const discount = cart.length === 0 ? 0 : state.checkout.discount;
       const shipping = cart.length === 0 ? 0 : state.checkout.shipping;
       const billing = cart.length === 0 ? null : state.checkout.billing;
@@ -92,6 +92,8 @@ const slice = createSlice({
     },
 
     addCart(state, action) {
+      console.log("called")
+      console.log(action.payload)
       const product = action.payload;
       const isEmptyCart = state.checkout.cart.length === 0;
 
@@ -99,26 +101,27 @@ const slice = createSlice({
         state.checkout.cart = [...state.checkout.cart, product];
       } else {
         state.checkout.cart = map(state.checkout.cart, (_product) => {
-          const isExisted = _product.id === product.id;
+          const isExisted = _product._id === product._id;
           if (isExisted) {
             return {
               ..._product,
-              quantity: _product.quantity + 1
+              cart_quantity: _product.cart_quantity + 1
             };
           }
           return _product;
         });
       }
-      state.checkout.cart = uniqBy([...state.checkout.cart, product], 'id');
+      state.checkout.cart = uniqBy([...state.checkout.cart, product], '_id');
+      console.log(state.checkout.cart)
     },
 
     deleteCart(state, action) {
-      const updateCart = filter(state.checkout.cart, (item) => item.id !== action.payload);
-
+      const updateCart = filter(state.checkout.cart, (item) => item._id !== action.payload);
       state.checkout.cart = updateCart;
     },
 
     resetCart(state) {
+      console.log("called reset")
       state.checkout.activeStep = 0;
       state.checkout.cart = [];
       state.checkout.total = 0;
@@ -126,6 +129,10 @@ const slice = createSlice({
       state.checkout.discount = 0;
       state.checkout.shipping = 0;
       state.checkout.billing = null;
+    },
+    resetCartCart(state, action) {
+      console.log("called reset")
+      state.checkout.cart = action.payload;
     },
 
     onBackStep(state) {
@@ -144,10 +151,10 @@ const slice = createSlice({
     increaseQuantity(state, action) {
       const productId = action.payload;
       const updateCart = map(state.checkout.cart, (product) => {
-        if (product.id === productId) {
+        if (product._id === productId) {
           return {
             ...product,
-            quantity: product.quantity + 1
+            cart_quantity: product.cart_quantity + 1
           };
         }
         return product;
@@ -159,10 +166,10 @@ const slice = createSlice({
     decreaseQuantity(state, action) {
       const productId = action.payload;
       const updateCart = map(state.checkout.cart, (product) => {
-        if (product.id === productId) {
+        if (product._id === productId) {
           return {
             ...product,
-            quantity: product.quantity - 1
+            cart_quantity: product.cart_quantity - 1
           };
         }
         return product;
@@ -208,7 +215,8 @@ export const {
   filterProducts,
   sortByProducts,
   increaseQuantity,
-  decreaseQuantity
+  decreaseQuantity,
+  resetCartCart
 } = slice.actions;
 
 // ----------------------------------------------------------------------
