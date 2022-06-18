@@ -9,20 +9,18 @@ Avatar ma user ko hunu paryo
 
 Detail Page:
 AutoSwipeable Views ma eutai matra images haru airako cha
+Quantity dynamic
+
+
+Login page: Forget Password, location changed submission ma register ko pani
+
 
 UI :
-
-Navbar Responsive
 
 Product Details Page
 
 My Orders page
 
-Order Details Page
-
-Checkout page (Payment Boxes and Payment type)
-
-Cart page responsive
 
 
 
@@ -34,3 +32,4 @@ Product Details Page
 My Orders Page
 Contact Us Page (Finished)
 Checkout Page
+Cart Page

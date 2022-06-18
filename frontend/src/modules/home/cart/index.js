@@ -3,9 +3,9 @@
 * checkout
 * remove esewa() and put it in services.js
 */
-
+import { Modal } from "@mui/material";
 import * as React from "react";
-import { Button, Box, Stack } from "@mui/material";
+import { Button, Box, Stack, Card, CardHeader, CardContent, MenuItem, Select, Divider } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { CLOTHES_IMAGE } from "../../../constants/api";
 import Typography from "@mui/material/Typography";
@@ -16,6 +16,18 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { Checkbox } from "@mui/material";
 import { PATH_APP } from "../../../routes/paths";
+import { useEffect, useState } from "react";
+import order, { PAYMENT_METHODS, PLACEMENT } from "../../../constants/order";
+import { useSnackbar } from "react-simple-snackbar";
+import snakOptions from "../../../constants/snakOptions";
+import TextField from "@mui/material/TextField";
+import CloseIcon from "@mui/icons-material/Close";
+import { DateTimePicker } from "@mui/x-date-pickers";
+import { fCurrency } from "../../../utils/formatNumber";
+import MediaQuery from "react-responsive";
+
+
+
 
 function esewa() {
 
@@ -51,151 +63,494 @@ function esewa() {
 
   post(path, params);
 }
-export default function AlignItemsList() {
-  const { cart, addToCart, refreshData, updateCart } = React.useContext(ItemsContext);
 
-  function getAllSelected(){
-    const res = cart.filter(c=>c.is_selected == false);
+const OrderModal = ({ open, handleOpen, orderDetails, setOrderDetails, closeModal }) => {
+
+  const { cart, addOrder, addToCart, refreshData, updateCart } = React.useContext(ItemsContext);
+
+  const style = {
+    transform: 'translate(-50%, -50%)',
+    boxShadow: 24,
+  };
+
+  const [openSnackbar, closeSnackbar] = useSnackbar(snakOptions);
+
+  const handleSubmit = async () => {
+    try {
+      const res = await addOrder(orderDetails);
+      console.log(res);
+      openSnackbar(`Order completely successfully`);
+    } catch (err) {
+      console.log(err);
+      openSnackbar(`Order unsuccessful`);
+    }
+  }
+
+  return (
+    <Modal open={open} onClose={handleOpen} sx={style} >
+      <Grid container spacing={3}>
+        <Grid item xs={6}>
+          <Card>
+            <CardHeader
+              title="Billing/Delivery info"
+            />
+            <CardContent>
+              <Stack spacing={2}>
+                <Stack direction="column" justifyContent="space-between">
+                  <Typography variant="body2">
+                    Location
+                  </Typography>
+                  <TextField
+                    value={orderDetails.location}
+                    onChange={(e) => {
+                      setOrderDetails({ ...orderDetails, location: e.target.value })
+                    }}
+                    variant='standard'
+                    type={"text"} />
+                </Stack>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="body2">
+                    Payment Method
+                  </Typography>
+                  <Select
+                    value={orderDetails.payment_method}
+                    onChange={(e) => {
+                      setOrderDetails({ ...orderDetails, payment_method: e.target.value })
+                    }}
+                    variant='standard'>
+                    <MenuItem value={'esewa'}>E-sewa</MenuItem>
+                    <MenuItem value={'cash'}>Cash</MenuItem>
+                  </Select>
+                </Stack>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="body2">
+                    Delivery Type
+                  </Typography>
+                  <Select
+                    value={orderDetails.delivery_type}
+                    onChange={(e) => {
+                      setOrderDetails({ ...orderDetails, delivery_type: e.target.value })
+                    }}
+                    variant='standard'>
+                    <MenuItem value={'delivery'}>Delivery</MenuItem>
+                    <MenuItem value={'self_pickup'}>Self Pickup</MenuItem>
+                  </Select>
+                </Stack>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="body2">
+                    Order Status
+                  </Typography>
+                  <Select
+                    value={orderDetails.status}
+                    onChange={(e) => {
+                      setOrderDetails({ ...orderDetails, status: e.target.value })
+                    }}
+                    variant='standard'>
+                    <MenuItem value={'placed'}>Placed</MenuItem>
+                    <MenuItem value={'on_delivery'}>On Delivery</MenuItem>
+                    <MenuItem value={'completed'}>Completed</MenuItem>
+                    <MenuItem value={'cancled'}>Cancled</MenuItem>
+                  </Select>
+                </Stack>
+                <Stack direction="column" justifyContent="space-between">
+                  <Typography variant="body2">
+                    Duedate
+                  </Typography>
+                  {/* <DateTimePicker
+                value={orderDetails.delivery_duedate}
+                onChange={(e) => {
+                  setOrderDetails({ ...orderDetails, delivery_duedate: e })
+                }}
+                renderInput={(params) => <TextField {...params} />}
+              /> */}
+                </Stack>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+
+
+
+        <Grid item xs={6}>
+
+          <Card>
+            <CardHeader
+              title="Order Summary"
+            />
+            <CardContent>
+              <Stack>
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                    Sub Total
+                  </Typography>
+                  <Typography variant="subtitle2"></Typography>
+                </Stack>
+
+                <Divider />
+
+                <Stack direction="row" justifyContent="space-between">
+                  <Typography variant="subtitle1">Total</Typography>
+                  <Box sx={{ textAlign: 'right' }}>
+                    <Typography variant="subtitle1" sx={{ color: 'error.main' }}>
+
+                    </Typography>
+                    <Typography variant="caption" sx={{ fontStyle: 'italic' }}>
+                      (VAT included if applicable)
+                    </Typography>
+                  </Box>
+                </Stack>
+              </Stack>
+            </CardContent>
+          </Card>
+        </Grid>
+        <Button variant="contained">Checkout</Button>
+      </Grid>
+    </Modal >
+  )
+}
+
+
+
+
+export default function AlignItemsList() {
+  const { cart, addOrder, addToCart, refreshData, updateCart } = React.useContext(ItemsContext);
+
+  const [modal, setModal] = useState(false);
+
+  const handleChangeModal = () => {
+    setModal(!modal);
+  }
+
+
+  const [orderDetails, setOrderDetails] = useState({
+    user_email: "",
+    location: "",
+    payment_method: "cash",
+    delivery_type: "delivery",
+    status: "placed",
+    delivery_duedate: new Date(Date.now())
+  })
+
+  useEffect(() => {
+    var total = 0;
+
+    cart.map((i) => {
+      if (i.item && i.item[0] && i.is_selected) {
+        total += i.item[0].item_price * i.quantity;
+      }
+    })
+
+    setOrderDetails({ ...orderDetails, total })
+  }, [cart])
+
+
+
+  function getAllSelected() {
+    const res = cart.filter(c => c.is_selected == false);
     return res.length === 0;
   }
 
-  async function selectAll(){
+  async function selectAll() {
 
-    var b= true;
-    if(getAllSelected()){
+    var b = true;
+    if (getAllSelected()) {
       b = false;
     }
-    await Promise.all(cart.map(async (c)=>{
-      await updateCart(c._id, {is_selected: b}, false)
+    await Promise.all(cart.map(async (c) => {
+      await updateCart(c._id, { is_selected: b }, false)
     }))
     refreshData();
   }
 
-  function updateSelectedItems(item){
-    updateCart(item._id, {is_selected: !item.is_selected})
+  function updateSelectedItems(item) {
+    updateCart(item._id, { is_selected: !item.is_selected })
   }
   const navigate = useNavigate();
 
 
+  function onModalClick() {
+    setModal(!modal);
+  }
+
+  function closeModal() {
+    setModal(false);
+  }
+
 
   return (
     <>
-      <Typography
-        variant="h4"
-        sx={{ ml: 15, mt: 5, mb: 5, fontFamily: "Nunito" }}
-      >
-        Items Added to the Cart
-      </Typography>
 
+      <MediaQuery minWidth={400}>
+        <Typography
+          variant="h4"
+          sx={{ ml: 15, mt: 5, mb: 5, fontFamily: "Nunito" }}
+        >
+          Items Added to the Cart
+        </Typography>
 
-      <Grid
-        container
-        sx={{
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
 
         <Grid
           container
           gap={2}
           sx={{
-            width: 1260,
-            maxheight: 1200,
-            padding: 10,
+            alignItems: "center",
+            justifyContent: "center"
           }}
+          spacing={5}
         >
-          {cart.length ? (
-            <div>
 
+          {cart.length ? (
+            <Grid item xs={8}>
               <Checkbox checked={getAllSelected()} onChange={selectAll} />
               <Typography variant="body2"> Select all</Typography>
-            </div>
-          ) : ("")}
-          {cart.length
-            ? cart.map((item, i) => {
-              return (
-                <Grid item key={i}>
-                  <Grid
-                    container
-                    columns={16}
-                    sx={{
-                      width: 1100,
-                      height: 200,
-                      backgroundColor: "white",
-                      color: "black",
-                      borderRadius: "30px",
-                    }}
-                    gap={3}
-                  >
-                    <Grid item xs={1}>
-                      <Checkbox checked={item.is_selected} onChange={()=>updateSelectedItems(item)} />
-                    </Grid>
-                    <Grid item xs={3}>
-                      <Box
-                        component="img"
-                        sx={{
-                          width: 150,
-                          m: 3,
-                          maxHeight: 150,
-                          maxWidth: 150,
-                        }}
-                        src={`${CLOTHES_IMAGE}${item.item_id}/${item.item[0].files[0]}`}
-                      />
-                    </Grid>
-                    <Grid item sx={{ color: "black" }} xs={9}>
-                      <Typography variant="h6" sx={{ mt: 3, mb: 2 }}>
-                        {item.item[0].item_name}
-                      </Typography>
-                      <Typography variant="body1" sx={{ mb: 2 }}>
-                        Rs. {item.item[0].item_price * item.quantity}
-                      </Typography>
-                      <Stack spacing={2} direction="row">
-                        <Button disabled={item.quantity == 1} size="small" variant="contained"
-                          onClick={() => {
-                            addToCart(item.item[0], -1).then(refreshData);
-                          }}
-                        >
-                          <RemoveIcon sx={{ color: "black" }} />
-                        </Button>
-                        <Typography variant="body1" sx={{ mb: 2 }}>
-                          {item.quantity}
-                        </Typography>
-                        <Button size="small" variant="contained"
-                          onClick={() => {
-                            console.log("apple");
-                            addToCart(item.item[0], 1).then(refreshData);
-                          }}
-                        >
-                          <AddIcon sx={{ color: "black" }} />
-                        </Button>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={1} sx={{ mt: 2 }}>
-                      <Button sx={{ color: "black" }}>
-                        <DeleteIcon sx={{ ml: 2 }} onClick={async () => {
-                        }} />
-                      </Button>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              );
-            })
-            : "Your cart is empty "}
-          {cart ? (
-            <Grid
-              container
-              sx={{ alignItems: "center", justifyContent: "center", mt: 3 }}
-            >
-              <Grid item sx={{ mb: 4, fontFamily: "Nunito" }}>
-                <Button variant="contained" onClick={()=>{
-                  navigate(PATH_APP.app.checkout);
-                }} >Proceed to checkout</Button>
-              </Grid>
             </Grid>
           ) : ("")}
+
+
+          <Grid item container direction="column" xs={8} spacing={5}>
+            {cart.length
+              ? cart.map((item, i) => {
+                return (
+                  <Grid item key={i}>
+                    <Grid
+                      container
+                      direction="row"
+                      sx={{
+                        backgroundColor: "white",
+                        color: "black",
+                        borderRadius: "30px",
+                        border: 1,
+                        alignItems: "center",
+                        padding: 1
+                      }}
+
+                    >
+                      <Grid item xs>
+                        <Checkbox checked={item.is_selected} onChange={() => updateSelectedItems(item)} />
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Box
+                          component="img"
+                          sx={{
+                            width: 100,
+                            maxHeight: 100,
+                            height: 100,
+                            maxWidth: 100,
+                          }}
+                          src={`${CLOTHES_IMAGE}${item.item_id}/${item.item[0].files[0]}`}
+                        />
+                      </Grid>
+                      <Grid container item sx={{ color: "black", alignItems: "center", justifyContent: "center" }} xs={5}>
+                        <Grid item xs={12}>
+                          <Typography variant="body2">
+                            {item.item[0].item_name}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography variant="subtitle2" >
+                            Rs. {item.item[0].item_price * item.quantity}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Stack spacing={2} direction="row">
+                            <Button disabled={item.quantity == 1} size="small"
+                              onClick={() => {
+                                addToCart(item.item[0], -1).then(refreshData);
+                              }}
+                            >
+                              <RemoveIcon sx={{ color: "black" }} />
+                            </Button>
+                            <Typography variant="body1" >
+                              {item.quantity}
+                            </Typography>
+                            <Button size="small"
+                              onClick={() => {
+                                console.log("apple");
+                                addToCart(item.item[0], 1).then(refreshData);
+                              }}
+                            >
+                              <AddIcon sx={{ color: "black" }} />
+                            </Button>
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs>
+                        <Button sx={{ color: "black" }}>
+                          <DeleteIcon onClick={async () => {
+                          }} />
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                );
+              })
+              : "Your cart is empty "}
+          </Grid>
+
+
+          {
+            cart ? (
+              <Grid item xs={12}>
+                <Grid
+                  container
+                  sx={{ alignItems: "center", justifyContent: "center", mt: 3 }}
+                >
+                  <Grid item sx={{ mb: 4, fontFamily: "Nunito" }}>
+                    <Button variant="contained" onClick={() => {
+                      window.location = PATH_APP.app.checkout
+                    }} >Proceed to checkout</Button>
+                  </Grid>
+                </Grid>
+              </Grid>
+            ) : ("")
+          }
+          <OrderModal open={modal} handleOpen={handleChangeModal} orderDetails={orderDetails} setOrderDetails={setOrderDetails} closeModal={closeModal} />
         </Grid>
-      </Grid>
+      </MediaQuery>
+
+
+
+
+
+      {/* //For Mobile */}
+      <MediaQuery maxWidth={400}>
+        <Typography
+          variant="h4"
+          sx={{ p: 3, fontFamily: "Nunito" }}
+        >
+          Items Added to the Cart
+        </Typography>
+
+
+        <Grid
+          container
+          sx={{
+            alignItems: "center",
+            justifyContent: "center"
+          }}
+          gap={3}
+        >
+
+          {cart.length ? (
+            <Grid item xs={8}>
+              <Stack direction="row" sx={{ alignItems: "center" }}>
+                <Checkbox checked={getAllSelected()} onChange={selectAll} />
+                <Typography variant="body2"> Select all</Typography>
+              </Stack>
+            </Grid>
+          ) : ("")}
+
+          <Grid item container direction="column" xs={8} spacing={5}>
+            {cart.length
+              ? cart.map((item, i) => {
+                return (
+                  <Grid item key={i}>
+                    <Grid
+                      container
+                      direction="column"
+                      gap={3}
+                      sx={{
+                        backgroundColor: "white",
+                        color: "black",
+                        borderRadius: "30px",
+                        border: 1,
+                        alignItems: "center",
+                        padding: 1
+                      }}
+
+                    >
+                      <Grid item xs={1}>
+                        <Checkbox checked={item.is_selected} onChange={() => updateSelectedItems(item)} />
+                      </Grid>
+                      <Grid item xs={4}>
+                        <Box
+                          component="img"
+                          sx={{
+                            width: 100,
+                            maxHeight: 100,
+                            height: 100,
+                            maxWidth: 100,
+                          }}
+                          src={`${CLOTHES_IMAGE}${item.item_id}/${item.item[0].files[0]}`}
+                        />
+                      </Grid>
+                      <Grid container sx={{ color: "black", alignItems: "center", justifyContent: "center", width: "100%" }} spacing={2}>
+                        <Grid item xs={12}>
+                          <Typography variant="body1">
+                            {item.item[0].item_name}
+                          </Typography>
+                        </Grid>
+                        <Grid item xs={12}>
+                          <Typography variant="subtitle2" >
+                            Rs. {item.item[0].item_price * item.quantity}
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <Stack direction="row">
+                            <Button disabled={item.quantity == 1} size="small"
+                              onClick={() => {
+                                addToCart(item.item[0], -1).then(refreshData);
+                              }}
+                            >
+                              <RemoveIcon sx={{ color: "black" }} />
+                            </Button>
+                            <Typography variant="body1" >
+                              {item.quantity}
+                            </Typography>
+                            <Button size="small"
+                              onClick={() => {
+                                console.log("apple");
+                                addToCart(item.item[0], 1).then(refreshData);
+                              }}
+                            >
+                              <AddIcon sx={{ color: "black" }} />
+                            </Button>
+                          </Stack>
+                        </Grid>
+                      </Grid>
+                      <Grid item xs>
+                        <Button sx={{ color: "black" }}>
+                          <DeleteIcon onClick={async () => {
+                          }} />
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                );
+              })
+              : "Your cart is empty "}
+          </Grid>
+
+
+          {
+            cart ? (
+              <Grid item xs={12}>
+                <Grid
+                  container
+                  sx={{ alignItems: "center", justifyContent: "center", mt: 3 }}
+                >
+                  <Grid item sx={{ mb: 4, fontFamily: "Nunito" }}>
+                    <Button variant="contained" onClick={() => {
+                      window.location = PATH_APP.app.checkout
+                    }} >Proceed to checkout</Button>
+                  </Grid>
+                </Grid>
+              </Grid>
+            ) : ("")
+          }
+          <OrderModal open={modal} handleOpen={handleChangeModal} orderDetails={orderDetails} setOrderDetails={setOrderDetails} closeModal={closeModal} />
+        </Grid>
+      </MediaQuery>
+
+
+
+
+
+
+
+
+
+
     </>
-  );
+  )
 }

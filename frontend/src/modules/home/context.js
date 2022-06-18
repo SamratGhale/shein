@@ -13,6 +13,7 @@ import { getUser } from '../../utils/sessionManager';
 const initialState = {
     items: [],
     cart: [],
+    orderItems: [], /** It seems more simpler to treat orderItems and cart differently, like two independent features of the app*/
     cartCount: 0,
     search: '',
     refresh: false,
@@ -80,24 +81,7 @@ export const ItemsContextProvider = ({ children }) => {
         return await Service.addToCart(form);
     }
 
-    async function addOrder(data) {
-        const form = new FormData();
-        form.append("payment_method", data.payment_method);
-        form.append("delivery_type", data.delivery_type);
-        form.append("location", data.location);
 
-        /* 
-        * TODO
-        * to change this for order items directly
-        */
-        const items = state.cart.filter((i)=> i.is_selected == true);
-
-        items.forEach((i)=>{
-            form.append("items", JSON.stringify(i));
-        })
-
-        return await Service.addOrder(form);
-    }
 
     async function updateCart(id, data, refresh = true) {
         const res = await Service.updateCart(id, data);
@@ -120,7 +104,6 @@ export const ItemsContextProvider = ({ children }) => {
                 listItems,
                 setSearch,
                 updateCart,
-                addOrder
             }}
         >
             {children}

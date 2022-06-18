@@ -3,7 +3,7 @@ import { Icon } from '@iconify/react';
 import { useParams, useLocation } from 'react-router-dom';
 import { useSnackbar } from 'notistack';
 import closeFill from '@iconify/icons-eva/close-fill';
-import {TextField} from '@mui/material';
+import { TextField } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { MIconButton } from '../../../@material-extend';
 import { useFormik, Form, FormikProvider } from 'formik';
@@ -35,6 +35,7 @@ import { useState } from 'react';
 import useClothes from '../../../../hooks/useClothes';
 import useOrders from '../../../../hooks/useOrders';
 import { useEffect } from 'react';
+import InvoicePDF from '../invoice/InvoicePDF';
 
 const style = {
   position: 'absolute',
@@ -55,38 +56,49 @@ export default function CheckoutCart() {
   const { checkout } = useSelector((state) => state.product);
   const { cart, total, discount, subtotal } = checkout;
   const isEmptyCart = cart.length === 0;
-  const {getByItemCode} = useClothes();
+  const { getByItemCode } = useClothes();
   const { enqueueSnackbar, closeSnackbar } = useSnackbar();
-  const {addOrder, getById, updateOrder} = useOrders();
-  const {pathname} = useLocation();
+  const { addOrder, getById, updateOrder } = useOrders();
+  const { pathname } = useLocation();
+
+  /** for pdf */
+  const [openPdf, setOpenPdf] = useState(false);
+
+  function handleOpenPdf() {
+    setOpenPdf(!openPdf);
+  }
 
   const isEdit = pathname.includes('edit');
-  const {id} = useParams();
+  const { id } = useParams();
+  const [invoice, setInvoice] = useState({});
 
   const [orderDetails, setOrderDetails] = useState({
-    user_email : "",
+    user_email: "",
     location: "",
     payment_method: "cash",
-    delivery_type : "delivery",
-    status  : "placed",
+    delivery_type: "delivery",
+    status: "placed",
     delivery_duedate: new Date(Date.now())
   })
 
-  useEffect(()=>{
-    if(isEdit){
-      getById(id).then((res)=>{
-        setOrderDetails({...orderDetails, 
-          user_email : res[0].user_detail[0].email,
-          location : res[0].location,
-          status : res[0].status,
-          delivery_duedate : res[0].delivery_duedate,
-          delivery_type : res[0].delivery_type,
-          payment_method : res[0].payment_method,
+  useEffect(() => {
+    if (isEdit) {
+      getById(id).then((res) => {
+        console.log(res[0])
+        setInvoice(res[0]); 
+        setOrderDetails({
+          ...orderDetails,
+          user_email: res[0].user_detail[0].email,
+          location: res[0].location,
+          status: res[0].status,
+          delivery_duedate: res[0].delivery_duedate,
+          delivery_type: res[0].delivery_type,
+          payment_method: res[0].payment_method,
         });
         dispatch(resetCartCart(res[0].item_details))
       });
     }
-  },[])
+  }, [])
 
   const handleDeleteCart = (productId) => {
     dispatch(deleteCart(productId));
@@ -133,8 +145,8 @@ export default function CheckoutCart() {
 
   const [itemCode, setItemcode] = useState("");
 
-  function handleAdd(){
-    getByItemCode(itemCode).then(res=>{
+  function handleAdd() {
+    getByItemCode(itemCode).then(res => {
       res.cart_quantity = 1;
       dispatch(addCart(res));
       console.log(res);
@@ -152,13 +164,13 @@ export default function CheckoutCart() {
     });
   }
 
-  function handleCheckout(){
+  function handleCheckout() {
     if (isEdit) {
-      var order = orderDetails; 
+      var order = orderDetails;
       delete order.user_email;
-      order = {...order, items: cart}
+      order = { ...order, items: cart }
       console.log(order);
-      updateOrder(id, order).then(()=>{
+      updateOrder(id, order).then(() => {
         enqueueSnackbar("Order updated successfully", {
           variant: 'success',
           action: (key) => (
@@ -212,85 +224,92 @@ export default function CheckoutCart() {
 
 
   return (
-    <FormikProvider value={formik}>
-      <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
-            <Card sx={{ mb: 3 }}>
-              <CardHeader
-                title={
-                  <div>
-                  <Typography variant="h6">
-                    Card
-                    <Typography component="span" sx={{ color: 'text.secondary' }}>
-                      &nbsp;({totalItems} item)
-                    </Typography>
-                    <Button variant='contained' onClick={handleOpen}> Add new Item</Button>
-                  </Typography>
-                  </div>
-                }
-                sx={{ mb: 3 }}
-              />
-
-              {!values.products.length == 0 ? (
-                <Scrollbar>
-                  <CheckoutProductList
-                    formik={formik}
-                    onDelete={handleDeleteCart}
-                    onIncreaseQuantity={handleIncreaseQuantity}
-                    onDecreaseQuantity={handleDecreaseQuantity}
-                  />
-                </Scrollbar>
-              ) : (
-                <EmptyContent
-                  title="Cart is empty"
-                  description="Look like you have no items in your shopping cart."
-                  img="/static/illustrations/illustration_empty_cart.svg"
+    <div>
+      <FormikProvider value={formik}>
+        <Form autoComplete="off" noValidate onSubmit={handleSubmit}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={8}>
+              <Card sx={{ mb: 3 }}>
+                <CardHeader
+                  title={
+                    <div>
+                      <Typography variant="h6">
+                        Card
+                        <Typography component="span" sx={{ color: 'text.secondary' }}>
+                          &nbsp;({totalItems} item)
+                        </Typography>
+                        <Button variant='contained' onClick={handleOpen}> Add new Item</Button>
+                      </Typography>
+                    </div>
+                  }
+                  sx={{ mb: 3 }}
                 />
-              )}
-            </Card>
 
-            <Button
-              color="inherit"
-              component={RouterLink}
-              to={PATH_DASHBOARD.eCommerce.root}
-              startIcon={<Icon icon={arrowIosBackFill} />}
-            >
-              Continue Shopping
-            </Button>
-          </Grid>
+                {!values.products.length == 0 ? (
+                  <Scrollbar>
+                    <CheckoutProductList
+                      formik={formik}
+                      onDelete={handleDeleteCart}
+                      onIncreaseQuantity={handleIncreaseQuantity}
+                      onDecreaseQuantity={handleDecreaseQuantity}
+                    />
+                  </Scrollbar>
+                ) : (
+                  <EmptyContent
+                    title="Cart is empty"
+                    description="Look like you have no items in your shopping cart."
+                    img="/static/illustrations/illustration_empty_cart.svg"
+                  />
+                )}
+              </Card>
 
-          <Grid item xs={12} md={4}>
-            <CheckoutSummary
-              total={total}
-              isEdit={isEdit}
-              enableDiscount
-              discount={discount}
-              subtotal={subtotal}
-              setOrderDetails={setOrderDetails}
-              orderDetails={orderDetails}
-              onApplyDiscount={handleApplyDiscount}
-            />
-            <Button fullWidth size="large" onClick={handleCheckout} variant="contained" disabled={values.products.length === 0}>
-              {isEdit ?  "Update Order" : "Check Out" }
-            </Button>
+              {isEdit ? (
+                <Button
+                  color="inherit"
+                  onClick={handleOpenPdf}
+                >
+                  Generate Invoice Pdf
+                </Button>
+
+              ) : " "}
+            </Grid>
+
+            <Grid item xs={12} md={4}>
+              <CheckoutSummary
+                total={total}
+                isEdit={isEdit}
+                enableDiscount
+                discount={discount}
+                subtotal={subtotal}
+                setOrderDetails={setOrderDetails}
+                orderDetails={orderDetails}
+                onApplyDiscount={handleApplyDiscount}
+              />
+              <Button fullWidth size="large" onClick={handleCheckout} variant="contained" disabled={values.products.length === 0}>
+                {isEdit ? "Update Order" : "Check Out"}
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-      </Form>
-      <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography variant="h6" component="h2">
-            Enter item code
-          </Typography>
-          <TextField value={itemCode} onChange={(e)=>setItemcode(e.target.value)}  color="success" focused />
-          <Button onClick={handleAdd} variant='contained'>Add</Button>
-        </Box>
-      </Modal>
-    </FormikProvider>
+        </Form>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography variant="h6" component="h2">
+              Enter item code
+            </Typography>
+            <TextField value={itemCode} onChange={(e) => setItemcode(e.target.value)} color="success" focused />
+            <Button onClick={handleAdd} variant='contained'>Add</Button>
+          </Box>
+        </Modal>
+      </FormikProvider>
+      {isEdit && invoice.items ? (
+        <InvoicePDF invoice={invoice} open={openPdf} handleOpen={handleOpenPdf} />
+      ) : " "}
+
+    </div>
   );
 }

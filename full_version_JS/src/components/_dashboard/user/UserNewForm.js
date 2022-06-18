@@ -45,7 +45,7 @@ export default function UserNewForm({ isEdit, id}) {
       state: currentUser?.state || '',
       avatarUrl: currentUser?.avatarUrl || null,
       is_registered: currentUser?.is_registered|| false,
-      status: currentUser?.status,
+      is_archived: currentUser?.is_archived || false,
       role: currentUser?.role || ''
     },
     validationSchema: NewUserSchema,
@@ -96,8 +96,8 @@ export default function UserNewForm({ isEdit, id}) {
                   labelPlacement="start"
                   control={
                     <Switch
-                      onChange={(event) => setFieldValue('status', event.target.checked ? 'banned' : 'active')}
-                      checked={values.status !== 'active'}
+                      onChange={(event) => setFieldValue('is_archived', event.target.checked)}
+                      checked={values.is_archived}
                     />
                   }
                   label={

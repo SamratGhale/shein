@@ -29,6 +29,8 @@ const Login = () => {
     const data = new FormData(event.currentTarget);
     login(data).then((res) => {
       openSnackbar("Login successful");
+      window.location = ROOTS.app;
+
     }).catch((err) => {
       console.log(err.response.data.message);
       openSnackbar(err.response.data.message);
@@ -53,7 +55,9 @@ const Login = () => {
             <Typography component="h1" variant="h5">
               Sign in
             </Typography>
-            <Box component="form" onSubmit={handleLogin} noValidate sx={{ mt: 1 }}>
+            <Box component="form" onSubmit={
+              handleLogin
+            } noValidate sx={{ mt: 1 }}>
               <TextField
                 margin="normal"
                 required

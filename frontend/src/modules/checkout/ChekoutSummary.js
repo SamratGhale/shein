@@ -17,9 +17,9 @@ import {
   InputAdornment
 } from '@mui/material';
 // utils
-import { fCurrency } from '../../../../utils/formatNumber';
+import { fCurrency } from '../../utils/formatNumber';
 import { Select } from '@mui/material';
-import { DateTimePicker } from '@mui/lab';
+import { getUser } from '../../utils/sessionManager';
 
 // ----------------------------------------------------------------------
 
@@ -28,8 +28,6 @@ CheckoutSummary.propTypes = {
   discount: PropTypes.number,
   subtotal: PropTypes.number,
   shipping: PropTypes.number,
-  onEdit: PropTypes.func,
-  enableEdit: PropTypes.bool,
   onApplyDiscount: PropTypes.func,
   enableDiscount: PropTypes.bool,
   setOrderDetails: PropTypes.func,
@@ -38,35 +36,21 @@ CheckoutSummary.propTypes = {
 
 export default function CheckoutSummary({
   total,
-  onEdit,
   discount,
   subtotal,
   shipping = null,
-  onApplyDiscount,
-  enableEdit = false,
-  enableDiscount = false,
   setOrderDetails,
   orderDetails,
   isEdit
 }) {
   const displayShipping = shipping !== null ? 'Free' : '-';
-
-  const [value, setValue] = useState(new Date('2014-08-18T21:11:54'));
-
-
+  const user = getUser()
   return (
     <div>
 
       <Card sx={{ mb: 3 }}>
         <CardHeader
           title="Billing/Delivery info"
-          action={
-            enableEdit && (
-              <Button size="small" type="button" onClick={onEdit} startIcon={<Icon icon={editFill} />}>
-                Edit
-              </Button>
-            )
-          }
         />
 
         <CardContent>
@@ -76,12 +60,19 @@ export default function CheckoutSummary({
                 User
               </Typography>
               <TextField 
-              disabled={isEdit}
-              value={orderDetails.user_email} 
-              onChange={(e)=>{
-                setOrderDetails({...orderDetails, user_email : e.target.value})
-              }}
+              disabled
+              value={user.email} 
               variant='standard' type={"email"} />
+            </Stack>
+            <Stack direction="column" justifyContent="space-between">
+              <Typography variant="body2">
+                Phone 
+              </Typography>
+              <TextField 
+              value={user.phone} 
+              disabled
+              variant='standard' 
+              type={"text"} />
             </Stack>
             <Stack direction="column" justifyContent="space-between">
               <Typography variant="body2">
@@ -139,31 +130,12 @@ export default function CheckoutSummary({
                 <MenuItem value={'cancled'}>Cancled</MenuItem>
               </Select>
             </Stack>
-            <Stack direction="column" justifyContent="space-between">
-              <Typography variant="body2">
-                Duedate
-              </Typography>
-              <DateTimePicker
-                value={orderDetails.delivery_duedate}
-                onChange={(e)=>{
-                  setOrderDetails({...orderDetails, delivery_duedate : e})
-                }}
-                renderInput={(params) => <TextField {...params} />}
-              />
-            </Stack>
           </Stack>
         </CardContent>
       </Card>
       <Card>
         <CardHeader
           title="Order Summary"
-          action={
-            enableEdit && (
-              <Button size="small" type="button" onClick={onEdit} startIcon={<Icon icon={editFill} />}>
-                Edit
-              </Button>
-            )
-          }
         />
         <CardContent>
           <Stack>
@@ -171,7 +143,7 @@ export default function CheckoutSummary({
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 Sub Total
               </Typography>
-              <Typography variant="subtitle2">{fCurrency(subtotal)}</Typography>
+              <Typography variant="subtitle2">{fCurrency(100)}</Typography>
             </Stack>
 
             <Stack direction="row" justifyContent="space-between">

@@ -68,6 +68,7 @@ module.exports = {
       address : Joi.string().optional().description('users address password'),
       phone: Joi.number().optional().description('user phone'),
       is_registered: Joi.boolean().optional().description('is user is registered'),
+      is_archived: Joi.boolean().optional().description('is user is archived'),
       role: Joi.string().optional().description("user role")
     }),
   },

@@ -27,14 +27,6 @@ export default function GeneralEcommerce() {
     <Page title="General: E-commerce | Minimal-UI">
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={8}>
-            <EcommerceWelcome />
-          </Grid>
-
-          <Grid item xs={12} md={4}>
-            <EcommerceNewProducts />
-          </Grid>
-
           <Grid item xs={12} md={4}>
             <EcommerceProductSold />
           </Grid>

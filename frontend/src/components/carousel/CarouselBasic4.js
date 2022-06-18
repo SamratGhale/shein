@@ -11,7 +11,7 @@ import mockData from '../../utils/mock-data';
 //
 import { CarouselControlsArrowsBasic2 } from './controls';
 //
-import { MIconButton } from '../@material-extend';
+import { Button } from '../@material-extend';
 
 // ----------------------------------------------------------------------
 
@@ -56,7 +56,7 @@ function CarouselItem({ item }) {
         <Typography variant="h6" sx={{ color: 'common.white' }}>
           {item.title}
         </Typography>
-        <MIconButton
+        <Button
           onClick={() => {}}
           sx={{
             color: 'common.white',
@@ -66,7 +66,7 @@ function CarouselItem({ item }) {
           }}
         >
           <Icon icon={moreHorizontalFill} />
-        </MIconButton>
+        </Button>
       </ContentItemStyle>
     </Box>
   );

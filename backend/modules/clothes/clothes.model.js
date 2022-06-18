@@ -36,9 +36,9 @@ const schema = {
     type: Array,
     description: "Tags (for searching)",
   },
-  vat: {
+  tax: {
     type: Number,
-    description: "vat amount",
+    description: "tax amount",
     required: false,
   },
   ...commonSchema,

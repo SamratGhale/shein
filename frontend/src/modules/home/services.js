@@ -88,20 +88,6 @@ export async function updateCart(id, data) {
   });
 }
 
-export async function addOrder(data) {
-  return new Promise((resolve, reject) => {
-    axios.post(ORDER, data, {
-      headers: {
-        'access_token': access_token
-      }
-    })
-      .then((res) => {
-        resolve(res.data);
-      }).catch((err) => {
-        reject(err);
-      });
-  });
-}
 
 export async function getMinMaxPrice() {
   return new Promise((resolve, reject) => {

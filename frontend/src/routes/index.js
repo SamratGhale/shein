@@ -13,6 +13,7 @@ import ContactUs from '../modules/ContactUs';
 import Orders from '../modules/Orders';
 import AuthProtect from '../global/AuthProtect';
 import Checkout from '../modules/Orders/checkout';
+import CheckoutCart from '../modules/checkout/CheckoutCart';
 
 export default function Router() {
   return useRoutes([
@@ -39,7 +40,7 @@ export default function Router() {
         { path: PATH_APP.app.account, element: <Account /> },
         { path: PATH_APP.app.cart, element: <Cart /> },
         { path: PATH_APP.app.orders, element: <Orders /> },
-        { path: PATH_APP.app.checkout, element: <Checkout/> },
+        { path: PATH_APP.app.checkout, element: <CheckoutCart/> },
       ],
     }
   ]);

@@ -18,9 +18,12 @@ import { useEffect } from "react";
 import { PAYMENT_METHODS, PLACEMENT } from "../../../constants/order";
 import { useSnackbar } from "react-simple-snackbar";
 import snakOptions from "../../../constants/snakOptions";
-import {TextField} from "@mui/material";
+import { TextField, Grid, Stack, Box, Modal } from "@mui/material";
+
+
 
 const Checkout = () => {
+
   const [openSnackbar, closeSnackbar] = useSnackbar(snakOptions);
   const { cart, addOrder } = useContext(ItemsContext);
   const [orderInfo, setOrderInfo] = useState({
@@ -51,42 +54,23 @@ const Checkout = () => {
     setOrderInfo({ ...orderInfo, total })
   }, [cart])
 
-  const handleSubmit=async()=>{
+  const handleSubmit = async () => {
 
-    try{
+    try {
       const res = await addOrder(orderInfo);
       console.log(res);
       openSnackbar(`Order completely successfully`);
-    }catch(err){
+    } catch (err) {
       console.log(err);
       openSnackbar(`Order unsuccessful`);
     }
   }
 
-  return (
-    <div>
-      <Typography variant="h3">
-        Order details
-      </Typography>
-      <Typography variant="body1">
-        Total : {orderInfo.total}
-      </Typography>
-      <Typography variant="body1">
-        Payment Method : {orderInfo.payment_method}
-      </Typography>
-      <Typography variant="body1">
-        Payment Method : {orderInfo.delivery_type}
-      </Typography>
-      <TextField label="Location " variant="filled" color="success" value={orderInfo.location}
-        onChange={(e) => {
-          e.preventDefault()
-            setOrderInfo({ ...orderInfo, location: e.target.value });
-        }} 
-        focused />
-        <br />
-        <Button variant="contained" onClick={handleSubmit} size="small">Complete checkout</Button>
 
-    </div>
-  )
+
+  const [modal, setModal] = useState(false);
+
+
+
 }
 export default Checkout;

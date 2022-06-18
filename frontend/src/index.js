@@ -1,10 +1,12 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
 import "./index.css";
+import ReactDOM from "react-dom";
 import { ThemeOptions } from "@mui/material";
 import { CssBaseline } from "@mui/material";
 import App from "./App";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+
 
 const darkTheme = createTheme({
   palette: {
@@ -37,10 +39,11 @@ const darkTheme = createTheme({
   },
 });
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(
+ReactDOM.render(
   <ThemeProvider theme={darkTheme}>
     <CssBaseline />
     <App />
-  </ThemeProvider>
+  </ThemeProvider>,
+  document.getElementById('root')
 );
+serviceWorkerRegistration.register();

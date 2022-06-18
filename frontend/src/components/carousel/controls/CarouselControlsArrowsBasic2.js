@@ -9,7 +9,7 @@ import roundKeyboardArrowRight from '@iconify/icons-ic/round-keyboard-arrow-righ
 import { useTheme, styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 //
-import { MIconButton } from '../../@material-extend';
+import { Button } from '../../@material-extend';
 
 // ----------------------------------------------------------------------
 
@@ -33,7 +33,7 @@ const RootStyle = styled(Box)(({ theme }) => ({
   justifyContent: 'space-between'
 }));
 
-const ArrowStyle = styled(MIconButton)(({ theme }) => ({
+const ArrowStyle = styled(Button)(({ theme }) => ({
   width: SIZE,
   height: SIZE,
   opacity: 0.48,

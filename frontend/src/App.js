@@ -4,6 +4,7 @@ import SnackbarProvider from 'react-simple-snackbar';
 import { BrowserRouter } from 'react-router-dom';
 import { ItemsContextProvider } from './modules/home/context';
 import { GoogleOAuthProvider } from '@react-oauth/google';
+import { OrderContextProvider } from './modules/Orders/context';
 
 const client_id = process.env.REACT_APP_GOOGLE_CLIENT_ID
 
@@ -12,9 +13,11 @@ const App = () => {
     <SnackbarProvider>
       <GoogleOAuthProvider clientId={client_id}>
         <ItemsContextProvider>
-          <BrowserRouter>
-            <Router />
-          </BrowserRouter>
+          <OrderContextProvider>
+            <BrowserRouter>
+              <Router />
+            </BrowserRouter>
+          </OrderContextProvider>
         </ItemsContextProvider>
       </GoogleOAuthProvider>
     </SnackbarProvider>

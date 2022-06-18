@@ -44,7 +44,7 @@
     "@mui/utils": "^5.8.0",
     "@mui/x-data-grid": "^5.11.1",
     "@mui/x-data-grid-generator": "^5.12.1",
-    "@react-pdf/renderer": "^2.1.1",
+    "@react-pdf/renderer": "^2.2.0",
     "@reduxjs/toolkit": "^1.8.2",
     "@turf/bbox": "^6.5.0",
     "amazon-cognito-identity-js": "^5.2.9",
