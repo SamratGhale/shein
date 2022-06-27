@@ -1,8 +1,5 @@
 import React from 'react';
-import { Box } from '@mui/material';
 import { Typography } from '@mui/material';
-import { Container } from '@mui/material';
-import { Link } from '@mui/material';
 import CD from "../cd.png";
 import Esewa from "../esewa.png"
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -13,9 +10,7 @@ import MediaQuery from 'react-responsive';
 
 const Footer = () => {
   return (
-
     <>
-
       <MediaQuery minWidth={450}>
         <Grid container sx={{ backgroundColor: "white", borderTop: 2 }}>
           <Grid item xs={12} sx={{ mb: 6 }}>
@@ -24,8 +19,8 @@ const Footer = () => {
                 <Stack spacing={3}>
                   <Typography variant="h6">Payment Methods</Typography>
                   <Stack direction="row" gap={5}>
-                    <img src={CD} style={{ maxWidth: 100 }}></img>
-                    <img src={Esewa} style={{ maxWidth: 100 }}></img>
+                    <img alt='CD' src={CD} style={{ maxWidth: 100 }}></img>
+                    <img alt='esewa' src={Esewa} style={{ maxWidth: 100 }}></img>
                   </Stack>
                 </Stack>
               </Grid>
@@ -33,10 +28,10 @@ const Footer = () => {
                 <Stack spacing={3}>
                   <Typography variant="h6">Follow Us</Typography>
                   <Stack direction="row" gap={3}>
-                    <a target="_blank" href="">
+                    <a  href="https://www.facebooo.com">
                       <FacebookIcon color="primary" fontSize='large' />
                     </a>
-                    <a target="_blank" href="https://www.instagram.com/hive_press/">
+                    <a  href="https://www.instagram.com/hive_press/">
                       <InstagramIcon color="secondary" fontSize='large' />
                     </a>
                   </Stack>
@@ -81,8 +76,8 @@ const Footer = () => {
                 <Stack spacing={3} direction="column">
                   <Typography variant="h6">Payment Methods</Typography>
                   <Stack direction="column" gap={5}>
-                    <img src={CD} style={{ maxWidth: 100 }}></img>
-                    <img src={Esewa} style={{ maxWidth: 100 }}></img>
+                    <img alt='CD' src={CD} style={{ maxWidth: 100 }}></img>
+                    <img alt="esewa" src={Esewa} style={{ maxWidth: 100 }}></img>
                   </Stack>
                 </Stack>
               </Grid>
@@ -90,10 +85,10 @@ const Footer = () => {
                 <Stack spacing={3} direction="column">
                   <Typography variant="h6">Follow Us</Typography>
                   <Stack direction="column" gap={3} sx={{ justifyContent: "center" }}>
-                    <a target="_blank" href="">
+                    <a  href="https://www.facebook.com/hive_press/">
                       <FacebookIcon color="primary" fontSize="large" />
                     </a>
-                    <a target="_blank" href="https://www.instagram.com/hive_press/">
+                    <a  href="https://www.instagram.com/hive_press/">
                       <InstagramIcon color="secondary" fontSize='large' />
                     </a>
                   </Stack>

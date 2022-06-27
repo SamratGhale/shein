@@ -1,9 +1,8 @@
 import { sum } from 'lodash';
-import { Icon } from '@iconify/react';
 import { useSnackbar } from 'react-simple-snackbar';
-import closeFill from '@iconify/icons-eva/close-fill';
 // material
 import { Grid, Card, Button, CardHeader, Typography } from '@mui/material';
+import snakOptions from "../../constants/snakOptions";
 //
 import CheckoutSummary from './ChekoutSummary';
 import CheckoutProductList from './CheckoutProductList';
@@ -11,20 +10,18 @@ import * as React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import InvoicePDF from './InvoicePdfModal';
-import { ItemsContext } from '../home/context';
 import { OrderContext } from '../Orders/context';
 
 // ----------------------------------------------------------------------
 
 export default function CheckoutCart() {
-  const { currOrder, updateCurrOrder, addOrder} = React.useContext(OrderContext)
-  const [ enqueueSnackbar, closeSnackbar ] = useSnackbar();
+  const { currOrder,  addOrder} = React.useContext(OrderContext)
+  const [ openSnackbar ] = useSnackbar(snakOptions);
 
   const [orderDetails, setOrderDetails] = useState({
     location: "",
-    payment_method: "cash",
+    payment_method: "esewa",
     delivery_type : "delivery",
-    status : "placed",
   })
 
 
@@ -44,13 +41,7 @@ export default function CheckoutCart() {
   }, [])
 
   const totalItems = sum(currOrder.map((item) => item.cart_quantity));
-
-
-  //New Item code
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
-
+  const totalPrice = sum(currOrder.map((item) => (item.item_price - item.item_price *(item.discount/100)) * item.cart_quantity));
 
   function handleCheckout() {
       var form_data = new FormData();
@@ -62,23 +53,9 @@ export default function CheckoutCart() {
         form_data.append("items", JSON.stringify({ item_code: i.item_code, quantity: i.cart_quantity }))
       })
       addOrder(form_data).then((res) => {
-        enqueueSnackbar("Order added successfully", {
-          variant: 'success',
-          action: (key) => (
-            <Button size="small" onClick={() => closeSnackbar(key)}>
-              <Icon icon={closeFill} />
-            </Button>
-          )
-        });
+        openSnackbar("Order added successfully");
       }).catch(err => {
-        enqueueSnackbar(err.response.data.message, {
-          variant: 'error',
-          action: (key) => (
-            <Button size="small" onClick={() => closeSnackbar(key)}>
-              <Icon icon={closeFill} />
-            </Button>
-          )
-        });
+        openSnackbar(err.response.data.message)
       })
   }
 
@@ -100,7 +77,7 @@ export default function CheckoutCart() {
               sx={{ mb: 3 }}
             />
 
-            {!currOrder.length == 0 ? (
+            {currOrder.length >= 0 ? (
               <CheckoutProductList
                 items={currOrder}
               />
@@ -112,7 +89,7 @@ export default function CheckoutCart() {
 
         <Grid item xs={12} md={4}>
           <CheckoutSummary
-            total={1000}
+            total={totalPrice}
             enableDiscount
             discount={10}
             subtotal={9090}

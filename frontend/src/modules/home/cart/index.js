@@ -6,7 +6,6 @@
 import { Modal } from "@mui/material";
 import * as React from "react";
 import { Button, Box, Stack, Card, CardHeader, CardContent, MenuItem, Select, Divider } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { CLOTHES_IMAGE } from "../../../constants/api";
 import Typography from "@mui/material/Typography";
 import { ItemsContext } from "../context";
@@ -17,18 +16,14 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { Checkbox } from "@mui/material";
 import { PATH_APP } from "../../../routes/paths";
 import { useEffect, useState } from "react";
-import order, { PAYMENT_METHODS, PLACEMENT } from "../../../constants/order";
-import { useSnackbar } from "react-simple-snackbar";
-import snakOptions from "../../../constants/snakOptions";
 import TextField from "@mui/material/TextField";
-import CloseIcon from "@mui/icons-material/Close";
-import { DateTimePicker } from "@mui/x-date-pickers";
-import { fCurrency } from "../../../utils/formatNumber";
 import MediaQuery from "react-responsive";
+import { OrderContext } from "../../Orders/context";
 
 
 
 
+/**
 function esewa() {
 
   var path = "https://uat.esewa.com.np/epay/main";
@@ -64,27 +59,14 @@ function esewa() {
   post(path, params);
 }
 
+ */
 const OrderModal = ({ open, handleOpen, orderDetails, setOrderDetails, closeModal }) => {
-
-  const { cart, addOrder, addToCart, refreshData, updateCart } = React.useContext(ItemsContext);
 
   const style = {
     transform: 'translate(-50%, -50%)',
     boxShadow: 24,
   };
 
-  const [openSnackbar, closeSnackbar] = useSnackbar(snakOptions);
-
-  const handleSubmit = async () => {
-    try {
-      const res = await addOrder(orderDetails);
-      console.log(res);
-      openSnackbar(`Order completely successfully`);
-    } catch (err) {
-      console.log(err);
-      openSnackbar(`Order unsuccessful`);
-    }
-  }
 
   return (
     <Modal open={open} onClose={handleOpen} sx={style} >
@@ -213,7 +195,7 @@ const OrderModal = ({ open, handleOpen, orderDetails, setOrderDetails, closeModa
 
 
 export default function AlignItemsList() {
-  const { cart, addOrder, addToCart, refreshData, updateCart } = React.useContext(ItemsContext);
+  const { cart,  addToCart, refreshData, updateCart, deleteFromCart } = React.useContext(ItemsContext);
 
   const [modal, setModal] = useState(false);
 
@@ -234,21 +216,22 @@ export default function AlignItemsList() {
   useEffect(() => {
     var total = 0;
 
-    cart.map((i) => {
+    cart.forEach((i) => {
       if (i.item && i.item[0] && i.is_selected) {
         total += i.item[0].item_price * i.quantity;
       }
     })
 
-    setOrderDetails({ ...orderDetails, total })
+    setOrderDetails(order=> ({...order, total}) )
   }, [cart])
 
 
 
   function getAllSelected() {
-    const res = cart.filter(c => c.is_selected == false);
+    const res = cart.filter(c => c.is_selected === false);
     return res.length === 0;
   }
+  const {cartToCurrOrder} = React.useContext(OrderContext);
 
   async function selectAll() {
 
@@ -265,12 +248,7 @@ export default function AlignItemsList() {
   function updateSelectedItems(item) {
     updateCart(item._id, { is_selected: !item.is_selected })
   }
-  const navigate = useNavigate();
 
-
-  function onModalClick() {
-    setModal(!modal);
-  }
 
   function closeModal() {
     setModal(false);
@@ -310,6 +288,7 @@ export default function AlignItemsList() {
           <Grid item container direction="column" xs={8} spacing={5}>
             {cart.length
               ? cart.map((item, i) => {
+							console.log(item)
                 return (
                   <Grid item key={i}>
                     <Grid
@@ -353,7 +332,7 @@ export default function AlignItemsList() {
                         </Grid>
                         <Grid item xs={12}>
                           <Stack spacing={2} direction="row">
-                            <Button disabled={item.quantity == 1} size="small"
+                            <Button disabled={item.quantity === 1} size="small"
                               onClick={() => {
                                 addToCart(item.item[0], -1).then(refreshData);
                               }}
@@ -377,6 +356,7 @@ export default function AlignItemsList() {
                       <Grid item xs>
                         <Button sx={{ color: "black" }}>
                           <DeleteIcon onClick={async () => {
+							deleteFromCart(item._id);	
                           }} />
                         </Button>
                       </Grid>
@@ -397,6 +377,7 @@ export default function AlignItemsList() {
                 >
                   <Grid item sx={{ mb: 4, fontFamily: "Nunito" }}>
                     <Button variant="contained" onClick={() => {
+					  cartToCurrOrder();
                       window.location = PATH_APP.app.checkout
                     }} >Proceed to checkout</Button>
                   </Grid>
@@ -443,6 +424,7 @@ export default function AlignItemsList() {
           <Grid item container direction="column" xs={8} spacing={5}>
             {cart.length
               ? cart.map((item, i) => {
+							console.log(item)
                 return (
                   <Grid item key={i}>
                     <Grid
@@ -487,7 +469,7 @@ export default function AlignItemsList() {
                         </Grid>
                         <Grid item>
                           <Stack direction="row">
-                            <Button disabled={item.quantity == 1} size="small"
+                            <Button disabled={item.quantity === 1} size="small"
                               onClick={() => {
                                 addToCart(item.item[0], -1).then(refreshData);
                               }}
@@ -499,7 +481,6 @@ export default function AlignItemsList() {
                             </Typography>
                             <Button size="small"
                               onClick={() => {
-                                console.log("apple");
                                 addToCart(item.item[0], 1).then(refreshData);
                               }}
                             >
@@ -509,9 +490,10 @@ export default function AlignItemsList() {
                         </Grid>
                       </Grid>
                       <Grid item xs>
-                        <Button sx={{ color: "black" }}>
-                          <DeleteIcon onClick={async () => {
-                          }} />
+                        <Button sx={{ color: "black" }} onClick={()=>{
+							deleteFromCart(item._id);	
+						}}>
+                          <DeleteIcon/>
                         </Button>
                       </Grid>
                     </Grid>
@@ -520,8 +502,6 @@ export default function AlignItemsList() {
               })
               : "Your cart is empty "}
           </Grid>
-
-
           {
             cart ? (
               <Grid item xs={12}>
@@ -541,16 +521,6 @@ export default function AlignItemsList() {
           <OrderModal open={modal} handleOpen={handleChangeModal} orderDetails={orderDetails} setOrderDetails={setOrderDetails} closeModal={closeModal} />
         </Grid>
       </MediaQuery>
-
-
-
-
-
-
-
-
-
-
     </>
   )
 }

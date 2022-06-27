@@ -12,7 +12,7 @@ const Verify = () => {
     }).catch((err) => {
       setStatus("faliure");
     })
-  }, [])
+  }, [token])
   if (status === "loading") {
     return (
       <div>

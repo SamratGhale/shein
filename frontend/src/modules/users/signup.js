@@ -1,8 +1,6 @@
-import React, { useState, useContext } from 'react';
-import { FormControl, Box, Link } from '@mui/material';
-import { InputLabel } from '@mui/material';
+import React from 'react';
+import {  Box, Link } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom'
-import { Input } from '@mui/material';
 import { Grid, Button, TextField } from '@mui/material';
 import { PATH_PAGE } from '../../routes/paths';
 import { signUp } from './services';
@@ -10,8 +8,6 @@ import { useSnackbar } from 'react-simple-snackbar';
 import snakOptions from '../../constants/snakOptions';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
@@ -21,7 +17,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 const theme = createTheme();
 
 const SignUp = () => {
-  const [openSnackbar, closeSnackbar] = useSnackbar(snakOptions);
+  const [openSnackbar ] = useSnackbar(snakOptions);
   const handleSignup = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);

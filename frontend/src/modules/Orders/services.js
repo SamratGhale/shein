@@ -17,3 +17,35 @@ export async function addOrder(data) {
       });
   });
 }
+
+
+export async function getMyOrder(data) {
+  return new Promise((resolve, reject) => {
+    axios.get(ORDER + '/myorders', {
+      headers: {
+        'access_token': access_token
+      }
+    })
+      .then((res) => {
+        resolve(res.data);
+      }).catch((err) => {
+        reject(err);
+      });
+  });
+}
+
+
+export async function getOrderById(id) {
+  return new Promise((resolve, reject) => {
+    axios.get(ORDER + '/' + id, {
+      headers: {
+        'access_token': access_token
+      }
+    })
+      .then((res) => {
+        resolve(res.data);
+      }).catch((err) => {
+        reject(err);
+      });
+  });
+}

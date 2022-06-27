@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import { PATH_APP } from "../../../routes/paths";
 import { ItemsContext } from "../context";
-import { Grid, Box, Button, Card, ButtonGroup, Stack, Modal, Input } from "@mui/material";
+import { Grid, Box, Button, Card, ButtonGroup, Modal, Input } from "@mui/material";
 import SwipeableViews from "react-swipeable-views";
 import { autoPlay } from "react-swipeable-views-utils";
 import { CLOTHES_IMAGE } from "../../../constants/api";
@@ -12,10 +12,6 @@ import { useTheme } from "@mui/material/styles";
 import MobileStepper from "@mui/material/MobileStepper";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import { makeStyles } from "@mui/styles";
-import AddIcon from "@mui/icons-material/Add";
-import CircleIcon from "@mui/icons-material/Circle";
-import RemoveIcon from "@mui/icons-material/Remove";
 import { useSnackbar } from "react-simple-snackbar";
 import snakOptions from "../../../constants/snakOptions";
 import { OrderContext } from "../../Orders/context";
@@ -38,7 +34,7 @@ const style = {
 
 function AddToCartModal({ item, open, handleClose}) {
   const { addToCart } = useContext(ItemsContext);
-  const [openSnackbar, closeSnackbar] = useSnackbar(snakOptions);
+  const [openSnackbar ] = useSnackbar(snakOptions);
   const [quantity, setQuantity] = useState(0);
   return (
     <Modal
@@ -69,9 +65,7 @@ function AddToCartModal({ item, open, handleClose}) {
   );
 }
 function AddToOrderModal({ item, open, handleClose }) {
-  const { addToCart } = useContext(ItemsContext);
   const {updateCurrOrder} = useContext(OrderContext);
-  const [openSnackbar, closeSnackbar] = useSnackbar(snakOptions);
   const navigate = useNavigate();
   
   const [quantity, setQuantity] = useState(0);
@@ -132,14 +126,12 @@ const ItemDetail = (params) => {
       try {
         const res = await getById(id);
         setItem(res);
-        console.log(res)
       } catch (err) {
-        console.log(err);
         window.location = PATH_APP.root;
       }
     };
     init();
-  }, []);
+  }, [getById, id]);
 
   // const classes = useStyles();
 
@@ -258,7 +250,7 @@ const ItemDetail = (params) => {
                 })}
               </Typography>
               <Typography variant="h3" sx={{ color: "green" }}>
-                Rs.{item.item_price}
+		            Rs {item.discounted_price}
               </Typography>
               <Typography variant="body1">
                 <del>Rs.{item.item_price}</del>

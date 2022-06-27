@@ -1,3 +1,4 @@
+const { ITEMS } = require("../../constants/permissions");
 const controllers = require("./clothes.controllers");
 const validators = require("./clothes.validators");
 
@@ -18,6 +19,7 @@ const routes = {
       multipart: true,
       allow: "multipart/form-data",
     },
+	performance: [ITEMS.WRITE]
   },
   register: {
     method: "POST",
@@ -30,11 +32,13 @@ const routes = {
       multipart: true,
       allow: "multipart/form-data",
     },
+	performance: [ITEMS.WRITE]
   },
   archive: {
     method: "DELETE",
     path: "/{id}",
     description: "Archive the item",
+	performance: [ITEMS.WRITE]
   },
   decreaseItem: {
     method: "PUT",
@@ -46,6 +50,7 @@ const routes = {
       multipart: true,
       allow: "multipart/form-data",
     },
+	performance: [ITEMS.WRITE]
   },
   increaseItem: {
     method: "PUT",
@@ -57,6 +62,7 @@ const routes = {
       multipart: true,
       allow: "multipart/form-data",
     },
+	performance: [ITEMS.WRITE]
   },
   getById: {
     method: "GET",

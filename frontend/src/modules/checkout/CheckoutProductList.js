@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import { Icon } from '@iconify/react';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import minusFill from '@iconify/icons-eva/minus-fill';
-import trash2Fill from '@iconify/icons-eva/trash-2-fill';
 // material
 import { styled } from '@mui/material/styles';
 import {
@@ -18,7 +17,6 @@ import {
   TableContainer
 } from '@mui/material';
 // utils
-import getColorName from '../../utils/getColorName';
 import { fCurrency } from '../../utils/formatNumber';
 //
 import { Button } from '@mui/material';
@@ -93,9 +91,10 @@ export default function ProductList({ items }) {
 
         <TableBody>
           {items.map((product) => {
-            const { quantity } = product;
+            const { cart_quantity } = product;
             console.log(product)
-            const {_id, item_name, item_price, files  } = product;
+            var {_id, item_name, item_price, files, discount  } = product;
+			item_price = item_price - item_price * (discount/100);
             return (
               <TableRow key={_id}>
                 <TableCell>
@@ -133,9 +132,10 @@ export default function ProductList({ items }) {
                 </TableCell>
 
                 <TableCell align="left">{fCurrency(item_price)}</TableCell>
+                <TableCell align="left">{cart_quantity}</TableCell>
 
 
-                <TableCell align="right">{fCurrency(item_price * quantity)}</TableCell>
+                <TableCell align="right">{fCurrency(item_price * cart_quantity)}</TableCell>
 
               </TableRow>
             );

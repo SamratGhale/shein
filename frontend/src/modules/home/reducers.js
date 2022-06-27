@@ -12,6 +12,8 @@ const reducer = (state, action) => {
             return { ...state, cartCount: action.data }
         case actions.SET_SEARCH:
             return { ...state, search: action.data }
+		default:
+			return {...state}
     }
 }
 export default reducer;

@@ -16,6 +16,11 @@ module.exports = {
         WRITE:  'cart_write',
         REMOVE: 'cart_remove',
     },
+    ORDER:{
+        READ:   'order_read',
+        WRITE:  'order_write',
+        REMOVE: 'order_remove',
+    },
     ADMIN: 'app_admin',
     ROLE_ADMIN: 'app_admin',
 };

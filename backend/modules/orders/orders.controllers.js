@@ -54,7 +54,7 @@ const Orders = {
     });
     return res;
   },
-  async list({ start, limit }) {
+  async list({ start, limit, token }) {
     const query = [];
     query.push({
       $lookup: {
@@ -86,11 +86,65 @@ const Orders = {
     });
     return res;
   },
+  async getMyOrders({ start, limit, token }) {
+    const query = [];
+
+    var user = (await User.validateToken(token)).user;
+	
+	if(!user){
+		throw {message :" User dosen't exist", code : 404}
+	}
+
+    query.push({
+      $lookup: {
+        from: 'clothes',
+        localField: 'items.item_id',
+        foreignField: '_id',
+        as: 'items_details',
+      },
+    })
+
+    query.push({
+      $match: {
+		user_id: user._id
+      },
+    })
+
+    query.push({
+      $project: {
+        "user_detail.password": 0,
+        "user_detail.is_archived": 0,
+        "user_detail.is_registered": 0,
+        "user_detail.role": 0,
+        "user_detail.created_at": 0,
+        "user_detail.updated_at": 0,
+        "user_detail.__v": 0
+      }
+
+    })
+
+    const res = await DataUtils.paging({
+      start,
+      limit,
+      sort: { created_at: -1 },
+      model: OrdersModel,
+      query,
+    });
+
+	  res.data.forEach(async (item, i) => {
+		  if (item.items_details[0]) {
+			  item.items_details.forEach((cloth,j) => {
+				  res.data[i].items_details[j].files = fs.readdirSync(`./modules/clothes/images/${item.items_details[j]._id}`);
+			  })
+		  }
+	  })
+    return res;
+  },
 
   async add(payload, token) {
     var user = (await User.validateToken(token)).user;
 
-    const { user_email, status, payment_method, items, delivery_type, delivery_duedate, location, lat_long } = payload;
+    var { user_email, status, payment_method, items, delivery_type, delivery_duedate, location, lat_long } = payload;
 
     /* user_email is extracted from token but admin can pass a different user_id */
     var is_admin = false
@@ -226,6 +280,16 @@ module.exports = {
     })
   },
   getById: (req) => Orders.getById(req.params.id),
+  getMyOrders: (req)=>{
+    const token = req.params.token || req.headers.access_token;
+    const start = req.query.start || 0;
+    const limit = req.query.limit || 8;
+    return Orders.getMyOrders({
+      start,
+      limit,
+	  token
+    })
+  },
   add: (req) => {
     const token = req.params.token || req.headers.access_token;
     return Orders.add(req.payload, token);

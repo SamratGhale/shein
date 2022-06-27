@@ -55,7 +55,7 @@ export const ItemsContextProvider = ({ children }) => {
     }, [])
 
     useEffect(() => {
-        if (state.refresh == true) {
+        if (state.refresh === true) {
             try {
                 Service.getAllItems().then((data) => {
                     dispatch({ type: actions.SET_ITEMS, data: data });
@@ -80,8 +80,11 @@ export const ItemsContextProvider = ({ children }) => {
         form.append("quantity", amount);
         return await Service.addToCart(form);
     }
-
-
+    async function deleteFromCart(id) {
+        const res = await Service.deleteById(id);
+        dispatch({ type: actions.REGRESH_DATA });
+		return res;
+    }
 
     async function updateCart(id, data, refresh = true) {
         const res = await Service.updateCart(id, data);
@@ -104,6 +107,7 @@ export const ItemsContextProvider = ({ children }) => {
                 listItems,
                 setSearch,
                 updateCart,
+				deleteFromCart
             }}
         >
             {children}

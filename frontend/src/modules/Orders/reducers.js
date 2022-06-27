@@ -8,6 +8,8 @@ const reducer = (state, action) => {
             return { ...state, currOrder: action.data }
         case actions.REFRESH_DATA:
             return { ...state, refresh: !state.refresh }
+		default:
+			return {...state}
     }
 }
 export default reducer;

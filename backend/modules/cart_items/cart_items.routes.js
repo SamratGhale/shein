@@ -1,3 +1,4 @@
+const { CART } = require('../../constants/permissions');
 const controllers = require('./cart_items.controllers')
 const validators = require('./cart_items.validators')
 
@@ -12,16 +13,25 @@ const routes = {
             multipart: true,
             allow: "multipart/form-data",
         },
+		permissions: [CART.WRITE]
     },
     getMyCart: {
         method: "GET",
         path: "",
-        description: "Get my cart items"
+        description: "Get my cart items",
+		permissions: [CART.READ]
     },
     update: {
         method: "PUT",
         path: "/{id}",
         description: "update cart",
+		permissions: [CART.WRITE]
+    },
+    deleteById: {
+        method: "DELETE",
+        path: "/{id}",
+        description: "Delete cart by item",
+		permissions: [CART.WRITE]
     }
 };
 

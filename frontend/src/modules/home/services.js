@@ -1,5 +1,5 @@
 import axios from "axios";
-import { CLOTHES, CART, ORDER } from "../../constants/api";
+import { CLOTHES, CART } from "../../constants/api";
 import { getUserToken } from "../../utils/sessionManager";
 
 const access_token = getUserToken();
@@ -41,6 +41,18 @@ export async function getById(id) {
     throw err;
   }
 }
+
+export async function deleteById(id) {
+  try {
+    const res = await axios.delete(CART+ "/" + id,{headers:{
+		access_token 
+	}});
+    return res.data;
+  } catch (err) {
+    throw err;
+  }
+}
+
 export async function addToCart(payload) {
   return new Promise((resolve, reject) => {
     axios

@@ -1,20 +1,15 @@
 import PropTypes from 'prop-types';
-import { Icon } from '@iconify/react';
-import { useState } from 'react';
 import { MenuItem } from '@mui/material';
-import editFill from '@iconify/icons-eva/edit-fill';
 // material
 import {
   Box,
   Card,
   Stack,
-  Button,
   Divider,
   TextField,
   CardHeader,
   Typography,
   CardContent,
-  InputAdornment
 } from '@mui/material';
 // utils
 import { fCurrency } from '../../utils/formatNumber';
@@ -112,22 +107,6 @@ export default function CheckoutSummary({
                variant='standard'>
                 <MenuItem value={'delivery'}>Delivery</MenuItem>
                 <MenuItem value={'self_pickup'}>Self Pickup</MenuItem>
-              </Select>
-            </Stack>
-            <Stack direction="row" justifyContent="space-between">
-              <Typography variant="body2">
-                Order Status
-              </Typography>
-              <Select 
-              value={orderDetails.status}
-              onChange={(e)=>{
-                setOrderDetails({...orderDetails, status: e.target.value})
-              }}
-               variant='standard'>
-                <MenuItem value={'placed'}>Placed</MenuItem>
-                <MenuItem value={'on_delivery'}>On Delivery</MenuItem>
-                <MenuItem value={'completed'}>Completed</MenuItem>
-                <MenuItem value={'cancled'}>Cancled</MenuItem>
               </Select>
             </Stack>
           </Stack>

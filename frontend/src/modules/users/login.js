@@ -1,12 +1,10 @@
-import React, { useState, useContext } from 'react';
-import { FormControl, Box, Link } from '@mui/material';
+import React from 'react';
+import {  Box, Link } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom'
-import { InputLabel } from '@mui/material';
-import { Input } from '@mui/material';
 import { Grid, Button, TextField } from '@mui/material';
 import { useSnackbar } from 'react-simple-snackbar';
 import { GoogleLogin } from '@react-oauth/google';
-import { PATH_APP, PATH_PAGE, ROOTS } from '../../routes/paths';
+import {  PATH_PAGE, ROOTS } from '../../routes/paths';
 import snakOptions from '../../constants/snakOptions';
 import Avatar from '@mui/material/Avatar';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -23,7 +21,7 @@ const theme = createTheme();
 
 const Login = () => {
 
-  const [openSnackbar, closeSnackbar] = useSnackbar(snakOptions);
+  const [openSnackbar ] = useSnackbar(snakOptions);
   const handleLogin = async (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);

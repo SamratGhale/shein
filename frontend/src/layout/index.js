@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 import Footer from './Footer';
 import { Breadcrumbs } from '@mui/material';
 import { Link } from '@mui/material';
-import React, { useState } from "react";
+import React from "react";
 import { Outlet } from 'react-router-dom';
 import AB from "../ab.png";
 
@@ -24,7 +24,7 @@ function DashBoardLayout() {
         minHeight: '100vh',
 
       }}>
-      <img src={AB} />
+      <img alt="ab" src={AB} />
       <NavBar />
       <Box sx={{ padding: 3 }}>
         {paths[paths.length - 1] !== "" ? (

@@ -3,6 +3,7 @@ const bcrypt = require('bcrypt');
 const Common = require('../../utils/common');
 const { OAuth2Client } = require('google-auth-library')
 const jwt = require('jsonwebtoken');
+const { USER } = require('../../constants/permissions');
 const Role = require('./role.controllers').Role;
 require('dotenv').config();
 
@@ -21,8 +22,10 @@ const User = {
     },
 
     async update(request) {
-        console.log(request.payload);
-        const res = await UserModel.findOneAndUpdate({ _id: request.params.id }, request.payload);
+		const params = request.payload;
+		/** Noone can change role, admin can directly change role from backend*/
+		delete params.role;
+        const res = await UserModel.findOneAndUpdate({ _id: request.params.id }, params);
         return res;
     },
 
@@ -201,9 +204,13 @@ const User = {
     },
 
 
-    async archive(id) {
-        return UserModel.findOneAndUpdate({ _id: id, is_archived: false }, { is_archived: true });
-    },
+	async archive(id) {
+		const { user, permissions } = await User.validateToken(token);
+		if(!permissions.includes(USER.ADMIN) && user._id != id){
+			throw { message: "You can't arvhice other user!", code : 400};
+		}
+		return UserModel.findOneAndUpdate({ _id: id, is_archived: false }, { is_archived: true });
+	},
     async approve(id) {
         return UserModel.findOneAndUpdate({ _id: id }, [{ $set: { is_approved: { $eq: [false, "$is_approved"] } } }]);
     },
@@ -234,7 +241,10 @@ module.exports = {
     },
     login: (req) => User.login(req.payload),
     google_login: (req) => User.google_login(req.params.cred),
-    archive: (req) => User.archive(req.params.id),
+    archive: (req) => {
+        const token = req.query.access_token || req.headers.access_token;
+		return User.archive(req.params.id, token)
+	},
     approve: (req) => User.approve(req.params.id),
     findById: (req) => User.findById(req.params.id),
     findByRoles: (req) => User.findByRoles(req.params.role),

@@ -7,6 +7,7 @@ const routes = {
     method: 'GET',
     path: '',
     description: 'List all users',
+    permissions: [USER.ADMIN]
   },
   register: {
     method: 'POST',
@@ -18,7 +19,6 @@ const routes = {
       multipart: true,
       allow: 'multipart/form-data',
     },
-    //permissions: [USER.WRITE, USER.ADMIN]
   },
   changePassword: {
     method: 'PUT',
